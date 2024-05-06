@@ -1,20 +1,41 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import Main from './src/screens/Main';
+import * as Font from 'expo-font';
+import React, { useState } from 'react';
+import { useEffect } from 'react';
+import { AppLoading } from 'expo';
+import { Text } from 'react-native';
+import initDB from './src/database/db';
+import { NavigationContainer } from '@react-navigation/native';
+
+
+const customFonts = {
+  'K2D-Bold': require('./assets/fonts/K2D-Bold.ttf'),
+};
 
 export default function App() {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  async function loadFonts() {
+    await Font.loadAsync(customFonts);
+    setFontsLoaded(true);
+  }
+  
+  useEffect(() => {
+    loadFonts();
+  }, []);
+  
+  useEffect(() => {
+    initDB();
+  }, []);
+
+  if (!fontsLoaded) {
+    return <Text>No ha cargao la fuente.</Text>;
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Main />
+    </NavigationContainer>
+    
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
