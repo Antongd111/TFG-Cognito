@@ -21,6 +21,7 @@ const initDB = () => {
 };
 
 export const addPaciente = async (nombre, apellidos, fecha_nacimiento, sexo, observaciones, callback) => {
+  console.log("Añadiendo paciente:", nombre, apellidos, fecha_nacimiento, sexo, observaciones);
   await db.transaction(async (tx) => {
     tx.executeSql(
       "INSERT INTO Paciente (nombre, apellidos, fecha_nacimiento, sexo, observaciones) VALUES (?, ?, ?, ?, ?);",

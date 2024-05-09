@@ -1,27 +1,10 @@
 import React from "react";
 import { Text, View , TouchableOpacity, StyleSheet, Button} from "react-native";
 import ListaPacientes from '../components/listaPacientes';
-import AgregarPaciente from "./AgregarPaciente";
 import { addPaciente } from '../database/db';
 import { Alert } from "react-native";
 
 const PantallaPacientes = ({navigation}) => {
-  const agregarPacientePrueba = async () => {
-    try {
-      // Datos de ejemplo
-      const nombre = "John";
-      const apellidos = "Doe";
-      const fecha_nacimiento = "1980-01-01";
-      const sexo = "M";
-      const observaciones = "Ninguna observación especial";
-
-      await addPaciente(nombre, apellidos, fecha_nacimiento, sexo, observaciones);
-      Alert.alert("Éxito", "Paciente añadido correctamente");
-    } catch (error) {
-      console.error(error);
-      Alert.alert("Error", "No se pudo añadir el paciente");
-    }
-  };
 
   return (
     <View>
