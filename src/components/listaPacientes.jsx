@@ -3,7 +3,7 @@ import Constants from "expo-constants";
 import { Text, View, FlatList, TextInput} from "react-native";
 import ListaPacientesStyles from '../styles/ListaPacientesStyles';
 import { useState, useEffect } from 'react';
-import { getPacientes } from '../database/db';
+import { obtenerPacientes } from '../api/PacienteApi';
 import TarjetaPaciente from "./tarjetaPaciente";
 
 
@@ -18,17 +18,18 @@ const ListaPacientes = () => {
      * Carga la lista de pacientes al iniciar la aplicación
      */
     useEffect(() => {
-        const cargarPacientes = () => {
-            getPacientes((pacientesObtenidos) => {
-                setPacientes(pacientesObtenidos);
-                setFilteredData(pacientesObtenidos);
-                console.log(pacientesObtenidos);
-            });
+        const cargarPacientes = async () => {
+          try {
+            const listaPacientes = await obtenerPacientes();
+            setPacientes(listaPacientes);
+            setFilteredData(listaPacientes); // Asegúrate de inicializar filteredData también
+          } catch (error) {
+            console.error("Error al cargar los pacientes:", error);
+          }
         };
-        
+      
         cargarPacientes();
-        
-    }, []);    
+      }, []); 
 
     return (
         <View style={ListaPacientesStyles.contenedor}>

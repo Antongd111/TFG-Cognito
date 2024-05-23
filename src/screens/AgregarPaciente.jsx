@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Text, View, TouchableOpacity, TextInput, KeyboardAvoidingView, ScrollView, Platform, Alert} from "react-native";
 import AgregarPacienteStyles from "../styles/AgregarPacienteStyles";
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { addPaciente } from '../database/db';
+import { agregarPaciente } from '../api/PacienteApi';
 
 const AgregarPaciente = ({navigation}) => {
 
@@ -24,24 +24,24 @@ const AgregarPaciente = ({navigation}) => {
     };
 
     const handleAddPaciente = async () => {
-
-        // Envío una alerta si algún campo requerido está vacío
         if (!nombre || !apellidos || !identificacion || !genero) {
-            Alert.alert("Error", "Por favor, rellena todos los campos requeridos.");
-            return;
+          Alert.alert("Error", "Por favor, rellena todos los campos requeridos.");
+          return;
         }
-
-        // Formatear la fecha de nacimiento para guardar en la BD
+      
+        // Formatear la fecha de nacimiento para la base de datos
         const formattedDate = fechaNacimiento.toISOString().split('T')[0];
-
+      
         try {
-            Alert.alert("Éxito", "Paciente añadido correctamente.");
-            navigation.navigate('Pacientes');
+          // Llamar a la función de añadir paciente y esperar el resultado
+          const result = await agregarPaciente(identificacion, nombre, apellidos, formattedDate, genero, observaciones);
+          Alert.alert("Éxito", "Paciente añadido correctamente.");
+          navigation.navigate('Pacientes');
         } catch (error) {
-            console.error(error);
-            Alert.alert("Error", "Ha ocurrido un error al añadir el paciente.");
+          console.error(error);
+          Alert.alert("Error", "Ha ocurrido un error al añadir el paciente.");
         }
-    };
+      };
 
     return (
         <KeyboardAvoidingView
