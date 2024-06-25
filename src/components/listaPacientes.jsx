@@ -7,7 +7,7 @@ import { obtenerPacientes } from '../api/PacienteApi';
 import TarjetaPaciente from "./tarjetaPaciente";
 
 
-const ListaPacientes = () => {
+const ListaPacientes = ({navigation}) => {
 
     
     const [searchQuery, setSearchQuery] = useState('');
@@ -55,6 +55,8 @@ const ListaPacientes = () => {
                 data={filteredData}
                 renderItem={({item}) => (
                     <TarjetaPaciente
+                        navigation={navigation}
+                        id={item.id}
                         nombre={item.nombre}
                         apellidos={item.apellidos}
                         fecha_nacimiento={item.fecha_nacimiento}
