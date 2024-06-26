@@ -6,6 +6,7 @@ import { AppLoading } from 'expo';
 import { Text } from 'react-native';
 import initDB from './src/database/db';
 import { NavigationContainer } from '@react-navigation/native';
+import 'react-native-reanimated';
 
 
 const customFonts = {

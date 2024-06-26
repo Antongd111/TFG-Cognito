@@ -50,4 +50,16 @@ export const obtenerPacientes = async () => {
     throw error;  // Propaga el error para ser manejado por el llamador.
   }
 };
+
+export const obtenerPaciente = async (id) => {
+  const db = await dbPromise;
+  try {
+    const row = await db.getFirstAsync('SELECT * FROM Paciente WHERE id = ?', [id]);
+    console.log("Paciente obtenido:", row);
+    return row;  // Devuelve el resultado directamente.
+  } catch (error) {
+    console.error("Error al obtener paciente:", error);
+    throw error;  // Propaga el error para ser manejado por el llamador.
+  }
+};
 export default initDB;

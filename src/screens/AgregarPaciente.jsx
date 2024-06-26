@@ -105,13 +105,13 @@ const AgregarPaciente = ({navigation}) => {
                 </View>
             </ScrollView>
             <View style={AgregarPacienteStyles.contenedorBotones}>
-                    <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('Pacientes')}>
-                        <Text style={styles.textoBoton}>Cancelar</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.boton} onPress={handleAddPaciente}>
-                        <Text style={styles.textoBoton}>Agregar Paciente</Text>
-                    </TouchableOpacity>
-                </View>
+                <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('Pacientes')}>
+                    <Text style={styles.textoBoton}>Cancelar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.boton} onPress={handleAddPaciente}>
+                    <Text style={styles.textoBoton}>Agregar Paciente</Text>
+                </TouchableOpacity>
+            </View>
         </KeyboardAvoidingView>
     );
 };

@@ -1,8 +1,6 @@
 import React from "react";
-import { Text, View , TouchableOpacity, StyleSheet, Button} from "react-native";
+import { Text, View , TouchableOpacity, StyleSheet} from "react-native";
 import ListaPacientes from '../components/listaPacientes';
-import { addPaciente } from '../database/db';
-import { Alert } from "react-native";
 
 const PantallaPacientes = ({navigation}) => {
 
@@ -11,7 +9,7 @@ const PantallaPacientes = ({navigation}) => {
       <TouchableOpacity style={styles.botonAgregarPaciente} onPress={() => navigation.navigate('AgregarPaciente')}>
         <Text style={styles.textoAgregarPaciente}>Agregar Paciente</Text>
       </TouchableOpacity>
-      <ListaPacientes />
+      <ListaPacientes navigation={navigation}/>
     </View>
   );
 };

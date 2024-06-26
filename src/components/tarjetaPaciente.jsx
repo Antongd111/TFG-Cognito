@@ -3,7 +3,7 @@ import { Text, View, Image, TouchableOpacity } from "react-native";
 import styles from "../styles/TarjetaPacienteStyles";
 import { format, parseISO } from 'date-fns';
 
-export default function TarjetaPaciente({id, nombre, apellidos, fecha_nacimiento, sexo}) {
+export default function TarjetaPaciente({navigation, id, nombre, apellidos, fecha_nacimiento, sexo}) {
 
     const fecha_formateada = format(parseISO(fecha_nacimiento), 'dd/MM/yyyy');
 
@@ -17,8 +17,8 @@ export default function TarjetaPaciente({id, nombre, apellidos, fecha_nacimiento
                 </View>
             </View>
             <View style={styles.contenedor_botones}>
-                <TouchableOpacity style={styles.boton}>
-                    <Text style={styles.textoBoton} onPress={() => navigation.navigate('FichaPaciente', {idPaciente: id})}>Ver ficha</Text>
+                <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('FichaPaciente', {idPaciente: id})}>
+                    <Text style={styles.textoBoton}>Ver ficha</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.boton}>
                     <Text style={styles.textoBoton}>Modificar datos</Text>
