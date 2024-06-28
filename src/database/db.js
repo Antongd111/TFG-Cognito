@@ -25,10 +25,10 @@ export const agregarPaciente = async (identificacion, nombre, apellidos, fecha_n
   console.log("Añadiendo paciente:", identificacion, nombre, apellidos, fecha_nacimiento, sexo, observaciones);
   const db = await dbPromise;
   const statement = await db.prepareAsync(
-    'INSERT INTO Paciente (nombre, apellidos, fecha_nacimiento, sexo, observaciones) VALUES ($nombre, $apellidos, $fecha_nacimiento, $sexo, $observaciones)'
+    'INSERT INTO Paciente (localizador, nombre, apellidos, fecha_nacimiento, sexo, observaciones) VALUES ($localizador $nombre, $apellidos, $fecha_nacimiento, $sexo, $observaciones)'
   );
   try {
-    const result = await statement.executeAsync({$nombre: nombre, $apellidos: apellidos, $fecha_nacimiento: fecha_nacimiento, $sexo: sexo, $observaciones: observaciones });
+    const result = await statement.executeAsync({$localizador: localizador, $nombre: nombre, $apellidos: apellidos, $fecha_nacimiento: fecha_nacimiento, $sexo: sexo, $observaciones: observaciones });
     console.log("Paciente añadido con ID:", result.lastInsertRowId);
     if (callback) callback(true, result.lastInsertRowId);
   } catch (error) {
