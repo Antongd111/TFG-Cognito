@@ -22,7 +22,7 @@ const ListaPacientes = ({navigation}) => {
           try {
             const listaPacientes = await obtenerPacientes();
             setPacientes(listaPacientes);
-            setFilteredData(listaPacientes); // Asegúrate de inicializar filteredData también
+            setFilteredData(listaPacientes);
           } catch (error) {
             console.error("Error al cargar los pacientes:", error);
           }

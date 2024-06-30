@@ -9,7 +9,7 @@ const initDB = async () => {
     PRAGMA foreign_keys = ON;
     CREATE TABLE IF NOT EXISTS Paciente (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      localizador VARCHAR(255) NOT NULL,
+      identificacion VARCHAR(255) NOT NULL,
       nombre VARCHAR(255) NOT NULL,
       apellidos VARCHAR(255) NOT NULL,
       fecha_nacimiento DATE NOT NULL,
@@ -25,10 +25,10 @@ export const agregarPaciente = async (identificacion, nombre, apellidos, fecha_n
   console.log("Añadiendo paciente:", identificacion, nombre, apellidos, fecha_nacimiento, sexo, observaciones);
   const db = await dbPromise;
   const statement = await db.prepareAsync(
-    'INSERT INTO Paciente (localizador, nombre, apellidos, fecha_nacimiento, sexo, observaciones) VALUES ($localizador $nombre, $apellidos, $fecha_nacimiento, $sexo, $observaciones)'
+    'INSERT INTO Paciente (identificacion, nombre, apellidos, fecha_nacimiento, sexo, observaciones) VALUES ($identificacion $nombre, $apellidos, $fecha_nacimiento, $sexo, $observaciones)'
   );
   try {
-    const result = await statement.executeAsync({$localizador: localizador, $nombre: nombre, $apellidos: apellidos, $fecha_nacimiento: fecha_nacimiento, $sexo: sexo, $observaciones: observaciones });
+    const result = await statement.executeAsync({$identificacion: identificacion, $nombre: nombre, $apellidos: apellidos, $fecha_nacimiento: fecha_nacimiento, $sexo: sexo, $observaciones: observaciones });
     console.log("Paciente añadido con ID:", result.lastInsertRowId);
     if (callback) callback(true, result.lastInsertRowId);
   } catch (error) {
@@ -62,4 +62,22 @@ export const obtenerPaciente = async (id) => {
     throw error;  // Propaga el error para ser manejado por el llamador.
   }
 };
+
+export const actualizarPaciente = async (id, identificacion, nombre, apellidos, fecha_nacimiento, sexo, observaciones) => {
+  const db = await dbPromise;
+  console.log("Actualizando paciente:", id, identificacion, nombre, apellidos, fecha_nacimiento, sexo, observaciones);
+  try {
+    const statement = await db.prepareAsync(
+      'UPDATE Paciente SET identificacion = $identificacion, nombre = $nombre, apellidos = $apellidos, fecha_nacimiento = $fecha_nacimiento, sexo = $sexo, observaciones = $observaciones WHERE id = $id'
+    );
+    const result = await statement.executeAsync({ $id: id, $identificacion: identificacion, $nombre: nombre, $apellidos: apellidos, $fecha_nacimiento: fecha_nacimiento, $sexo: sexo, $observaciones: observaciones });
+    await statement.finalizeAsync();
+    console.log("Paciente actualizado:", result.changes);
+    return result.changes; // Devuelve el número de filas afectadas
+  } catch (error) {
+    console.error("Error al actualizar paciente:", error);
+    throw error; // Propaga el error para ser manejado por el llamador
+  }
+};
+
 export default initDB;

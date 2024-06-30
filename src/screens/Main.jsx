@@ -5,6 +5,7 @@ import {View} from "react-native";
 import PantallaPacientes from "./PantallaPacientes";
 import AgregarPaciente from "./AgregarPaciente";
 import FichaPaciente from "./FichaPaciente";
+import ModificarPaciente from "./ModificarPaciente";
 import Header from '../components/header';
 
 const Stack = createNativeStackNavigator();
@@ -17,6 +18,7 @@ const Main = () => {
         <Stack.Screen name="Pacientes" component={PantallaPacientes} options={{ title: 'Pantalla de Pacientes' }} />
         <Stack.Screen name="AgregarPaciente" component={AgregarPaciente} options={{ title: 'Pantalla de añadir paciente' }} />
         <Stack.Screen name="FichaPaciente" component={FichaPaciente} options={{ title: 'Pantalla de ficha de paciente' }} />
+        <Stack.Screen name="ModificarPaciente" component={ModificarPaciente} options={{ title: 'Pantalla de modificación de paciente' }} />
       </Stack.Navigator>
     </View>
   );
