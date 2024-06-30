@@ -6,7 +6,7 @@ import AgregarPacienteStyles from "../styles/AgregarPacienteStyles";
 import styles from "../styles/ComunStyles";
 
 const ModificarPaciente = ({ navigation, route }) => {
-    const { idPaciente } = route.params; // Suponemos que el ID se pasa como parámetro
+    const { idPaciente } = route.params;
 
     // Estados para almacenar los datos del paciente
     const [nombre, setNombre] = useState('');
@@ -34,7 +34,7 @@ const ModificarPaciente = ({ navigation, route }) => {
                 setIdentificacion(datos.identificacion);
                 setNombre(datos.nombre);
                 setApellidos(datos.apellidos);
-                setFechaNacimiento(new Date(datos.fecha_nacimiento)); // Asumiendo que viene en formato adecuado
+                setFechaNacimiento(new Date(datos.fecha_nacimiento));
                 setGenero(datos.sexo);
                 setObservaciones(datos.observaciones);
             }
@@ -54,7 +54,7 @@ const ModificarPaciente = ({ navigation, route }) => {
         try {
             const result = await actualizarPaciente(idPaciente, identificacion, nombre, apellidos, formattedDate, genero, observaciones);
             Alert.alert("Éxito", "Datos del paciente actualizados correctamente.");
-            navigation.goBack();
+            navigation.navigate('Pacientes');
         } catch (error) {
             console.error(error);
             Alert.alert("Error", "Ha ocurrido un error al actualizar los datos del paciente.");

@@ -1,4 +1,3 @@
-import react from "react";
 import { Text, View, Image, TouchableOpacity } from "react-native";
 import styles from "../styles/TarjetaPacienteStyles";
 import { format, parseISO } from 'date-fns';
