@@ -10,7 +10,7 @@ export default styles = StyleSheet.create({
         margin: '2%',
         padding: 10,
         borderRadius: 10,
-        height: '78%',
+        height: '61%',
     },
 
     barraBusqueda: {

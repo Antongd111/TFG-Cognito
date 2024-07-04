@@ -17,7 +17,7 @@ export default FichaPacientesStyle = StyleSheet.create({
         margin: '2%',
         padding: 10,
         borderRadius: 10,
-        height: '85%',
+        height: '68%',
     },
 
     contenedor_datos: {

@@ -1,4 +1,5 @@
 import React from "react";
+import Header from "../components/header";
 import { Text, View, TouchableOpacity, TextInput, Button, ScrollView } from "react-native";
 import { useState, useLayoutEffect } from 'react';
 import FichaPacientesStyles from '../styles/FichaPacientesStyles';
@@ -27,6 +28,7 @@ const FichaPaciente = ({ route, navigation }) => {
 
   return (
     <View>
+      <Header />
       <Text style={FichaPacientesStyles.titulo}>Ficha del Paciente</Text>
       <View style={FichaPacientesStyles.contenedor}>
         <View style={FichaPacientesStyles.contenedor_datos}>

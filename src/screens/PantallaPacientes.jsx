@@ -1,11 +1,13 @@
 import React from "react";
 import { Text, View , TouchableOpacity, StyleSheet} from "react-native";
+import Header from '../components/header';
 import ListaPacientes from '../components/listaPacientes';
 
 const PantallaPacientes = ({navigation}) => {
 
   return (
     <View>
+      <Header />
       <TouchableOpacity style={styles.botonAgregarPaciente} onPress={() => navigation.navigate('AgregarPaciente')}>
         <Text style={styles.textoAgregarPaciente}>Agregar Paciente</Text>
       </TouchableOpacity>

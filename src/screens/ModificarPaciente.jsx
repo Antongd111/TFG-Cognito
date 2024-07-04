@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Header from "../components/header";
 import { Text, View, TouchableOpacity, TextInput, KeyboardAvoidingView, ScrollView, Platform, Alert } from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { obtenerPaciente, actualizarPaciente } from '../api/PacienteApi';
@@ -67,6 +68,7 @@ const ModificarPaciente = ({ navigation, route }) => {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
         >
+            <Header/>
             <ScrollView style={AgregarPacienteStyles.contenedor}>
                 <Text style={AgregarPacienteStyles.titulo}>Modificar Datos del Paciente</Text>
                 <View style={AgregarPacienteStyles.formulario}>

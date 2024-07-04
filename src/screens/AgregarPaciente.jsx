@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import Header from "../components/header";
 import { Text, View, TouchableOpacity, TextInput, KeyboardAvoidingView, ScrollView, Platform, Alert} from "react-native";
 import AgregarPacienteStyles from "../styles/AgregarPacienteStyles";
+import styles from "../styles/ComunStyles";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { agregarPaciente } from '../api/PacienteApi';
 
@@ -49,6 +51,7 @@ const AgregarPaciente = ({navigation}) => {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
         >
+            <Header />
             <ScrollView style={AgregarPacienteStyles.contenedor}>
                 <Text style={AgregarPacienteStyles.titulo}>Registro de paciente</Text>
                 <View style={AgregarPacienteStyles.formulario}>
