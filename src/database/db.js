@@ -16,7 +16,27 @@ const initDB = async () => {
       sexo VARCHAR(1) CHECK(sexo IN ('M', 'F')) NOT NULL,
       observaciones TEXT
     );
+
+    CREATE TABLE IF NOT EXISTS SesionTest (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_paciente INTEGER NOT NULL,
+      fecha_sesion DATE NOT NULL,
+      FOREIGN KEY (id_paciente) REFERENCES Pacientes (id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS Test_1 (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_sesion INTEGER NOT NULL,
+      numero_ensayos INTEGER NOT NULL,
+      tiempo_medio_reaccion REAL NOT NULL,
+      errores_anticipacion INTEGER NOT NULL,
+      errores_retrasos INTEGER NOT NULL,
+      errores_tiempo INTEGER NOT NULL,
+      FOREIGN KEY (id_sesion) REFERENCES Sesiones (id) ON DELETE CASCADE
+    );
   `);
+
+
 
   console.log("Tabla Paciente creada o ya existente");
 };
@@ -28,7 +48,7 @@ export const agregarPaciente = async (identificacion, nombre, apellidos, fecha_n
     'INSERT INTO Paciente (localizador, nombre, apellidos, fecha_nacimiento, sexo, observaciones) VALUES ($localizador $nombre, $apellidos, $fecha_nacimiento, $sexo, $observaciones)'
   );
   try {
-    const result = await statement.executeAsync({$localizador: localizador, $nombre: nombre, $apellidos: apellidos, $fecha_nacimiento: fecha_nacimiento, $sexo: sexo, $observaciones: observaciones });
+    const result = await statement.executeAsync({ $localizador: localizador, $nombre: nombre, $apellidos: apellidos, $fecha_nacimiento: fecha_nacimiento, $sexo: sexo, $observaciones: observaciones });
     console.log("Paciente añadido con ID:", result.lastInsertRowId);
     if (callback) callback(true, result.lastInsertRowId);
   } catch (error) {

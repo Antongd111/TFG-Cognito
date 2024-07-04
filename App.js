@@ -8,7 +8,6 @@ import initDB from './src/database/db';
 import { NavigationContainer } from '@react-navigation/native';
 import 'react-native-reanimated';
 
-
 const customFonts = {
   'K2D-Bold': require('./assets/fonts/K2D-Bold.ttf'),
 };
