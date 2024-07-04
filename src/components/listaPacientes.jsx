@@ -1,15 +1,14 @@
 import React from "react";
-import Constants from "expo-constants";
 import { Text, View, FlatList, TextInput} from "react-native";
 import ListaPacientesStyles from '../styles/ListaPacientesStyles';
 import { useState, useEffect } from 'react';
+import { useFocusEffect } from "@react-navigation/native";
 import { obtenerPacientes } from '../api/PacienteApi';
 import TarjetaPaciente from "./tarjetaPaciente";
 
 
 const ListaPacientes = ({navigation}) => {
 
-    
     const [searchQuery, setSearchQuery] = useState('');
     const [lista_pacientes, setPacientes] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
@@ -17,19 +16,22 @@ const ListaPacientes = ({navigation}) => {
     /**
      * Carga la lista de pacientes al iniciar la aplicación
      */
-    useEffect(() => {
         const cargarPacientes = async () => {
           try {
             const listaPacientes = await obtenerPacientes();
             setPacientes(listaPacientes);
-            setFilteredData(listaPacientes); // Asegúrate de inicializar filteredData también
+            setFilteredData(listaPacientes);
           } catch (error) {
             console.error("Error al cargar los pacientes:", error);
           }
         };
       
-        cargarPacientes();
-      }, []); 
+        useFocusEffect(
+            React.useCallback(() => {
+                cargarPacientes();
+            }, [])
+        );
+
 
     return (
         <View style={ListaPacientesStyles.contenedor}>

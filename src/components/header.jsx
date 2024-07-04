@@ -1,6 +1,5 @@
 import React from "react";
-import Constants from "expo-constants";
-import { Text, View, StyleSheet, Image } from "react-native";
+import { View, Image } from "react-native";
 import HeaderStyles from '../styles/HeaderStyles';
 
 const Header = () => {

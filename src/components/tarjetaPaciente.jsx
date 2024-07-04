@@ -1,4 +1,3 @@
-import react from "react";
 import { Text, View, Image, TouchableOpacity } from "react-native";
 import styles from "../styles/TarjetaPacienteStyles";
 import { format, parseISO } from 'date-fns';
@@ -20,7 +19,7 @@ export default function TarjetaPaciente({navigation, id, nombre, apellidos, fech
                 <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('FichaPaciente', {idPaciente: id})}>
                     <Text style={styles.textoBoton}>Ver ficha</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.boton}>
+                <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('ModificarPaciente', {idPaciente: id})}>
                     <Text style={styles.textoBoton}>Modificar datos</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.boton}>

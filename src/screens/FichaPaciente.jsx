@@ -62,7 +62,7 @@ const FichaPaciente = ({ route, navigation }) => {
               <Text style={FichaPacientesStyles.label}>Género:</Text>
               <TextInput
                 style={FichaPacientesStyles.input}
-                value={paciente.genero === 'M' ? 'Hombre' : 'Mujer'}
+                value={paciente.sexo === 'M' ? 'Hombre' : 'Mujer'}
                 editable={false}>
               </TextInput>
             </View>
