@@ -15,22 +15,24 @@ const PreguntaIniciarTest = ({ visible, onClose, onRepeatTests, onStartRealTests
           <Text style={styles.tituloInstrucciones}>{title}</Text>
           <View style={styles.separador} />
           <Text style={styles.textoInstrucciones}>{instructions}</Text>
+          <View style={{display: 'flex', flexDirection: 'row'}}>
           <TouchableOpacity 
             style={styles.boton}
             onPress={() => {
-              onRepeatTests(); // Pass false to the handler
-              onClose(); // Optionally close the modal
+              onRepeatTests();
+              onClose(); 
             }}>
             <Text style={styles.textoBoton}>Repetir pruebas</Text>
           </TouchableOpacity>
           <TouchableOpacity 
             style={styles.boton}
             onPress={() => {
-              onStartRealTests(); // Pass true to the handler
-              onClose(); // Optionally close the modal
+              onStartRealTests();
+              onClose(); 
             }}>
             <Text style={styles.textoBoton}>Comenzar ensayos reales</Text>
           </TouchableOpacity>
+          </View>
         </View>
       </View>
     </Modal>
