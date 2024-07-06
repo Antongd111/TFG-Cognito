@@ -22,6 +22,13 @@ export default ComunStyles = StyleSheet.create({
         backgroundColor: 'white',
         margin: '2%',
         borderRadius: 10,
+        borderWidth: 2,
+        borderColor: '#D2B48C',
+    },
+
+    borde_tests: {
+        flex: 1,
+        backgroundColor: '#F2E8E1',
     },
 
     centeredView: {
