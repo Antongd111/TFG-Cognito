@@ -43,6 +43,7 @@ const Test_1 = ({ navigation, route }) => {
     }
   }, [payasoVisible]);
 
+  // Muestra el payaso tras un tiempo aleatorio de mínimo 4 segundos y máximo 10 segundos
   const mostrarPayaso = () => {
     const delay = Math.floor(Math.random() * (max - min + 1)) + min;
     setTimeout(() => {
@@ -61,6 +62,9 @@ const Test_1 = ({ navigation, route }) => {
     }
   };
 
+  /**
+   * Inicia el test real. Muestra el payaso y comienza el contador de tiempo.
+   */
   const iniciarTestReal = () => {
     if ((ensayosCompletados < totalEnsayosReales) && (reactionTimes.length < totalEnsayosValidos)) {
       mostrarPayaso();
@@ -106,7 +110,6 @@ const Test_1 = ({ navigation, route }) => {
     setReactionTimes([]);
     setEnsayosCompletados(0);
     setPreguntaIniciarTest(true);
-
   };
 
   /**
@@ -123,7 +126,7 @@ const Test_1 = ({ navigation, route }) => {
    */
   const handleRepeatTests = () => {
     setPayasoVisible(false);
-    setTimeout(iniciarPrueba(), 5000);
+    setTimeout(iniciarPrueba, 5000);
   }
 
   return (
@@ -151,7 +154,7 @@ const Test_1 = ({ navigation, route }) => {
         </View>
         {payasoVisible && (
           <TouchableOpacity onPress={handlePressClown} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Image source={clownImage} style={{ width: 300, height: 300 }} />
+            <Image source={clownImage} style={{ maxWidth: 350, maxHeight: 400 }} />
           </TouchableOpacity>
         )}
 
@@ -163,9 +166,6 @@ const Test_1 = ({ navigation, route }) => {
       </View>
     </View>
   );
-
-
-
 };
 
 const stylesTest1 = StyleSheet.create({

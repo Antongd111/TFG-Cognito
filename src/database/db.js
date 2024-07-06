@@ -93,10 +93,27 @@ export const actualizarPaciente = async (id, identificacion, nombre, apellidos, 
     const result = await statement.executeAsync({ $id: id, $identificacion: identificacion, $nombre: nombre, $apellidos: apellidos, $fecha_nacimiento: fecha_nacimiento, $sexo: sexo, $observaciones: observaciones });
     await statement.finalizeAsync();
     console.log("Paciente actualizado:", result.changes);
-    return result.changes; // Devuelve el número de filas afectadas
+    return result.changes;
   } catch (error) {
     console.error("Error al actualizar paciente:", error);
-    throw error; // Propaga el error para ser manejado por el llamador
+    throw error;
+  }
+};
+
+export const guardarResultadosTest_1 = async (id_paciente, reaccion, errores_anticipacion, errores_tiempo, errores_retrasos) => {
+  const db = await dbPromise;
+  console.log("Guardando resultados del Test 1:", id_paciente, reaccion, errores_anticipacion, errores_tiempo, errores_retrasos);
+  try {
+    const statement = await db.prepareAsync(
+      'INSERT INTO Test_1 (id_sesion, numero_ensayos, tiempo_medio_reaccion, errores_anticipacion, errores_retrasos, errores_tiempo) VALUES ($id_sesion, $numero_ensayos, $tiempo_medio_reaccion, $errores_anticipacion, $errores_retrasos, $errores_tiempo)'
+    );
+    const result = await statement.executeAsync({ $id_sesion: id_paciente, $numero_ensayos: reaccion.length, $tiempo_medio_reaccion: reaccion.reduce((a, b) => a + b, 0) / reaccion.length, $errores_anticipacion: errores_anticipacion, $errores_retrasos: errores_retrasos, $errores_tiempo: errores_tiempo });
+    await statement.finalizeAsync();
+    console.log("Resultados del Test 1 guardados:", result.lastInsertRowId);
+    return result.lastInsertRowId;
+  } catch (error) {
+    console.error("Error al guardar resultados del Test 1:", error);
+    throw error;
   }
 };
 
