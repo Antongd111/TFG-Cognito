@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Header from "../components/header";
-import { Text, View, TouchableOpacity, TextInput, KeyboardAvoidingView, ScrollView, Platform, Alert} from "react-native";
+import { Text, View, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, Alert} from "react-native";
 import AgregarPacienteStyles from "../styles/AgregarPacienteStyles";
 import styles from "../styles/ComunStyles";
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -49,10 +49,11 @@ const AgregarPaciente = ({navigation}) => {
         <KeyboardAvoidingView
             style={{ flex: 1 }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+            
         >
             <Header />
-            <ScrollView style={AgregarPacienteStyles.contenedor}>
+            <View style={AgregarPacienteStyles.contenedor}>
+            <View>
                 <Text style={AgregarPacienteStyles.titulo}>Registro de paciente</Text>
                 <View style={AgregarPacienteStyles.formulario}>
                     <View style={AgregarPacienteStyles.row}>
@@ -106,7 +107,7 @@ const AgregarPaciente = ({navigation}) => {
                         <TextInput style={[AgregarPacienteStyles.input, AgregarPacienteStyles.observaciones]} multiline value={observaciones} onChangeText={setObservaciones} />
                     </View>          
                 </View>
-            </ScrollView>
+            </View>
             <View style={AgregarPacienteStyles.contenedorBotones}>
                 <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('Pacientes')}>
                     <Text style={styles.textoBoton}>Cancelar</Text>
@@ -115,6 +116,7 @@ const AgregarPaciente = ({navigation}) => {
                     <Text style={styles.textoBoton}>Agregar Paciente</Text>
                 </TouchableOpacity>
             </View>
+        </View>
         </KeyboardAvoidingView>
     );
 };

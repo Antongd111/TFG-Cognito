@@ -4,16 +4,18 @@ import PreguntaIniciarTest from '../../components/preguntaIniciarTest';
 import { View, Image, TouchableOpacity, Text, StyleSheet, Alert } from 'react-native';
 import styles from '../../styles/ComunStyles';
 import clownImage from '../../../assets/images/payaso.png';
+import { guardarResultadosTest_1 } from '../../api/PacienteApi';
 
 
 const Test_1 = ({ navigation, route }) => {
+  
+  const { idPaciente } = route.params;
+
   const totalEnsayosPrueba = 5;
   const totalEnsayosReales = 36;
   const totalEnsayosValidos = 12;
   const min = 4000;
   const max = 10000;
-
-  const { idPaciente } = route.params;
 
   const [prueba, setPrueba] = useState(true);
   const [modalVisible, setModalVisible] = useState(true);
@@ -69,10 +71,19 @@ const Test_1 = ({ navigation, route }) => {
     if ((ensayosCompletados < totalEnsayosReales) && (reactionTimes.length < totalEnsayosValidos)) {
       mostrarPayaso();
     } else {
-      // Guardar datos en la base de datos
-      Alert.alert('Test finalizado', 'Los resultados han sido guardados correctamente.', [
-        { text: 'OK', onPress: () => navigation.navigate('Batería de tests', { idPaciente }) }
-      ]);
+      almacenarResultados();
+    }
+  }
+
+  const almacenarResultados = async () => {
+    try {
+      // Llamar a la función de añadir paciente y esperar el resultado
+      const a = await guardarResultadosTest_1(idPaciente, reactionTimes, erroresAnticipacion, erroresTiempo, erroresRetrasos);
+      console.log("Éxito", "Resultados almacenados.");
+      navigation.navigate('Test_2', { idPaciente: idPaciente });
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "Ha ocurrido un error al añadir los resultados a la Base de Datos.");
     }
   }
 
