@@ -12,9 +12,9 @@ const Test_1 = ({ navigation, route }) => {
   
   const { idPaciente } = route.params;
 
-  const totalEnsayosPrueba = 1;
+  const totalEnsayosPrueba = 5;
   const totalEnsayosReales = 36;
-  const totalEnsayosValidos = 2;
+  const totalEnsayosValidos = 12;
   const min = 4000;
   const max = 10000;
 
