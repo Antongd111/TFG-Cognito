@@ -6,6 +6,7 @@ const dbPromise = SQLite.openDatabaseAsync("CognitoDB.db");
 const initDB = async () => {
   const db = await dbPromise;
   await db.execAsync(`
+
     PRAGMA foreign_keys = ON;
     CREATE TABLE IF NOT EXISTS Paciente (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -21,22 +22,20 @@ const initDB = async () => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       id_paciente INTEGER NOT NULL,
       fecha_sesion DATE NOT NULL,
-      FOREIGN KEY (id_paciente) REFERENCES Pacientes (id) ON DELETE CASCADE
+      FOREIGN KEY (id_paciente) REFERENCES Paciente (id) ON DELETE CASCADE
     );
 
     CREATE TABLE IF NOT EXISTS Test_1 (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       id_sesion INTEGER NOT NULL,
       numero_ensayos INTEGER NOT NULL,
-      tiempo_medio_reaccion REAL NOT NULL,
+      tiempos_reaccion TEXT NOT NULL,
       errores_anticipacion INTEGER NOT NULL,
       errores_retrasos INTEGER NOT NULL,
       errores_tiempo INTEGER NOT NULL,
-      FOREIGN KEY (id_sesion) REFERENCES Sesiones (id) ON DELETE CASCADE
+      FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
     );
   `);
-
-
 
   console.log("Tabla Paciente creada o ya existente");
 };
@@ -100,14 +99,40 @@ export const actualizarPaciente = async (id, identificacion, nombre, apellidos, 
   }
 };
 
-export const guardarResultadosTest_1 = async (id_paciente, reaccion, errores_anticipacion, errores_tiempo, errores_retrasos) => {
+export const crearSesionTest = async (id_paciente, fecha_sesion) => {
   const db = await dbPromise;
-  console.log("Guardando resultados del Test 1:", id_paciente, reaccion, errores_anticipacion, errores_tiempo, errores_retrasos);
   try {
     const statement = await db.prepareAsync(
-      'INSERT INTO Test_1 (id_sesion, numero_ensayos, tiempo_medio_reaccion, errores_anticipacion, errores_retrasos, errores_tiempo) VALUES ($id_sesion, $numero_ensayos, $tiempo_medio_reaccion, $errores_anticipacion, $errores_retrasos, $errores_tiempo)'
+      'INSERT INTO SesionTest (id_paciente, fecha_sesion) VALUES ($id_paciente, $fecha_sesion)'
     );
-    const result = await statement.executeAsync({ $id_sesion: id_paciente, $numero_ensayos: reaccion.length, $tiempo_medio_reaccion: reaccion.reduce((a, b) => a + b, 0) / reaccion.length, $errores_anticipacion: errores_anticipacion, $errores_retrasos: errores_retrasos, $errores_tiempo: errores_tiempo });
+    const result = await statement.executeAsync({ $id_paciente: id_paciente, $fecha_sesion: fecha_sesion });
+    await statement.finalizeAsync();
+    console.log("Sesión de test creada con ID:", result.lastInsertRowId);
+    return result.lastInsertRowId;  // Devuelve el ID de la sesión para usar en tests subsiguientes.
+  } catch (error) {
+    console.error("Error al crear sesión de test:", error);
+    throw error;
+  }
+};
+
+export const guardarResultadosTest_1 = async (id_sesion, numero_ensayos, reaccion, errores_anticipacion, errores_tiempo, errores_retrasos) => {
+  const db = await dbPromise;
+  console.log("Guardando resultados del Test 1:", id_sesion, numero_ensayos, reaccion, errores_anticipacion, errores_tiempo, errores_retrasos);
+  try {
+    const statement = await db.prepareAsync(
+      'INSERT INTO Test_1 (id_sesion, numero_ensayos, tiempos_reaccion, errores_anticipacion, errores_retrasos, errores_tiempo) VALUES ($id_sesion, $numero_ensayos, $tiempos_reaccion, $errores_anticipacion, $errores_retrasos, $errores_tiempo)'
+    );
+
+    const tiempos_reaccion = JSON.stringify(reaccion);
+    console.log("Tiempos de reacción:", tiempos_reaccion);
+
+    const result = await statement.executeAsync({ 
+      $id_sesion: id_sesion, 
+      $numero_ensayos: numero_ensayos, 
+      $tiempos_reaccion: tiempos_reaccion, 
+      $errores_anticipacion: errores_anticipacion, 
+      $errores_retrasos: errores_retrasos, 
+      $errores_tiempo: errores_tiempo });
     await statement.finalizeAsync();
     console.log("Resultados del Test 1 guardados:", result.lastInsertRowId);
     return result.lastInsertRowId;

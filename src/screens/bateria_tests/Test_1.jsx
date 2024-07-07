@@ -4,16 +4,17 @@ import PreguntaIniciarTest from '../../components/preguntaIniciarTest';
 import { View, Image, TouchableOpacity, Text, StyleSheet, Alert } from 'react-native';
 import styles from '../../styles/ComunStyles';
 import clownImage from '../../../assets/images/payaso.png';
-import { guardarResultadosTest_1 } from '../../api/PacienteApi';
+import { guardarResultadosTest_1 } from '../../api/TestApi';
+import { crearSesionTest } from '../../api/TestApi';
 
 
 const Test_1 = ({ navigation, route }) => {
   
   const { idPaciente } = route.params;
 
-  const totalEnsayosPrueba = 5;
+  const totalEnsayosPrueba = 1;
   const totalEnsayosReales = 36;
-  const totalEnsayosValidos = 12;
+  const totalEnsayosValidos = 2;
   const min = 4000;
   const max = 10000;
 
@@ -78,7 +79,8 @@ const Test_1 = ({ navigation, route }) => {
   const almacenarResultados = async () => {
     try {
       // Llamar a la función de añadir paciente y esperar el resultado
-      const a = await guardarResultadosTest_1(idPaciente, reactionTimes, erroresAnticipacion, erroresTiempo, erroresRetrasos);
+      const idSesion = await crearSesionTest(idPaciente, new Date().toISOString());
+      await guardarResultadosTest_1(idSesion, ensayosCompletados, reactionTimes, erroresAnticipacion, erroresTiempo, erroresRetrasos);
       console.log("Éxito", "Resultados almacenados.");
       navigation.navigate('Test_2', { idPaciente: idPaciente });
     } catch (error) {
