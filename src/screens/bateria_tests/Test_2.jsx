@@ -5,13 +5,16 @@ import clownImage from '../../../assets/images/payaso.png';
 import { Dimensions } from 'react-native';
 import stylesComunes from '../../styles/ComunStyles';
 import { set } from 'date-fns';
+import { id } from 'date-fns/locale';
 
-const Test_2 = ({ navigation }) => {
+const Test_2 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);
     const [toques, setToques] = useState(0);
     const [posicion, setPosicion] = useState(obtenerPosicionAleatoria());
     const [mostrarOpciones, setMostrarOpciones] = useState(false);
     const [mostrarError, setMostrarError] = useState(false);
+
+    const { idPaciente } = route.params;
 
     function obtenerPosicionAleatoria() {
         const screenWidth = Dimensions.get('window').width;
@@ -37,7 +40,7 @@ const Test_2 = ({ navigation }) => {
     const seleccionarOpcion = (opcion) => {
         if (opcion === 'payaso') {
             // Respuesta correcta
-            navigation.navigate('Test_3');
+            navigation.navigate('Test_3', { idPaciente: idPaciente });
         } else {
             // Respuesta incorrecta
             setMostrarError(true);
@@ -53,7 +56,8 @@ const Test_2 = ({ navigation }) => {
                     visible={modalVisible}
                     onClose={() => setModalVisible(false)}
                     title="Test 2"
-                    instructions="Toca el payaso."
+                    instructions="El payaso Bernabé va a aparecer 3 veces en lugares diferentes, tóquelo cuando aparezca.
+                    Para comenzar, pulse el botón 'Entendido'."
                 />
                 {!modalVisible && !mostrarOpciones && (
                     <TouchableOpacity

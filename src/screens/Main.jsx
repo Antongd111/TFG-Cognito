@@ -8,6 +8,7 @@ import FichaPaciente from "./FichaPaciente";
 import ModificarPaciente from "./ModificarPaciente";
 import Test_1 from "./bateria_tests/Test_1";
 import Test_2 from "./bateria_tests/Test_2";
+import Test_3 from "./bateria_tests/Test_3";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,6 +22,7 @@ const Main = () => {
         <Stack.Screen name="ModificarPaciente" component={ModificarPaciente} options={{ title: 'Pantalla de modificación de paciente' }} />
         <Stack.Screen name="Test_1" component={Test_1} options={{ title: 'Test 1' }} />
         <Stack.Screen name="Test_2" component={Test_2} options={{ title: 'Test 2' }} />
+        <Stack.Screen name="Test_3" component={Test_3} options={{ title: 'Test 3' }} />
       </Stack.Navigator>
     </View>
   );
