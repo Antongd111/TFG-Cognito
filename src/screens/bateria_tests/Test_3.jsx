@@ -3,10 +3,12 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
 import correct from '../../../assets/images/correct.png';
 import incorrect from '../../../assets/images/incorrect.png';
-import clownImage from '../../../assets/images/payaso.png';
-import { Dimensions } from 'react-native';
+import perroGrande from '../../../assets/images/perro_alto.png';
+import perroPequeno from '../../../assets/images/perro_bajo.png';
+import payasoAlto from '../../../assets/images/payaso_alto.png';
+import payasoBajo from '../../../assets/images/payaso_bajo.png';
 import stylesComunes from '../../styles/ComunStyles';
-import { set } from 'date-fns';
+import { useEffect } from 'react';
 
 const Test_3 = ({ navigation, route }) => {
 
@@ -15,6 +17,9 @@ const Test_3 = ({ navigation, route }) => {
     const [faseLectura, setFaseLectura] = useState(true);
     const [secuenciaTocada, setSecuenciaTocada] = useState('');
     const [numeroAciertos, setNumeroAciertos] = useState(0);
+    const [lecturaCorrecta, setLecturaCorrecta] = useState(0);
+    const [erroresTiempo, setErroresTiempo] = useState(0);
+
 
     const { idPaciente } = route.params;
 
@@ -37,53 +42,105 @@ const Test_3 = ({ navigation, route }) => {
     };
 
     /**
+     * Prepara las variables para la siguiente instrucción.
+     */
+    const siguienteCaso = (acierto) => {
+        if (acierto)
+            setNumeroAciertos(numeroAciertos + 1);
+
+        setEnsayoActual(ensayoActual + 1);
+        setFaseLectura(true);
+        setSecuenciaTocada('');
+    }
+
+    /**
+     * Cuando se actualice el valor de la secuencia tocada, se comprobará si es correcta o no.
+     */
+    useEffect(() => {
+        if (ensayoActual == 0) {
+            if (secuenciaTocada[0]) {
+                if (secuenciaTocada[0] == '1') {
+                    if (secuenciaTocada[1]) {
+                        if (secuenciaTocada[1] == '4') {
+                            siguienteCaso(true);
+                        } else if (secuenciaTocada[1] == '1' || '2' || '3')
+                            siguienteCaso(false);
+                    }
+                } else if (secuenciaTocada[0] == '4') {
+                    if (secuenciaTocada[1]) {
+                        if (secuenciaTocada[1] == '1') {
+                            siguienteCaso(true);
+                        } else
+                            siguienteCaso(false);
+                    }
+                } else siguienteCaso(false)
+            }
+        }
+
+        if (ensayoActual == 1) {
+            if (secuenciaTocada[0]) {
+                if (secuenciaTocada[0] == 3)
+                    siguienteCaso(true);
+                else
+                    siguienteCaso(false);
+            }
+        }
+
+        if (ensayoActual == 2) {
+            if (secuenciaTocada[0]) {
+                if (secuenciaTocada[0] == 1)
+                    siguienteCaso(true);
+                else
+                    siguienteCaso(false);
+            }
+        }
+
+        if (ensayoActual == 3) {
+            if (secuenciaTocada[0]) {
+                if (secuenciaTocada[0] == 3)
+                    siguienteCaso(true);
+                else
+                    siguienteCaso(false);
+            }
+        }
+
+        if (ensayoActual == 4) {
+            if (secuenciaTocada[0]) {
+                if (secuenciaTocada[0] == 3) {
+                    if (secuenciaTocada[1]) {
+                        if (secuenciaTocada[1] == 1)
+                            siguienteCaso(true);
+                        else
+                            siguienteCaso(false);
+                    }
+                } else
+                    siguienteCaso(false);
+            }
+
+        }
+
+        if (ensayoActual == 5) {
+            if (secuenciaTocada[0]) {
+                if (secuenciaTocada[0] == 1) {
+                    if (secuenciaTocada[1]) {
+                        if (secuenciaTocada[1] == 4)
+                            siguienteCaso(true);
+                        else
+                            siguienteCaso(false);
+                    }
+                }
+            }
+        }
+
+    }, [secuenciaTocada]);
+
+    /**
      * Dependiendo de la frase por la que vayamos, se comprueba la secuencia de toques introducida para ver si es la correcta.
      * 
      * @param {*} numeroImagen 
      */
     const handleImagenTocada = (numeroImagen) => {
-        
-        if(ensayoActual == 0){
-            if (secuenciaTocada[0] == 1){
-                if(secuenciaTocada[1] == 4)
-                    numeroAciertos++;
-            } else if (secuenciaTocada[0] == 4) {
-                if(secuenciaTocada[1] == 1)
-                    numeroAciertos++;
-            }
-        }
-
-        if(ensayoActual == 1){
-            if (secuenciaTocada[0] == 3){
-                numeroAciertos++;
-            }
-        }
-
-        if(ensayoActual == 2){
-            if (secuenciaTocada[0] == 1){
-                numeroAciertos++;
-            }
-        }
-
-        if(ensayoActual == 3){
-            if (secuenciaTocada[0] == 3){
-                numeroAciertos++;
-            }
-        }
-
-        if(ensayoActual == 0){
-            if (secuenciaTocada[0] == 3){
-                if(secuenciaTocada[1] == 1)
-                    numeroAciertos++;
-            }
-        }
-
-        if(ensayoActual == 0){
-            if (secuenciaTocada[0] == 1){
-                if(secuenciaTocada[1] == 4)
-                    numeroAciertos++;
-            }
-        }
+        setSecuenciaTocada(secuenciaTocada + numeroImagen);
     }
 
     return (
@@ -98,6 +155,8 @@ const Test_3 = ({ navigation, route }) => {
                 />
                 {!modalVisible && (
                     <>
+                        <Text>numeroAciertos: {numeroAciertos}</Text>
+                        <Text>ensayoActual: {ensayoActual} </Text>
                         <View style={styles.tarjetaFrase}>
                             <Text style={styles.texto_instruccion}>
                                 {obtenerFrase(ensayoActual)}
@@ -109,7 +168,6 @@ const Test_3 = ({ navigation, route }) => {
                                         <TouchableOpacity
                                             style={styles.botonAcierto}
                                             onPress={() => {
-                                                setEnsayoActual(ensayoActual + 1);
                                                 setFaseLectura(false);
                                             }}
                                         >
@@ -118,7 +176,6 @@ const Test_3 = ({ navigation, route }) => {
                                         <TouchableOpacity
                                             style={styles.botonFallo}
                                             onPress={() => {
-                                                setEnsayoActual(ensayoActual + 1);
                                                 setFaseLectura(false);
                                             }}
                                         >
@@ -128,38 +185,45 @@ const Test_3 = ({ navigation, route }) => {
                                 )}
                             </View>
                         </View>
-                        <View style={styles.contenedorImagen}>
-                            <TouchableOpacity onPress={() => {handleImagenTocada('1')}}>
-                            <Image
-                                source={clownImage}
-                                style={styles.imagen}
-                            />
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => {handleImagenTocada('2')}}>
-                            <Image
-                                source={clownImage}
-                                style={styles.imagen}
-                            />
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => {handleImagenTocada('3')}}>
-                            <Image
-                                source={clownImage}
-                                style={styles.imagen}
-                            />
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => {handleImagenTocada('4')}}>
-                            <Image
-                                source={clownImage}
-                                style={styles.imagen}
-                            />
-                            </TouchableOpacity>
-                        </View>
+                        {!faseLectura && (
+                            <View style={styles.contenedorImagen}>
+                                <TouchableOpacity onPress={() => { handleImagenTocada('1') }}>
+                                    <Image
+                                        source={perroGrande}
+                                        style={[styles.imagen, { marginBottom: -50 }]}
+                                        resizeMode="contain"
+                                    />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => { handleImagenTocada('2') }}>
+                                    <Image
+                                        source={payasoAlto}
+                                        style={styles.imagen}
+                                        resizeMode="contain"
+                                    />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => { handleImagenTocada('3') }}>
+                                    <Image
+                                        source={payasoBajo}
+                                        style={[styles.imagen, { marginBottom: -20 }]}
+                                        resizeMode="contain"
+                                    />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => { handleImagenTocada('4') }}>
+                                    <Image
+                                        source={perroPequeno}
+                                        style={[styles.imagen, { marginBottom: -20 }]}
+                                        resizeMode="contain"
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                        )}
                     </>
                 )}
             </View>
         </View>
     );
 };
+
 
 const styles = StyleSheet.create({
     tarjetaFrase: {
@@ -206,14 +270,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     imagen: {
-        maxWidth: 250,
-        maxHeight: 300,
-        marginTop: 100,
+        width: 250,
+        maxHeight: 400,
     },
     contenedorImagen: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-around',
+        alignContent: 'center',
+        alignItems: 'flex-end',
     },
 });
 
