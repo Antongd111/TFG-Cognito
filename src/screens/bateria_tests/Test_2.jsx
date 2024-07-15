@@ -4,8 +4,7 @@ import InstruccionesModal from '../../components/instrucciones';
 import clownImage from '../../../assets/images/payaso.png';
 import { Dimensions } from 'react-native';
 import stylesComunes from '../../styles/ComunStyles';
-import { set } from 'date-fns';
-import { id } from 'date-fns/locale';
+
 
 const Test_2 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);
@@ -14,7 +13,7 @@ const Test_2 = ({ navigation, route }) => {
     const [mostrarOpciones, setMostrarOpciones] = useState(false);
     const [mostrarError, setMostrarError] = useState(false);
 
-    const { idPaciente } = route.params;
+    const { idPaciente, idSesion } = route.params;
 
     function obtenerPosicionAleatoria() {
         const screenWidth = Dimensions.get('window').width;
@@ -40,14 +39,12 @@ const Test_2 = ({ navigation, route }) => {
     const seleccionarOpcion = (opcion) => {
         if (opcion === 'payaso') {
             // Respuesta correcta
-            navigation.navigate('Test_3', { idPaciente: idPaciente });
+            navigation.navigate('Test_3', { idPaciente: idPaciente, idSesion: idSesion });
         } else {
             // Respuesta incorrecta
             setMostrarError(true);
         }
     }
-
-
 
     return (
         <View style={stylesComunes.borde_tests}>

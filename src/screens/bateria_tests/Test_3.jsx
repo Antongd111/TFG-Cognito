@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
 import correct from '../../../assets/images/correct.png';
@@ -8,10 +8,9 @@ import perroPequeno from '../../../assets/images/perro_bajo.png';
 import payasoAlto from '../../../assets/images/payaso_alto.png';
 import payasoBajo from '../../../assets/images/payaso_bajo.png';
 import stylesComunes from '../../styles/ComunStyles';
-import { useEffect } from 'react';
+import { guardarResultadosTest_3 } from '../../api/TestApi';
 
 const Test_3 = ({ navigation, route }) => {
-
     const [modalVisible, setModalVisible] = useState(true);
     const [ensayoActual, setEnsayoActual] = useState(0);
     const [faseLectura, setFaseLectura] = useState(true);
@@ -19,9 +18,9 @@ const Test_3 = ({ navigation, route }) => {
     const [numeroAciertos, setNumeroAciertos] = useState(0);
     const [lecturaCorrecta, setLecturaCorrecta] = useState(0);
     const [erroresTiempo, setErroresTiempo] = useState(0);
+    const [timeoutId, setTimeoutId] = useState(null);
 
-
-    const { idPaciente } = route.params;
+    const { idPaciente, idSesion } = route.params;
 
     // Función que retorna la frase según el ensayo actual
     const obtenerFrase = (ensayo) => {
@@ -38,110 +37,86 @@ const Test_3 = ({ navigation, route }) => {
                 return "Toque el payaso pequeño y después el perro grande";
             case 5:
                 return "Toque el perro blanco después de haber tocado el perro negro";
+            default:
+                return "Instrucción no definida";
         }
     };
 
-    /**
-     * Prepara las variables para la siguiente instrucción.
-     */
-    const siguienteCaso = (acierto) => {
-        if (acierto)
-            setNumeroAciertos(numeroAciertos + 1);
+    const respuestasCorrectas = [
+        ['1', '4'],
+        ['3'],
+        ['1'],
+        ['3'],
+        ['3', '1'],
+        ['1', '4']
+    ];
 
-        setEnsayoActual(ensayoActual + 1);
-        setFaseLectura(true);
-        setSecuenciaTocada('');
-    }
-
-    /**
-     * Cuando se actualice el valor de la secuencia tocada, se comprobará si es correcta o no.
-     */
     useEffect(() => {
-        if (ensayoActual == 0) {
-            if (secuenciaTocada[0]) {
-                if (secuenciaTocada[0] == '1') {
-                    if (secuenciaTocada[1]) {
-                        if (secuenciaTocada[1] == '4') {
-                            siguienteCaso(true);
-                        } else if (secuenciaTocada[1] == '1' || '2' || '3')
-                            siguienteCaso(false);
-                    }
-                } else if (secuenciaTocada[0] == '4') {
-                    if (secuenciaTocada[1]) {
-                        if (secuenciaTocada[1] == '1') {
-                            siguienteCaso(true);
-                        } else
-                            siguienteCaso(false);
-                    }
-                } else siguienteCaso(false)
-            }
+        if (faseLectura) {
+            const id = setTimeout(() => {
+                setErroresTiempo(erroresTiempo + 1);
+                setFaseLectura(false);  // Simula el fin del tiempo de lectura
+            }, 10000);
+            setTimeoutId(id);
         }
 
-        if (ensayoActual == 1) {
-            if (secuenciaTocada[0]) {
-                if (secuenciaTocada[0] == 3)
-                    siguienteCaso(true);
-                else
-                    siguienteCaso(false);
-            }
-        }
+        return () => clearTimeout(timeoutId);
+    }, [faseLectura, ensayoActual]);
 
-        if (ensayoActual == 2) {
-            if (secuenciaTocada[0]) {
-                if (secuenciaTocada[0] == 1)
-                    siguienteCaso(true);
-                else
-                    siguienteCaso(false);
-            }
-        }
+    useEffect(() => {
+        if (!faseLectura && secuenciaTocada.length === respuestasCorrectas[ensayoActual].length) {
+            let esCorrecto = false;
 
-        if (ensayoActual == 3) {
-            if (secuenciaTocada[0]) {
-                if (secuenciaTocada[0] == 3)
-                    siguienteCaso(true);
-                else
-                    siguienteCaso(false);
-            }
-        }
-
-        if (ensayoActual == 4) {
-            if (secuenciaTocada[0]) {
-                if (secuenciaTocada[0] == 3) {
-                    if (secuenciaTocada[1]) {
-                        if (secuenciaTocada[1] == 1)
-                            siguienteCaso(true);
-                        else
-                            siguienteCaso(false);
-                    }
-                } else
-                    siguienteCaso(false);
+            // Verifica si el ensayo actual es el primero y si la secuencia tocada contiene los dos perros
+            if (ensayoActual === 0) {
+                const perros = ["1", "4"]; // Suponiendo que "1" y "4" representan los dos perros
+                esCorrecto = secuenciaTocada.split('').sort().join('') === perros.sort().join('');
+            } else {
+                // Lógica para otros ensayos donde el orden importa
+                esCorrecto = respuestasCorrectas[ensayoActual].every((val, idx) => val === secuenciaTocada[idx]);
             }
 
-        }
-
-        if (ensayoActual == 5) {
-            if (secuenciaTocada[0]) {
-                if (secuenciaTocada[0] == 1) {
-                    if (secuenciaTocada[1]) {
-                        if (secuenciaTocada[1] == 4)
-                            siguienteCaso(true);
-                        else
-                            siguienteCaso(false);
-                    }
-                }
+            if (esCorrecto) {
+                setNumeroAciertos(numeroAciertos + 1);
             }
+            siguienteCaso(esCorrecto);
         }
-
     }, [secuenciaTocada]);
 
-    /**
-     * Dependiendo de la frase por la que vayamos, se comprueba la secuencia de toques introducida para ver si es la correcta.
-     * 
-     * @param {*} numeroImagen 
-     */
+    const siguienteCaso = (acierto) => {
+        if (acierto) {
+            setNumeroAciertos(numeroAciertos + 1);
+        }
+    
+        // Aumentar el contador de ensayo actual
+        const nuevoEnsayoActual = ensayoActual + 1;
+        setEnsayoActual(nuevoEnsayoActual);
+    
+        // Verifica si es el último ensayo
+        if (nuevoEnsayoActual > 5) { // Asumiendo que 5 es el índice del último ensayo
+            // Navegar al siguiente test
+            almacenarResultados();
+        } else {
+            setFaseLectura(true);
+            setSecuenciaTocada('');
+        }
+    }
+
+    const almacenarResultados = async () => {
+        try {
+          // Llamar a la función de añadir paciente y esperar el resultado
+          await guardarResultadosTest_3(idSesion, numeroAciertos, lecturaCorrecta, erroresTiempo);
+          console.log("Éxito", "Resultados almacenados.");
+          navigation.navigate('Test_4', { idPaciente: idPaciente, idSesion: idSesion });
+        } catch (error) {
+          console.error(error);
+          Alert.alert("Error", "Ha ocurrido un error al añadir los resultados a la Base de Datos.");
+        }
+      }
+
     const handleImagenTocada = (numeroImagen) => {
         setSecuenciaTocada(secuenciaTocada + numeroImagen);
-    }
+    };
 
     return (
         <View style={stylesComunes.borde_tests}>
@@ -150,13 +125,10 @@ const Test_3 = ({ navigation, route }) => {
                     visible={modalVisible}
                     onClose={() => setModalVisible(false)}
                     title="Test 3"
-                    instructions="En la pantalla aparecerá una frase que usted debe leer en voz alta. Posteriormente, verá una imagen y debe hacer lo que acaba de leer lo más rápido posible. 
-                    Pulse 'Entendido' para comenzar."
+                    instructions="En la pantalla aparecerá una frase que usted debe leer en voz alta. Posteriormente, verá una imagen y debe hacer lo que acaba de leer lo más rápido posible. Pulse 'Entendido' para comenzar."
                 />
                 {!modalVisible && (
                     <>
-                        <Text>numeroAciertos: {numeroAciertos}</Text>
-                        <Text>ensayoActual: {ensayoActual} </Text>
                         <View style={styles.tarjetaFrase}>
                             <Text style={styles.texto_instruccion}>
                                 {obtenerFrase(ensayoActual)}
@@ -169,6 +141,7 @@ const Test_3 = ({ navigation, route }) => {
                                             style={styles.botonAcierto}
                                             onPress={() => {
                                                 setFaseLectura(false);
+                                                setLecturaCorrecta(lecturaCorrecta + 1);
                                             }}
                                         >
                                             <Image source={correct} style={{ width: 30, height: 30 }} />

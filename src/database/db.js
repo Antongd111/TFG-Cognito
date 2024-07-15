@@ -35,6 +35,15 @@ const initDB = async () => {
       errores_tiempo INTEGER NOT NULL,
       FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
     );
+
+    CREATE TABLE IF NOT EXISTS Test_3 (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_sesion INTEGER NOT NULL,
+      numero_aciertos INTEGER NOT NULL,
+      lectura_correcta INTEGER NOT NULL,
+      errores_tiempo INTEGER NOT NULL,
+      FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
+    );
   `);
 
   console.log("Tabla Paciente creada o ya existente");
@@ -138,6 +147,23 @@ export const guardarResultadosTest_1 = async (id_sesion, numero_ensayos, reaccio
     return result.lastInsertRowId;
   } catch (error) {
     console.error("Error al guardar resultados del Test 1:", error);
+    throw error;
+  }
+};
+
+export const guardarResultadosTest_3 = async (id_sesion, numeroAciertos, lecturaCorrecta, erroresTiempo) => {
+  const db = await dbPromise;
+  console.log("Guardando resultados del Test 3:", id_sesion, numeroAciertos, lecturaCorrecta, erroresTiempo);
+  try {
+    const statement = await db.prepareAsync(
+      'INSERT INTO Test_3 (id_sesion, numero_aciertos, lectura_correcta, errores_tiempo) VALUES ($id_sesion, $numero_aciertos, $lectura_correcta, $errores_tiempo)'
+    );
+    const result = await statement.executeAsync({ $id_sesion: id_sesion, $numero_aciertos: numeroAciertos, $lectura_correcta: lecturaCorrecta, $errores_tiempo: erroresTiempo });
+    await statement.finalizeAsync();
+    console.log("Resultados del Test 3 guardados:", result.lastInsertRowId);
+    return result.lastInsertRowId;
+  } catch (error) {
+    console.error("Error al guardar resultados del Test 3:", error);
     throw error;
   }
 };

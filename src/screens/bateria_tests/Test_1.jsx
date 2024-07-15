@@ -82,7 +82,7 @@ const Test_1 = ({ navigation, route }) => {
       const idSesion = await crearSesionTest(idPaciente, new Date().toISOString());
       await guardarResultadosTest_1(idSesion, ensayosCompletados, reactionTimes, erroresAnticipacion, erroresTiempo, erroresRetrasos);
       console.log("Éxito", "Resultados almacenados.");
-      navigation.navigate('Test_2', { idPaciente: idPaciente });
+      navigation.navigate('Test_2', { idPaciente: idPaciente, idSesion: idSesion });
     } catch (error) {
       console.error(error);
       Alert.alert("Error", "Ha ocurrido un error al añadir los resultados a la Base de Datos.");
