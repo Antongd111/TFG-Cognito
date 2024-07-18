@@ -5,14 +5,12 @@ import stylesComunes from '../../styles/ComunStyles';
 import InstruccionesModal from '../../components/instrucciones';
 import pitidoCorto from '../../../assets/sounds/pitido_corto.mp3';
 import pitidoLargo from '../../../assets/sounds/pitido_largo.mp3';
-import { set } from 'date-fns';
+import { guardarResultadosTest_4 } from '../../api/TestApi';
 
 const Test_4 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);
     const [ensayoActual, setEnsayoActual] = useState(0);
     const [faseEscucha, setFaseEscucha] = useState(true);
-    const [sonidosLargosContados, setSonidosLargosContados] = useState(0);
-    const [contadorUsuario, setContadorUsuario] = useState(0);
     const [contadorCorrecto, setContadorCorrecto] = useState(0);
     const [sound, setSound] = useState();
     const [inputValue, setInputValue] = useState('');
@@ -101,10 +99,11 @@ const Test_4 = ({ navigation, route }) => {
         setEnsayoActual(ensayoActual + 1);
 
         setFaseEscucha(false);
-    };
 
-    const handleSubmitCount = () => {
-        // Aquí puedes agregar la lógica para verificar si el conteo del usuario es correcto
+        if (ensayoActual > numeroEnsayos){
+            await guardarResultadosTest_4(route.params.idSesion, numeroAciertos, numeroSobreestimaciones, numeroSubestimaciones);
+            navigation.navigate('Test_5', { idSesion: route.params.idSesion });
+        }
     };
 
     return (
@@ -116,14 +115,6 @@ const Test_4 = ({ navigation, route }) => {
                     title="Test 4"
                     instructions="Escuche atentamente y cuente los sonidos largos."
                 />
-                {!modalVisible && faseEscucha && (
-                    <>
-                        <Text>Sobreestimaciones: {numeroSobreestimaciones}</Text>
-                        <Text>Subestimaciones: {numeroSubestimaciones}</Text>
-                        <Text>Aciertos: {numeroAciertos}</Text>
-                        <Text>Ensayo {ensayoActual + 1}</Text>
-                    </>
-                )}
                 {!modalVisible && !faseEscucha && (
                     <>
                         <View style={{ height: '100%', alignItems: 'center', justifyContent: 'center', }}>
