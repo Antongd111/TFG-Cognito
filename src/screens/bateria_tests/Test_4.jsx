@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Audio } from 'expo-av';
+import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
 import InstruccionesModal from '../../components/instrucciones';
 import pitidoCorto from '../../../assets/sounds/pitido_corto.mp3';
 import pitidoLargo from '../../../assets/sounds/pitido_largo.mp3';
 import { guardarResultadosTest_4 } from '../../api/TestApi';
+
 
 const Test_4 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);
@@ -20,6 +22,25 @@ const Test_4 = ({ navigation, route }) => {
     const [numeroSubestimaciones, setNumeroSubestimaciones] = useState(0);
 
     const numeroEnsayos = 10;
+
+    /******************** MENÚ DE EVALUACIÓN ********************/
+    const handleToggleVoice = () => {
+        console.log("Toggle voice feature");
+    };
+
+    const handleNavigateHome = () => {
+        navigation.navigate('Pacientes');
+    };
+
+    const handleNavigateNext = () => {
+        navigation.navigate('Test_5', { idSesion: route.params.idSesion }); // Ajusta según tu lógica
+    };
+
+    const handleNavigatePrevious = () => {
+        navigation.goBack(); // Ajusta para ir al test anterior
+    };
+
+    /***************** FIN MENÚ DE EVALUACIÓN *****************/
 
     // Efecto para limpiar el sonido
     useEffect(() => {
@@ -100,7 +121,7 @@ const Test_4 = ({ navigation, route }) => {
 
         setFaseEscucha(false);
 
-        if (ensayoActual > numeroEnsayos){
+        if (ensayoActual > numeroEnsayos) {
             await guardarResultadosTest_4(route.params.idSesion, numeroAciertos, numeroSobreestimaciones, numeroSubestimaciones);
             navigation.navigate('Test_5', { idSesion: route.params.idSesion });
         }
@@ -109,6 +130,12 @@ const Test_4 = ({ navigation, route }) => {
     return (
         <View style={stylesComunes.borde_tests}>
             <View style={stylesComunes.contenedor_test}>
+                <MenuComponent
+                    onToggleVoice={handleToggleVoice}
+                    onNavigateHome={handleNavigateHome}
+                    onNavigateNext={handleNavigateNext}
+                    onNavigatePrevious={handleNavigatePrevious}
+                />
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={handleStartTest}
@@ -118,41 +145,41 @@ const Test_4 = ({ navigation, route }) => {
                 {!modalVisible && !faseEscucha && (
                     <>
                         <View style={{ height: '100%', alignItems: 'center', justifyContent: 'center', }}>
-                        <View style={styles.numberPad}>
-                            <Text style={styles.inputDisplay}>{inputValue}</Text>
-                            <View style={styles.row}>
-                                {['1', '2', '3'].map(number => (
-                                    <TouchableOpacity key={number} style={styles.numberButton} onPress={() => handleNumberPress(number)}>
-                                        <Text style={styles.numberText}>{number}</Text>
+                            <View style={styles.numberPad}>
+                                <Text style={styles.inputDisplay}>{inputValue}</Text>
+                                <View style={styles.row}>
+                                    {['1', '2', '3'].map(number => (
+                                        <TouchableOpacity key={number} style={styles.numberButton} onPress={() => handleNumberPress(number)}>
+                                            <Text style={styles.numberText}>{number}</Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </View>
+                                <View style={styles.row}>
+                                    {['4', '5', '6'].map(number => (
+                                        <TouchableOpacity key={number} style={styles.numberButton} onPress={() => handleNumberPress(number)}>
+                                            <Text style={styles.numberText}>{number}</Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </View>
+                                <View style={styles.row}>
+                                    {['7', '8', '9'].map(number => (
+                                        <TouchableOpacity key={number} style={styles.numberButton} onPress={() => handleNumberPress(number)}>
+                                            <Text style={styles.numberText}>{number}</Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </View>
+                                <View style={styles.row}>
+                                    <TouchableOpacity style={styles.numberButton} onPress={() => setInputValue(inputValue.slice(0, -1))}>
+                                        <Text style={styles.numberText}>Del</Text>
                                     </TouchableOpacity>
-                                ))}
-                            </View>
-                            <View style={styles.row}>
-                                {['4', '5', '6'].map(number => (
-                                    <TouchableOpacity key={number} style={styles.numberButton} onPress={() => handleNumberPress(number)}>
-                                        <Text style={styles.numberText}>{number}</Text>
+                                    <TouchableOpacity style={styles.numberButton} onPress={() => handleNumberPress('0')}>
+                                        <Text style={styles.numberText}>0</Text>
                                     </TouchableOpacity>
-                                ))}
-                            </View>
-                            <View style={styles.row}>
-                                {['7', '8', '9'].map(number => (
-                                    <TouchableOpacity key={number} style={styles.numberButton} onPress={() => handleNumberPress(number)}>
-                                        <Text style={styles.numberText}>{number}</Text>
+                                    <TouchableOpacity style={styles.numberButton} onPress={handleSubmit}>
+                                        <Text style={styles.numberText}>OK</Text>
                                     </TouchableOpacity>
-                                ))}
+                                </View>
                             </View>
-                            <View style={styles.row}>
-                                <TouchableOpacity style={styles.numberButton} onPress={() => setInputValue(inputValue.slice(0, -1))}>
-                                    <Text style={styles.numberText}>Del</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.numberButton} onPress={() => handleNumberPress('0')}>
-                                    <Text style={styles.numberText}>0</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.numberButton} onPress={handleSubmit}>
-                                    <Text style={styles.numberText}>OK</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
                         </View>
                     </>
                 )}

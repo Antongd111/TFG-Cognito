@@ -107,7 +107,7 @@ const Test_3 = ({ navigation, route }) => {
           // Llamar a la función de añadir paciente y esperar el resultado
           await guardarResultadosTest_3(idSesion, numeroAciertos, lecturaCorrecta, erroresTiempo);
           console.log("Éxito", "Resultados almacenados.");
-          navigation.navigate('Test_4', { idPaciente: idPaciente, idSesion: idSesion });
+          navigation.navigate('Test_4', {idSesion: idSesion });
         } catch (error) {
           console.error(error);
           Alert.alert("Error", "Ha ocurrido un error al añadir los resultados a la Base de Datos.");

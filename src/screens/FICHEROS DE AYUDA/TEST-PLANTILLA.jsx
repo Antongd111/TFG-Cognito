@@ -1,26 +1,46 @@
 import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
-import clownImage from '../../../assets/images/payaso.png';
-import { Dimensions } from 'react-native';
+import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
-import { set } from 'date-fns';
 
-const Test_3 = ({ navigation, route }) => {
+
+const Test_5 = ({ navigation, route }) => {
 
     const [modalVisible, setModalVisible] = useState(true);
 
-    const { idPaciente } = route.params;
+    /******************** MENÚ DE EVALUACIÓN ********************/
+    const handleToggleVoice = () => {
+        console.log("Toggle voice feature");
+    };
 
+    const handleNavigateHome = () => {
+        navigation.navigate('Pacientes');
+    };
+
+    const handleNavigateNext = () => {
+        navigation.navigate('Test_6', { idSesion: route.params.idSesion });
+    };
+
+    const handleNavigatePrevious = () => {
+        navigation.goBack();
+    };
+
+    /***************** FIN MENÚ DE EVALUACIÓN *****************/
     return (
         <View style={stylesComunes.borde_tests}>
             <View style={stylesComunes.contenedor_test}>
+                <MenuComponent
+                    onToggleVoice={handleToggleVoice}
+                    onNavigateHome={handleNavigateHome}
+                    onNavigateNext={handleNavigateNext}
+                    onNavigatePrevious={handleNavigatePrevious}
+                />
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={() => setModalVisible(false)}
-                    title="Test 3"
-                    instructions="En la pantalla aparecerá una frase que usted debe leer en voz alta. Posteriormente, verá una imagen y debe hacer lo que acaba de leer lo más rápido posible. 
-                    Pulse 'Entendido' para comenzar."
+                    title="Test 5"
+                    instructions="Test 5."
                 />
                 {!modalVisible && (
                     <View></View>
@@ -31,4 +51,4 @@ const Test_3 = ({ navigation, route }) => {
 };
 
 
-export default Test_3;
+export default Test_5;

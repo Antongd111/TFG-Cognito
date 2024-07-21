@@ -21,16 +21,8 @@ export default function App() {
   }
   
   useEffect(() => {
-    loadFonts();
-  }, []);
-  
-  useEffect(() => {
     initDB();
   }, []);
-
-  if (!fontsLoaded) {
-    return <Text>No ha cargao la fuente.</Text>;
-  }
 
   return (
     <NavigationContainer>
