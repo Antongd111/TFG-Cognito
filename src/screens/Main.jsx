@@ -11,13 +11,14 @@ import Test_2 from "./bateria_tests/Test_2";
 import Test_3 from "./bateria_tests/Test_3";
 import Test_4 from "./bateria_tests/Test_4";
 import Test_5 from "./bateria_tests/Test_5";
+import Test_6 from "./bateria_tests/Test_6";
 
 const Stack = createNativeStackNavigator();
 
 const Main = () => {
   return (
     <View style={{ flex: 1, backgroundColor: '#F2E8E1' }}>
-      <Stack.Navigator initialRouteName="Test_5" screenOptions={{headerShown: false }}>
+      <Stack.Navigator initialRouteName="Test_6" screenOptions={{headerShown: false }}>
         <Stack.Screen name="Pacientes" component={PantallaPacientes} options={{ title: 'Pantalla de Pacientes' }} />
         <Stack.Screen name="AgregarPaciente" component={AgregarPaciente} options={{ title: 'Pantalla de añadir paciente' }} />
         <Stack.Screen name="FichaPaciente" component={FichaPaciente} options={{ title: 'Pantalla de ficha de paciente' }} />
@@ -27,6 +28,7 @@ const Main = () => {
         <Stack.Screen name="Test_3" component={Test_3} options={{ title: 'Test 3' }} />
         <Stack.Screen name="Test_4" component={Test_4} options={{ title: 'Test 4' }} />
         <Stack.Screen name="Test_5" component={Test_5} options={{ title: 'Test 5' }} />
+        <Stack.Screen name="Test_6" component={Test_6} options={{ title: 'Test 6' }} />
       </Stack.Navigator>
     </View>
   );
