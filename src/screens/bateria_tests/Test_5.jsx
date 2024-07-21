@@ -53,7 +53,7 @@ const Test_5 = ({ navigation, route }) => {
     };
 
     const handleNavigatePrevious = () => {
-        navigation.goBack();
+        navigation.navigate('Test_4', { idSesion: route.params.idSesion });
     };
 
     /***************** FIN MENÚ DE EVALUACIÓN *****************/

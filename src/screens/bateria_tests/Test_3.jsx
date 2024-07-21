@@ -22,6 +22,25 @@ const Test_3 = ({ navigation, route }) => {
 
     const { idPaciente, idSesion } = route.params;
 
+    /******************** MENÚ DE EVALUACIÓN ********************/
+    const handleToggleVoice = () => {
+        console.log("Toggle voice feature");
+    };
+
+    const handleNavigateHome = () => {
+        navigation.navigate('Pacientes');
+    };
+
+    const handleNavigateNext = () => {
+        navigation.navigate('Test_4', { idSesion: route.params.idSesion }); // Ajusta según tu lógica
+    };
+
+    const handleNavigatePrevious = () => {
+        navigation.navigate('Test_2', { idSesion: route.params.idSesion });
+    };
+
+    /***************** FIN MENÚ DE EVALUACIÓN *****************/
+
     // Función que retorna la frase según el ensayo actual
     const obtenerFrase = (ensayo) => {
         switch (ensayo) {
@@ -87,11 +106,11 @@ const Test_3 = ({ navigation, route }) => {
         if (acierto) {
             setNumeroAciertos(numeroAciertos + 1);
         }
-    
+
         // Aumentar el contador de ensayo actual
         const nuevoEnsayoActual = ensayoActual + 1;
         setEnsayoActual(nuevoEnsayoActual);
-    
+
         // Verifica si es el último ensayo
         if (nuevoEnsayoActual > 5) { // Asumiendo que 5 es el índice del último ensayo
             // Navegar al siguiente test
@@ -104,15 +123,15 @@ const Test_3 = ({ navigation, route }) => {
 
     const almacenarResultados = async () => {
         try {
-          // Llamar a la función de añadir paciente y esperar el resultado
-          await guardarResultadosTest_3(idSesion, numeroAciertos, lecturaCorrecta, erroresTiempo);
-          console.log("Éxito", "Resultados almacenados.");
-          navigation.navigate('Test_4', {idSesion: idSesion });
+            // Llamar a la función de añadir paciente y esperar el resultado
+            await guardarResultadosTest_3(idSesion, numeroAciertos, lecturaCorrecta, erroresTiempo);
+            console.log("Éxito", "Resultados almacenados.");
+            navigation.navigate('Test_4', { idSesion: idSesion });
         } catch (error) {
-          console.error(error);
-          Alert.alert("Error", "Ha ocurrido un error al añadir los resultados a la Base de Datos.");
+            console.error(error);
+            Alert.alert("Error", "Ha ocurrido un error al añadir los resultados a la Base de Datos.");
         }
-      }
+    }
 
     const handleImagenTocada = (numeroImagen) => {
         setSecuenciaTocada(secuenciaTocada + numeroImagen);
@@ -121,6 +140,12 @@ const Test_3 = ({ navigation, route }) => {
     return (
         <View style={stylesComunes.borde_tests}>
             <View style={stylesComunes.contenedor_test}>
+                <MenuComponent
+                    onToggleVoice={handleToggleVoice}
+                    onNavigateHome={handleNavigateHome}
+                    onNavigateNext={handleNavigateNext}
+                    onNavigatePrevious={handleNavigatePrevious}
+                />
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={() => setModalVisible(false)}

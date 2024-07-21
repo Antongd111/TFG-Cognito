@@ -15,6 +15,25 @@ const Test_2 = ({ navigation, route }) => {
 
     const { idPaciente, idSesion } = route.params;
 
+    /******************** MENÚ DE EVALUACIÓN ********************/
+    const handleToggleVoice = () => {
+        console.log("Toggle voice feature");
+    };
+
+    const handleNavigateHome = () => {
+        navigation.navigate('Pacientes');
+    };
+
+    const handleNavigateNext = () => {
+        navigation.navigate('Test_3', { idSesion: route.params.idSesion });
+    };
+
+    const handleNavigatePrevious = () => {
+        navigation.navigate('Test_1', { idSesion: route.params.idSesion });
+    };
+
+    /***************** FIN MENÚ DE EVALUACIÓN *****************/
+
     function obtenerPosicionAleatoria() {
         const screenWidth = Dimensions.get('window').width;
         const screenHeight = Dimensions.get('window').height;
@@ -49,6 +68,12 @@ const Test_2 = ({ navigation, route }) => {
     return (
         <View style={stylesComunes.borde_tests}>
             <View style={stylesComunes.contenedor_test}>
+                <MenuComponent
+                    onToggleVoice={handleToggleVoice}
+                    onNavigateHome={handleNavigateHome}
+                    onNavigateNext={handleNavigateNext}
+                    onNavigatePrevious={handleNavigatePrevious}
+                />
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={() => setModalVisible(false)}
@@ -73,8 +98,8 @@ const Test_2 = ({ navigation, route }) => {
                                 <Text style={styles.profesion}>Payaso</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.boton} onPress={() => seleccionarOpcion('emperador')}>
-                            <Text style={styles.nombre}>Julio César</Text>
-                            <Text style={styles.profesion}>Emperador</Text>
+                                <Text style={styles.nombre}>Julio César</Text>
+                                <Text style={styles.profesion}>Emperador</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

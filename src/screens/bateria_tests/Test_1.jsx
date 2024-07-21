@@ -9,7 +9,7 @@ import { crearSesionTest } from '../../api/TestApi';
 
 
 const Test_1 = ({ navigation, route }) => {
-  
+
   const { idPaciente } = route.params;
 
   const totalEnsayosPrueba = 5;
@@ -33,6 +33,20 @@ const Test_1 = ({ navigation, route }) => {
 
   const [ensayosCompletados, setEnsayosCompletados] = useState(0);
 
+  /******************** MENÚ DE EVALUACIÓN ********************/
+  const handleToggleVoice = () => {
+    console.log("Toggle voice feature");
+  };
+
+  const handleNavigateHome = () => {
+    navigation.navigate('Pacientes');
+  };
+
+  const handleNavigateNext = () => {
+    navigation.navigate('Test_2', { idSesion: route.params.idSesion });
+  };
+
+  /***************** FIN MENÚ DE EVALUACIÓN *****************/
   useEffect(() => {
     if (!modalVisible && prueba) {
       iniciarPrueba();
@@ -145,6 +159,11 @@ const Test_1 = ({ navigation, route }) => {
   return (
     <View style={styles.borde_tests}>
       <View style={styles.contenedor_test}>
+        <MenuComponent
+          onToggleVoice={handleToggleVoice}
+          onNavigateHome={handleNavigateHome}
+          onNavigateNext={handleNavigateNext}
+        />
         <InstruccionesModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}

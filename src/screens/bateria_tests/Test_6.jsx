@@ -23,10 +23,11 @@ const Test_5 = ({ navigation, route }) => {
     };
 
     const handleNavigatePrevious = () => {
-        navigation.goBack();
+        navigation.navigate('Test_5', { idSesion: route.params.idSesion });
     };
 
     /***************** FIN MENÚ DE EVALUACIÓN *****************/
+
     return (
         <View style={stylesComunes.borde_tests}>
             <View style={stylesComunes.contenedor_test}>

@@ -33,11 +33,11 @@ const Test_4 = ({ navigation, route }) => {
     };
 
     const handleNavigateNext = () => {
-        navigation.navigate('Test_5', { idSesion: route.params.idSesion }); // Ajusta según tu lógica
+        navigation.navigate('Test_5', { idSesion: route.params.idSesion });
     };
 
     const handleNavigatePrevious = () => {
-        navigation.goBack(); // Ajusta para ir al test anterior
+        navigation.navigate('Test_3', { idSesion: route.params.idSesion });
     };
 
     /***************** FIN MENÚ DE EVALUACIÓN *****************/
