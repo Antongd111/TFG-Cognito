@@ -56,10 +56,8 @@ const Test_7 = ({ navigation, route }) => {
     const iniciarEnsayo = () => {
         let colorAleatorio;
         let colorFuenteAleatorio;
-        console.log("Generando nuevo ensayo...");
         do {
             colorAleatorio = colores[Math.floor(Math.random() * colores.length)];
-            console.log("Intento de color:", colorAleatorio, "Anterior:", colorAnteriorRef.current);
         } while (colorAleatorio === colorAnteriorRef.current);
 
         do {
@@ -97,7 +95,6 @@ const Test_7 = ({ navigation, route }) => {
                 setPractica(false);
                 setTestRealVisible(true);
             } else {
-                console.log("AQUI")
                 setEnsayoActual(0);
                 iniciarEnsayo();
                 // Aquí puedes guardar los resultados y continuar con la lógica deseada.
@@ -133,11 +130,11 @@ const Test_7 = ({ navigation, route }) => {
                     visible={modalVisible}
                     onClose={() => setModalVisible(false)}
                     title={`Test 7 - Parte ${fase}`}
-                    instructions={fase === 1 ? 
+                    instructions={fase === 1 ?
                         "En esta prueba, debe asociar el nombre del color que aparece en la pantalla con un botón del mismo nombre. Vamos a comenzar con unos ensayos de práctica." :
-                        fase === 2 ? 
-                        "En esta prueba, debe asociar el color del rectángulo que aparece en la pantalla con un botón del mismo nombre. Vamos a comenzar con unos ensayos de práctica." :
-                        "En esta prueba, debe asociar el color de la fuente con el botón del nombre del color correspondiente. Vamos a comenzar con unos ensayos de práctica."
+                        fase === 2 ?
+                            "En esta prueba, debe asociar el color del rectángulo que aparece en la pantalla con un botón del mismo nombre. Vamos a comenzar con unos ensayos de práctica." :
+                            "En esta prueba, debe asociar el color de la fuente con el botón del nombre del color correspondiente. Vamos a comenzar con unos ensayos de práctica."
                     }
                 />
                 <InstruccionesModal
@@ -167,10 +164,10 @@ const Test_7 = ({ navigation, route }) => {
                             ))}
                         </View>
                         <View style={styles.estadisticas}>
-                            <Text>Correctas: {correctas}</Text>
+                            {/* <Text>Correctas: {correctas}</Text>
                             <Text>Errores: {errores}</Text>
                             <Text>Tiempo total: {tiempoTotal} ms</Text>
-                            <Text>Ensayos completados: {ensayoActual}</Text>
+                            <Text>Ensayos completados: {ensayoActual}</Text> */}
                         </View>
                         {fase < 3 && ensayoActual === 0 && !practica && (
                             <TouchableOpacity onPress={avanzarFase} style={styles.botonSiguiente}>
