@@ -12,8 +12,9 @@ const Test_8 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);
     const [ensayoActual, setEnsayoActual] = useState(0);
     const [fase, setFase] = useState(1); // 1 para la primera parte, 2 para la segunda parte
-    const [correctas, setCorrectas] = useState(0);
-    const [incorrectas, setIncorrectas] = useState(0);
+    const [pronunciacionesCorrectas, setPronunciacionesCorrectas] = useState(0);
+    const [pronunciacionesIncorrectas, setPronunciacionesIncorrectas] = useState(0);
+    const [recordadasCorrectas, setRecordadasCorrectas] = useState(0);
     const [intrusiones, setIntrusiones] = useState(0);
     const [perseveraciones, setPerseveraciones] = useState(0);
     const [rechazos, setRechazos] = useState(0);
@@ -58,9 +59,9 @@ const Test_8 = ({ navigation, route }) => {
 
     const manejarRespuesta = (respuesta) => {
         if (respuesta === 'correcto') {
-            setCorrectas(correctas + 1);
+            setPronunciacionesCorrectas(pronunciacionesCorrectas + 1);
         } else {
-            setIncorrectas(incorrectas + 1);
+            setPronunciacionesIncorrectas(pronunciacionesIncorrectas + 1);
         }
         siguienteNombre();
     };
@@ -81,15 +82,19 @@ const Test_8 = ({ navigation, route }) => {
     };
 
     const manejarSeleccionNombre = (nombre) => {
-        if (!nombresMemorizados.includes(nombre)) {
+        if (nombresMemorizados.includes(nombre)) {
+            setNombresMemorizados(nombresMemorizados.filter(item => item !== nombre));
+            setRecordadasCorrectas(recordadasCorrectas - 1);
+        } else {
             setNombresMemorizados([...nombresMemorizados, nombre]);
-            setCorrectas(correctas + 1);
+            setRecordadasCorrectas(recordadasCorrectas + 1);
         }
     };
 
     const validarFase2 = () => {
-        Alert.alert('Resultados', `Correctas: ${correctas}, Incorrectas: ${incorrectas}, Intrusiones: ${intrusiones}, Perseveraciones: ${perseveraciones}, Rechazos: ${rechazos}`);
-        // Aquí puedes agregar lógica para navegar a la siguiente parte del test
+        Alert.alert('Resultados', `Pronunciaciones correctas: ${pronunciacionesCorrectas}, Pronunciaciones incorrectas: ${pronunciacionesIncorrectas}, Recordadas correctas: ${recordadasCorrectas}, Intrusiones: ${intrusiones}, Perseveraciones: ${perseveraciones}, Rechazos: ${rechazos}`);
+        //await guardarResultadosTest_8(route.params.idSesion, pronunciacionesCorrectas, pronunciacionesIncorrectas, recordadasCorrectas, intrusiones, perseveraciones, rechazos);
+        navigation.navigate('Test_9', { idSesion: route.params.idSesion });
     };
 
     return (
@@ -166,28 +171,28 @@ const Test_8 = ({ navigation, route }) => {
                         ))}
                         <View style={styles.botonesFase2}>
                             <TouchableOpacity
-                                style={styles.botonFase2}
+                                style={stylesComunes.boton}
                                 onPress={() => setIntrusiones(intrusiones + 1)}
                             >
-                                <Text style={styles.textoBotonFase2}>Intrusión</Text>
+                                <Text style={stylesComunes.textoBoton}>Intrusión</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={styles.botonFase2}
+                                style={stylesComunes.boton}
                                 onPress={() => setPerseveraciones(perseveraciones + 1)}
                             >
-                                <Text style={styles.textoBotonFase2}>Perseveración</Text>
+                                <Text style={stylesComunes.textoBoton}>Perseveración</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={styles.botonFase2}
+                                style={stylesComunes.boton}
                                 onPress={() => setRechazos(rechazos + 1)}
                             >
-                                <Text style={styles.textoBotonFase2}>Rechazo</Text>
+                                <Text style={stylesComunes.textoBoton}>Rechazo</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={styles.botonFase2}
+                                style={stylesComunes.boton}
                                 onPress={validarFase2}
                             >
-                                <Text style={styles.textoBotonFase2}>Validar</Text>
+                                <Text style={stylesComunes.textoBoton}>Validar</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -251,6 +256,8 @@ const styles = StyleSheet.create({
         margin: 5,
         backgroundColor: '#DDDDDD',
         borderRadius: 5,
+        width: 150,
+        alignItems: 'center',
     },
     nombreSeleccionado: {
         backgroundColor: '#AAAAAA',
@@ -268,14 +275,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         width: '100%',
-    },
-    botonFase2: {
-        backgroundColor: '#DDDDDD',
-        padding: 10,
-        borderRadius: 5,
-    },
-    textoBotonFase2: {
-        fontSize: 16,
     },
 });
 
