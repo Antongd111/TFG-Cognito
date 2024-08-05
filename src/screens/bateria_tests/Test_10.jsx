@@ -1,3 +1,7 @@
+//**************************************************************************/
+// POR SOLUCIONAR: EL ULTIMO ENSAYO NO SE GUARDA EN LOS RESULTADOS
+//**************************************************************************/
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
@@ -75,9 +79,9 @@ const Test_10 = ({ navigation, route }) => {
     const mostrarTrayecto = async (secuencia) => {
         for (let i = 0; i < secuencia.length; i++) {
             setPayasoPosicion(secuencia[i]);
-            await new Promise((resolve) => setTimeout(resolve, 10));
+            await new Promise((resolve) => setTimeout(resolve, 1000));
             setPayasoPosicion(null);
-            await new Promise((resolve) => setTimeout(resolve, 10));
+            await new Promise((resolve) => setTimeout(resolve, 1000));
         }
 
         await playSound();
@@ -147,7 +151,7 @@ const Test_10 = ({ navigation, route }) => {
     };
 
     const mostrarResultados = () => {
-        console.log('Resultados:', resultadoEnsayos);
+        Alert.alert('Resultados', JSON.stringify(resultadoEnsayos));
     };
 
     const iniciarEnsayo = () => {
