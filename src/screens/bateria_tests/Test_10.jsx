@@ -1,6 +1,4 @@
-//**************************************************************************/
-// POR SOLUCIONAR: EL ULTIMO ENSAYO NO SE GUARDA EN LOS RESULTADOS
-//**************************************************************************/
+// FIXME: EL ULTIMO ENSAYO NO SE GUARDA EN LOS RESULTADOS
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
