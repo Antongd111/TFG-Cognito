@@ -1,3 +1,5 @@
+// FIXME: EL ULTIMO ENSAYO NO SE REGISTRA EN LOS RESULTADOS
+
 import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
