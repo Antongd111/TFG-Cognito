@@ -4,7 +4,6 @@ import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
 
-// Importa las imágenes de las caras
 import cara1 from '../../../assets/images/Caras/cara1.png';
 import cara2 from '../../../assets/images/Caras/cara2.png';
 import cara3 from '../../../assets/images/Caras/cara3.png';
