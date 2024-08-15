@@ -68,7 +68,7 @@ const ModificarPaciente = ({ navigation, route }) => {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
         >
-            <Header/>
+            <Header navigation={navigation} />
             <ScrollView style={AgregarPacienteStyles.contenedor}>
                 <Text style={AgregarPacienteStyles.titulo}>Modificar Datos del Paciente</Text>
                 <View style={AgregarPacienteStyles.formulario}>

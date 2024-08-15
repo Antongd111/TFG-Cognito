@@ -7,7 +7,6 @@ export default HeaderStyles = StyleSheet.create({
         justifyContent: 'center',
         alignContent: 'center',
         backgroundColor: '#F2E8E1',
-
     },
 
     logo: {
@@ -17,5 +16,18 @@ export default HeaderStyles = StyleSheet.create({
         borderRadius: 10,
         alignSelf: 'center',
     },
+
+    ajustes: {
+        width: 50,
+        height: 50,
+        position: 'absolute',
+        right: 20,
+        top: 50,
+    },
+
+    ajustesImg: {
+        width: 50,
+        height: 50,
+    }
 
 });

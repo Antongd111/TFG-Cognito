@@ -6,6 +6,7 @@ import styles from '../../styles/ComunStyles';
 import clownImage from '../../../assets/images/payaso.png';
 import { guardarResultadosTest_1 } from '../../api/TestApi';
 import { crearSesionTest } from '../../api/TestApi';
+import { getTranslation } from '../../locales';
 
 
 const Test_1 = ({ navigation, route }) => {

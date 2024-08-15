@@ -28,7 +28,7 @@ const FichaPaciente = ({ route, navigation }) => {
 
   return (
     <View>
-      <Header />
+      <Header navigation={navigation}/>
       <Text style={FichaPacientesStyles.titulo}>Ficha del Paciente</Text>
       <View style={FichaPacientesStyles.contenedor}>
         <View style={FichaPacientesStyles.contenedor_datos}>
@@ -94,7 +94,7 @@ const FichaPaciente = ({ route, navigation }) => {
 
           </ScrollView>
           <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('Pacientes')}>
-            <Text style={styles.textoBoton}>Cancelar</Text>
+            <Text style={styles.textoBoton}>  Volver  </Text>
           </TouchableOpacity>
         </View>
       </View>

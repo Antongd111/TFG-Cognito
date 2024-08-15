@@ -7,7 +7,7 @@ const PantallaPacientes = ({navigation}) => {
 
   return (
     <View>
-      <Header />
+      <Header navigation={navigation}/>
       <TouchableOpacity style={styles.botonAgregarPaciente} onPress={() => navigation.navigate('AgregarPaciente')}>
         <Text style={styles.textoAgregarPaciente}>Agregar Paciente</Text>
       </TouchableOpacity>
