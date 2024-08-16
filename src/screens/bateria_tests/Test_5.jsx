@@ -13,6 +13,10 @@ import figura_6 from '../../../assets/images/Test_5/figura_6.png';
 import figura_7 from '../../../assets/images/Test_5/figura_7.png';
 import figura_8 from '../../../assets/images/Test_5/figura_8.png';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../../locales";
+import { useIsFocused } from '@react-navigation/native';
+
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 const figuraSize = 50;
@@ -38,6 +42,25 @@ const Test_5 = ({ navigation, route }) => {
         figura_7: figura_7,
         figura_8: figura_8
     };
+
+    /** CARGA DE TRADUCCIONES **************************************/
+
+    const [translations, setTranslations] = useState({});
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        const loadLanguage = async () => {
+            const savedLanguage = await AsyncStorage.getItem('language');
+            const lang = savedLanguage || 'es';
+            setTranslations(getTranslation(lang));
+        };
+
+        if (isFocused) {
+            loadLanguage();
+        }
+    }, [isFocused]);
+
+    /** FIN CARGA DE TRADUCCIONES **************************************/
 
     /******************** MENÚ DE EVALUACIÓN ********************/
     const handleToggleVoice = () => {
@@ -122,7 +145,7 @@ const Test_5 = ({ navigation, route }) => {
                     visible={modalVisible}
                     onClose={handleStartTest}
                     title="Test 5"
-                    instructions="Mire bien este modelo. Dos figuras idénticas a este modelo aparecerán entre otras figuras. Usted deberá tocarlas lo más rápidamente posible. Para empezar el entrenamiento pulse el botón 'Entendido'."
+                    instructions={translations.pr05ItemStart + "\n \n" + translations.ItemStartBasico}
                 />
                 {!modalVisible && mostrarFiguraCorrecta && figuraCorrecta && (
                     <View style={styles.figuraCorrecta}>

@@ -9,6 +9,11 @@ import payasoAlto from '../../../assets/images/payaso_alto.png';
 import payasoBajo from '../../../assets/images/payaso_bajo.png';
 import stylesComunes from '../../styles/ComunStyles';
 import { guardarResultadosTest_3 } from '../../api/TestApi';
+import MenuComponent from '../../components/menu';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../../locales";
+import { useIsFocused } from '@react-navigation/native';
 
 const Test_3 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);
@@ -21,6 +26,25 @@ const Test_3 = ({ navigation, route }) => {
     const [timeoutId, setTimeoutId] = useState(null);
 
     const { idPaciente, idSesion } = route.params;
+
+    /** CARGA DE TRADUCCIONES **************************************/
+
+    const [translations, setTranslations] = useState({});
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        const loadLanguage = async () => {
+            const savedLanguage = await AsyncStorage.getItem('language');
+            const lang = savedLanguage || 'es';
+            setTranslations(getTranslation(lang));
+        };
+
+        if (isFocused) {
+            loadLanguage();
+        }
+    }, [isFocused]);
+
+    /** FIN CARGA DE TRADUCCIONES **************************************/
 
     /******************** MENÚ DE EVALUACIÓN ********************/
     const handleToggleVoice = () => {
@@ -45,19 +69,19 @@ const Test_3 = ({ navigation, route }) => {
     const obtenerFrase = (ensayo) => {
         switch (ensayo) {
             case 0:
-                return "Toque los perros";
+                return translations.pr03frase1;
             case 1:
-                return "Toque el payaso pequeño";
+                return translations.pr03frase2;
             case 2:
-                return "Toque el perro que mira el payaso grande";
+                return translations.pr03frase3;
             case 3:
-                return "Toque el payaso que está entre el perro blanco y el otro payaso";
+                return translations.pr03frase4;
             case 4:
-                return "Toque el payaso pequeño y después el perro grande";
+                return translations.pr03frase5;
             case 5:
-                return "Toque el perro blanco después de haber tocado el perro negro";
+                return translations.pr03frase6;
             default:
-                return "Instrucción no definida";
+                return ". . .";
         }
     };
 
@@ -150,7 +174,7 @@ const Test_3 = ({ navigation, route }) => {
                     visible={modalVisible}
                     onClose={() => setModalVisible(false)}
                     title="Test 3"
-                    instructions="En la pantalla aparecerá una frase que usted debe leer en voz alta. Posteriormente, verá una imagen y debe hacer lo que acaba de leer lo más rápido posible. Pulse 'Entendido' para comenzar."
+                    instructions={translations.pr03ItemStart + "\n \n" + translations.ItemStartBasico}
                 />
                 {!modalVisible && (
                     <>

@@ -21,6 +21,10 @@
     "ModificarDatosPaciente": "Modificar datos del paciente",
     "Cancelar": "Cancelar",
     "ActualizarDatos": "Actualizar datos",
+    "Comenzar": "Comenzar",
+    "Pr01PreguntaIniciar": "Puede seguir practicando o comenzar la prueba, ¿Está listo?",
+    "RepetirEntrenamiento": "Repetir entrenamiento",
+    "ComenzarEnsayosReales": "Comenzar ensayos reales",
 
     "app_name": "Cognito",
     "InicioSubtitulo": "Batería computerizada de test cognitivos",

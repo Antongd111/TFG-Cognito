@@ -6,8 +6,13 @@ import styles from '../../styles/ComunStyles';
 import clownImage from '../../../assets/images/payaso.png';
 import { guardarResultadosTest_1 } from '../../api/TestApi';
 import { crearSesionTest } from '../../api/TestApi';
-import { getTranslation } from '../../locales';
+import MenuComponent from '../../components/menu';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../../locales";
+import { useIsFocused } from '@react-navigation/native';
+
+//FIXME: Si se pasa al siguiente test desde el menu, no existe idSesion, hay que crear uno nuevo.
 
 const Test_1 = ({ navigation, route }) => {
 
@@ -33,6 +38,25 @@ const Test_1 = ({ navigation, route }) => {
   const [erroresRetrasos, setErroresRetrasos] = useState(0);
 
   const [ensayosCompletados, setEnsayosCompletados] = useState(0);
+
+  /** CARGA DE TRADUCCIONES **************************************/
+
+  const [translations, setTranslations] = useState({});
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    const loadLanguage = async () => {
+      const savedLanguage = await AsyncStorage.getItem('language');
+      const lang = savedLanguage || 'es';
+      setTranslations(getTranslation(lang));
+    };
+
+    if (isFocused) {
+      loadLanguage();
+    }
+  }, [isFocused]);
+
+  /** FIN CARGA DE TRADUCCIONES **************************************/
 
   /******************** MENÚ DE EVALUACIÓN ********************/
   const handleToggleVoice = () => {
@@ -169,7 +193,7 @@ const Test_1 = ({ navigation, route }) => {
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           title="Test 1"
-          instructions="Toca la pantalla tan rápido como pueda cuando vea aparecer el payaso. Pulsa el botón de abajo para comenzar con unos ensayos de prueba."
+          instructions= {translations.pr01ItemStart}
         />
 
         {preguntaIniciarTest && (
@@ -179,7 +203,7 @@ const Test_1 = ({ navigation, route }) => {
             onRepeatTests={handleRepeatTests}
             onStartRealTests={handleStartRealTests}
             title="Test 1"
-            instructions="Puedes seguir practicando o comenzar con los ensayos reales. ¿Estás listo?"
+            instructions={translations.Pr01PreguntaIniciar}
           />
         )}
         <View style={stylesTest1.contador}>
@@ -187,7 +211,7 @@ const Test_1 = ({ navigation, route }) => {
         </View>
         {payasoVisible && (
           <TouchableOpacity onPress={handlePressClown} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Image source={clownImage} style={{ maxWidth: 350, maxHeight: 400 }} />
+            <Image source={clownImage} style={{ maxWidth: 450, maxHeight: 400 }} />
           </TouchableOpacity>
         )}
 

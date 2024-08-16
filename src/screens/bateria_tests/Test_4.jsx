@@ -8,6 +8,9 @@ import pitidoCorto from '../../../assets/sounds/pitido_corto.mp3';
 import pitidoLargo from '../../../assets/sounds/pitido_largo.mp3';
 import { guardarResultadosTest_4 } from '../../api/TestApi';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../../locales";
+import { useIsFocused } from '@react-navigation/native';
 
 const Test_4 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);
@@ -22,6 +25,25 @@ const Test_4 = ({ navigation, route }) => {
     const [numeroSubestimaciones, setNumeroSubestimaciones] = useState(0);
 
     const numeroEnsayos = 10;
+
+    /** CARGA DE TRADUCCIONES **************************************/
+
+    const [translations, setTranslations] = useState({});
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        const loadLanguage = async () => {
+            const savedLanguage = await AsyncStorage.getItem('language');
+            const lang = savedLanguage || 'es';
+            setTranslations(getTranslation(lang));
+        };
+
+        if (isFocused) {
+            loadLanguage();
+        }
+    }, [isFocused]);
+
+    /** FIN CARGA DE TRADUCCIONES **************************************/
 
     /******************** MENÚ DE EVALUACIÓN ********************/
     const handleToggleVoice = () => {
@@ -140,7 +162,7 @@ const Test_4 = ({ navigation, route }) => {
                     visible={modalVisible}
                     onClose={handleStartTest}
                     title="Test 4"
-                    instructions="Escuche atentamente y cuente los sonidos largos."
+                    instructions={translations.pr04ItemStart + "\n \n" + translations.ItemStartBasico}
                 />
                 {!modalVisible && !faseEscucha && (
                     <>

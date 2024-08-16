@@ -19,10 +19,10 @@ const MenuComponent = ({ onToggleVoice, onNavigateHome, onExitTest, onNavigateNe
             <Text style={styles.dropdownText}>Volver al menú</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={onNavigatePrevious}>
-            <Text style={styles.dropdownText}>Siguiente test</Text>
+            <Text style={styles.dropdownText}>Test Anterior</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={onNavigateNext}>
-            <Text style={styles.dropdownText}>Test anterior</Text>
+            <Text style={styles.dropdownText}>Siguiente test</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -36,9 +36,10 @@ const styles = StyleSheet.create({
     top: 0,
     right: 0,
     padding: 10,
+    zIndex: 1,
   },
   menuButton: {
-    backgroundColor: 'green',
+    backgroundColor: '#D2B48C',
     padding: 8,
     borderRadius: 7,
   },

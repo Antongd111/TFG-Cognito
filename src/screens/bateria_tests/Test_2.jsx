@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
 import clownImage from '../../../assets/images/payaso.png';
 import { Dimensions } from 'react-native';
 import stylesComunes from '../../styles/ComunStyles';
+import MenuComponent from '../../components/menu';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../../locales";
+import { useIsFocused } from '@react-navigation/native';
 
 const Test_2 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);
@@ -14,6 +18,25 @@ const Test_2 = ({ navigation, route }) => {
     const [mostrarError, setMostrarError] = useState(false);
 
     const { idPaciente, idSesion } = route.params;
+
+    /** CARGA DE TRADUCCIONES **************************************/
+
+    const [translations, setTranslations] = useState({});
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        const loadLanguage = async () => {
+            const savedLanguage = await AsyncStorage.getItem('language');
+            const lang = savedLanguage || 'es';
+            setTranslations(getTranslation(lang));
+        };
+
+        if (isFocused) {
+            loadLanguage();
+        }
+    }, [isFocused]);
+
+    /** FIN CARGA DE TRADUCCIONES **************************************/
 
     /******************** MENÚ DE EVALUACIÓN ********************/
     const handleToggleVoice = () => {
@@ -58,7 +81,7 @@ const Test_2 = ({ navigation, route }) => {
     const seleccionarOpcion = (opcion) => {
         if (opcion === 'payaso') {
             // Respuesta correcta
-            navigation.navigate('Test_3', { idPaciente: idPaciente, idSesion: idSesion });
+            navigation.navigate('Test_3', {idSesion: idSesion });
         } else {
             // Respuesta incorrecta
             setMostrarError(true);
@@ -78,8 +101,7 @@ const Test_2 = ({ navigation, route }) => {
                     visible={modalVisible}
                     onClose={() => setModalVisible(false)}
                     title="Test 2"
-                    instructions="El payaso Bernabé va a aparecer 3 veces en lugares diferentes, tóquelo cuando aparezca.
-                    Para comenzar, pulse el botón 'Entendido'."
+                    instructions={translations.pr02ItemStart + "\n \n" + translations.ItemStartBasico}
                 />
                 {!modalVisible && !mostrarOpciones && (
                     <TouchableOpacity
@@ -91,22 +113,22 @@ const Test_2 = ({ navigation, route }) => {
                 )}
                 {mostrarOpciones && (
                     <View style={styles.opcionesContenedor}>
-                        <Text style={styles.instrucciones}>El payaso se llama Bernabé.{'\n'}Toque su tarjeta de visita.</Text>
+                        <Text style={styles.instrucciones}>{translations.pr02Enunciado}</Text>
                         <View style={styles.opciones} >
                             <TouchableOpacity style={styles.boton} onPress={() => seleccionarOpcion('payaso')}>
-                                <Text style={styles.nombre}>Bernabé</Text>
-                                <Text style={styles.profesion}>Payaso</Text>
+                                <Text style={styles.nombre}>{translations.pr02Bernabe}</Text>
+                                <Text style={styles.profesion}>{translations.pr02Payaso}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.boton} onPress={() => seleccionarOpcion('emperador')}>
-                                <Text style={styles.nombre}>Julio César</Text>
-                                <Text style={styles.profesion}>Emperador</Text>
+                                <Text style={styles.nombre}>{translations.pr02Julio}</Text>
+                                <Text style={styles.profesion}>{translations.pr02Emperador}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 )}
 
                 {mostrarError && (
-                    <Text style={styles.error}>Toque la tarjeta de visita correcta.</Text>
+                    <Text style={styles.error}>{translations.pr02Tarjeta}</Text>
                 )}
             </View>
         </View>
