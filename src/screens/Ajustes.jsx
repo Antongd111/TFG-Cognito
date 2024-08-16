@@ -71,7 +71,7 @@ const Ajustes = ({ navigation }) => {
                     <TouchableOpacity style={styles.resetButton} onPress={resetSettings}>
                         <Text style={styles.resetButtonText}>{translations.ReestablecerAjustes}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[stylesComunes.boton, { width: '40%' }]} onPress={() => navigation.navigate('Pacientes')}>
+                    <TouchableOpacity style={[stylesComunes.boton, { width: '40%' }]} onPress={() => navigation.goBack()}>
                         <Text style={[stylesComunes.textoBoton, {fontWeight: 'bold'}]}>{translations["Volver"]}</Text>
                     </TouchableOpacity>
                 </View>

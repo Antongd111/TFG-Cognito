@@ -1,10 +1,14 @@
 import React from "react";
 import Header from "../components/header";
-import { Text, View, TouchableOpacity, TextInput, Button, ScrollView } from "react-native";
-import { useState, useLayoutEffect } from 'react';
+import { Text, View, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { useState, useLayoutEffect, useEffect } from 'react';
 import FichaPacientesStyles from '../styles/FichaPacientesStyles';
 import styles from '../styles/ComunStyles';
 import { obtenerPaciente } from '../api/PacienteApi';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../locales";
+import { useIsFocused } from '@react-navigation/native';
 
 const FichaPaciente = ({ route, navigation }) => {
 
@@ -12,6 +16,25 @@ const FichaPaciente = ({ route, navigation }) => {
   const { idPaciente } = route.params;
 
   const [paciente, setPaciente] = useState([]);
+
+  /** CARGA DE TRADUCCIONES **************************************/
+
+  const [translations, setTranslations] = useState({});
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    const loadLanguage = async () => {
+      const savedLanguage = await AsyncStorage.getItem('language');
+      const lang = savedLanguage || 'es';
+      setTranslations(getTranslation(lang));
+    };
+
+    if (isFocused) {
+      loadLanguage();
+    }
+  }, [isFocused]);
+
+  /** FIN CARGA DE TRADUCCIONES **************************************/
 
   useLayoutEffect(() => {
     const cargarDatos = async () => {
@@ -28,13 +51,13 @@ const FichaPaciente = ({ route, navigation }) => {
 
   return (
     <View>
-      <Header navigation={navigation}/>
-      <Text style={FichaPacientesStyles.titulo}>Ficha del Paciente</Text>
+      <Header navigation={navigation} />
+      <Text style={FichaPacientesStyles.titulo}>{translations.FichaPaciente}</Text>
       <View style={FichaPacientesStyles.contenedor}>
         <View style={FichaPacientesStyles.contenedor_datos}>
 
           <View style={FichaPacientesStyles.inputGroup}>
-            <Text style={FichaPacientesStyles.label}>Identificación:</Text>
+            <Text style={FichaPacientesStyles.label}>{translations.Identificacion}:</Text>
             <TextInput
               style={[FichaPacientesStyles.input, FichaPacientesStyles.identificacion]}
               value={paciente.identificacion}
@@ -43,7 +66,7 @@ const FichaPaciente = ({ route, navigation }) => {
           </View>
           <View style={FichaPacientesStyles.row}>
             <View style={FichaPacientesStyles.inputGroup}>
-              <Text style={FichaPacientesStyles.label}>Nombre:</Text>
+              <Text style={FichaPacientesStyles.label}>{translations.Nombre}:</Text>
               <TextInput
                 style={FichaPacientesStyles.input}
                 value={paciente.nombre}
@@ -51,7 +74,7 @@ const FichaPaciente = ({ route, navigation }) => {
               </TextInput>
             </View>
             <View style={FichaPacientesStyles.inputGroup}>
-              <Text style={FichaPacientesStyles.label}>Apellidos:</Text>
+              <Text style={FichaPacientesStyles.label}>{translations.Apellidos}:</Text>
               <TextInput
                 style={FichaPacientesStyles.input}
                 value={paciente.apellidos}
@@ -61,15 +84,15 @@ const FichaPaciente = ({ route, navigation }) => {
           </View>
           <View style={FichaPacientesStyles.row}>
             <View style={FichaPacientesStyles.inputGroup}>
-              <Text style={FichaPacientesStyles.label}>Género:</Text>
+              <Text style={FichaPacientesStyles.label}>{translations.Sexo}:</Text>
               <TextInput
                 style={FichaPacientesStyles.input}
-                value={paciente.sexo === 'M' ? 'Hombre' : 'Mujer'}
+                value={paciente.sexo === 'M' ? translations.Hombre : translations.Mujer}
                 editable={false}>
               </TextInput>
             </View>
             <View style={FichaPacientesStyles.inputGroup}>
-              <Text style={FichaPacientesStyles.label}>Fecha de nacimiento:</Text>
+              <Text style={FichaPacientesStyles.label}>{translations.FechaNacimiento}:</Text>
               <TextInput
                 style={FichaPacientesStyles.input}
                 value={paciente.fecha_nacimiento}
@@ -78,7 +101,7 @@ const FichaPaciente = ({ route, navigation }) => {
             </View>
           </View>
           <View style={FichaPacientesStyles.inputGroup}>
-            <Text style={FichaPacientesStyles.label}>Observaciones:</Text>
+            <Text style={FichaPacientesStyles.label}>{translations.Observaciones}:</Text>
             <TextInput
               style={[FichaPacientesStyles.input, FichaPacientesStyles.observaciones]}
               value={paciente.observaciones}
@@ -89,12 +112,12 @@ const FichaPaciente = ({ route, navigation }) => {
 
         </View>
         <View style={FichaPacientesStyles.contenedor_tests}>
-          <Text style={FichaPacientesStyles.tituloTests}>Test realizados</Text>
+          <Text style={FichaPacientesStyles.tituloTests}>{translations.TestRealizados}</Text>
           <ScrollView style={FichaPacientesStyles.lista_tests}>
 
           </ScrollView>
           <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('Pacientes')}>
-            <Text style={styles.textoBoton}>  Volver  </Text>
+            <Text style={styles.textoBoton}>  {translations.Volver}  </Text>
           </TouchableOpacity>
         </View>
       </View>

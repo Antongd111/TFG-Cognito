@@ -6,6 +6,10 @@ import { obtenerPaciente, actualizarPaciente } from '../api/PacienteApi';
 import AgregarPacienteStyles from "../styles/AgregarPacienteStyles";
 import styles from "../styles/ComunStyles";
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../locales";
+import { useIsFocused } from '@react-navigation/native';
+
 const ModificarPaciente = ({ navigation, route }) => {
     const { idPaciente } = route.params;
 
@@ -22,10 +26,24 @@ const ModificarPaciente = ({ navigation, route }) => {
         setFechaNacimiento(currentDate);
     };
 
-    const generos = [
-        { label: 'Hombre', value: 'M' },
-        { label: 'Mujer', value: 'F' },
-    ];
+    /** CARGA DE TRADUCCIONES **************************************/
+
+    const [translations, setTranslations] = useState({});
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        const loadLanguage = async () => {
+            const savedLanguage = await AsyncStorage.getItem('language');
+            const lang = savedLanguage || 'es';
+            setTranslations(getTranslation(lang));
+        };
+
+        if (isFocused) {
+            loadLanguage();
+        }
+    }, [isFocused]);
+
+    /** FIN CARGA DE TRADUCCIONES **************************************/
 
     // Carga inicial de datos
     useEffect(() => {
@@ -62,6 +80,11 @@ const ModificarPaciente = ({ navigation, route }) => {
         }
     };
 
+    const generos = [
+        { label: translations.Hombre, value: 'M' },
+        { label: translations.Mujer, value: 'F' },
+    ];
+
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
@@ -70,25 +93,25 @@ const ModificarPaciente = ({ navigation, route }) => {
         >
             <Header navigation={navigation} />
             <ScrollView style={AgregarPacienteStyles.contenedor}>
-                <Text style={AgregarPacienteStyles.titulo}>Modificar Datos del Paciente</Text>
+                <Text style={AgregarPacienteStyles.titulo}>{translations.ModificarDatosPaciente}</Text>
                 <View style={AgregarPacienteStyles.formulario}>
                     <View style={AgregarPacienteStyles.row}>
                         <View style={AgregarPacienteStyles.inputGroup}>
-                            <Text style={AgregarPacienteStyles.label}>Identificación:</Text>
+                            <Text style={AgregarPacienteStyles.label}>{translations.Identificacion}:</Text>
                             <TextInput style={AgregarPacienteStyles.input} value={identificacion} onChangeText={setIdentificacion} />
                         </View>
                         <View style={AgregarPacienteStyles.inputGroup}>
-                            <Text style={AgregarPacienteStyles.label}>Nombre:</Text>
+                            <Text style={AgregarPacienteStyles.label}>{translations.Nombre}:</Text>
                             <TextInput style={AgregarPacienteStyles.input} value={nombre} onChangeText={setNombre} />
                         </View>
                         <View style={AgregarPacienteStyles.inputGroup}>
-                            <Text style={AgregarPacienteStyles.label}>Apellidos:</Text>
+                            <Text style={AgregarPacienteStyles.label}>{translations.Apellidos}:</Text>
                             <TextInput style={AgregarPacienteStyles.input} value={apellidos} onChangeText={setApellidos} />
                         </View>
                     </View>
                     <View style={AgregarPacienteStyles.row}>
                         <View style={AgregarPacienteStyles.inputGroupRow}>
-                            <Text style={AgregarPacienteStyles.label}>Género:</Text>
+                            <Text style={AgregarPacienteStyles.label}>{translations.Sexo}:</Text>
                             <View style={AgregarPacienteStyles.radioGroup}>
                                 {generos.map((item, index) => (
                                     <TouchableOpacity
@@ -102,7 +125,7 @@ const ModificarPaciente = ({ navigation, route }) => {
                             </View>
                         </View>
                         <View style={AgregarPacienteStyles.inputGroupRow}>
-                            <Text style={AgregarPacienteStyles.label}>Fecha de nacimiento:</Text>
+                            <Text style={AgregarPacienteStyles.label}>{translations.FechaNacimiento}:</Text>
                             <View style={AgregarPacienteStyles.datePicker}>
                                 <DateTimePicker
                                     testID="dateTimePicker"
@@ -119,17 +142,17 @@ const ModificarPaciente = ({ navigation, route }) => {
                         </View>
                     </View>
                     <View style={AgregarPacienteStyles.inputGroupObservaciones}>
-                        <Text style={AgregarPacienteStyles.label}>Observaciones:</Text>
+                        <Text style={AgregarPacienteStyles.label}>{translations.Observaciones}:</Text>
                         <TextInput style={[AgregarPacienteStyles.input, AgregarPacienteStyles.observaciones]} multiline value={observaciones} onChangeText={setObservaciones} />
                     </View>
                 </View>
             </ScrollView>
             <View style={AgregarPacienteStyles.contenedorBotones}>
                 <TouchableOpacity style={styles.boton} onPress={() => navigation.goBack()}>
-                    <Text style={styles.textoBoton}>Cancelar</Text>
+                    <Text style={styles.textoBoton}>{translations.Cancelar}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.boton} onPress={handleUpdatePaciente}>
-                    <Text style={styles.textoBoton}>Actualizar Datos</Text>
+                    <Text style={styles.textoBoton}>{translations.ActualizarDatos}</Text>
                 </TouchableOpacity>
             </View>
         </KeyboardAvoidingView>
