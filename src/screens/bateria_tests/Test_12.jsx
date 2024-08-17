@@ -4,6 +4,10 @@ import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../../locales";
+import { useIsFocused } from '@react-navigation/native';
+
 // Importar todas las imágenes de la carpeta Test_12
 const images = {
     pr12_t1_1_copa: require('../../../assets/images/Test_12/pr12_t1_1_copa.jpg'),
@@ -74,196 +78,6 @@ const images = {
     pr12_t11_6_lavadora: require('../../../assets/images/Test_12/pr12_t11_6_lavadora.jpg')
 };
 
-const secuencias = [
-    {
-        palabra: 'copa',
-        imagenes: [
-            images.pr12_t1_1_copa,
-            images.pr12_t1_2_plato,
-            images.pr12_t1_3_sopa,
-            images.pr12_t1_4_ventilador,
-            images.pr12_t1_5_perro,
-            images.pr12_t1_6_martillo
-        ],
-        correcta: 0,
-        errores: {
-            morfologicos: [1],
-            foneticos: [3],
-            semanticos: [2, 4]
-        }
-    },
-    {
-        palabra: 'tarta',
-        imagenes: [
-            images.pr12_t2_1_tarta,
-            images.pr12_t2_2_carta,
-            images.pr12_t2_3_cepillodientes,
-            images.pr12_t2_4_serpiente,
-            images.pr12_t2_5_pandereta,
-            images.pr12_t2_6_cruasan
-        ],
-        correcta: 0,
-        errores: {
-            morfologicos: [1],
-            foneticos: [2],
-            semanticos: [3, 5]
-        }
-    },
-    {
-        palabra: 'pato',
-        imagenes: [
-            images.pr12_t3_1_pato,
-            images.pr12_t3_2_pinguino,
-            images.pr12_t3_3_zanahoria,
-            images.pr12_t3_4_silbato,
-            images.pr12_t3_5_tetera,
-            images.pr12_t3_6_barbacoa
-        ],
-        correcta: 0,
-        errores: {
-            morfologicos: [2],
-            foneticos: [3],
-            semanticos: [1, 5]
-        }
-    },
-    {
-        palabra: 'mano',
-        imagenes: [
-            images.pr12_t4_1_mano,
-            images.pr12_t4_2_hoja,
-            images.pr12_t4_3_tijeras,
-            images.pr12_t4_4_triciclo,
-            images.pr12_t4_5_pie,
-            images.pr12_t4_6_piano
-        ],
-        correcta: 0,
-        errores: {
-            morfologicos: [4],
-            foneticos: [5],
-            semanticos: [2, 3]
-        }
-    },
-    {
-        palabra: 'cama',
-        imagenes: [
-            images.pr12_t5_1_cama,
-            images.pr12_t5_2_sofa,
-            images.pr12_t5_3_carreta,
-            images.pr12_t5_4_lana,
-            images.pr12_t5_5_tambor,
-            images.pr12_t5_6_gato
-        ],
-        correcta: 0,
-        errores: {
-            morfologicos: [1],
-            foneticos: [5],
-            semanticos: [2, 4]
-        }
-    },
-    {
-        palabra: 'boton',
-        imagenes: [
-            images.pr12_t6_1_boton,
-            images.pr12_t6_2_melon,
-            images.pr12_t6_3_cremallera,
-            images.pr12_t6_4_enchufe,
-            images.pr12_t6_5_barco,
-            images.pr12_t6_6_reloj
-        ],
-        correcta: 0,
-        errores: {
-            morfologicos: [4],
-            foneticos: [5],
-            semanticos: [2, 3]
-        }
-    },
-    {
-        palabra: 'cereza',
-        imagenes: [
-            images.pr12_t7_1_cereza,
-            images.pr12_t7_2_paraguas,
-            images.pr12_t7_3_percha,
-            images.pr12_t7_4_cerveza,
-            images.pr12_t7_5_fresa,
-            images.pr12_t7_6_lupa
-        ],
-        correcta: 0,
-        errores: {
-            morfologicos: [3],
-            foneticos: [4],
-            semanticos: [2, 5]
-        }
-    },
-    {
-        palabra: 'bombilla',
-        imagenes: [
-            images.pr12_t8_1_bombilla,
-            images.pr12_t8_2_tortilla,
-            images.pr12_t8_3_pera,
-            images.pr12_t8_4_elefante,
-            images.pr12_t8_5_guitarra,
-            images.pr12_t8_6_linterna
-        ],
-        correcta: 0,
-        errores: {
-            morfologicos: [2],
-            foneticos: [3],
-            semanticos: [1, 5]
-        }
-    },
-    {
-        palabra: 'rastrillo',
-        imagenes: [
-            images.pr12_t9_1_rastrillo,
-            images.pr12_t9_2_rana,
-            images.pr12_t9_3_peine,
-            images.pr12_t9_4_pala,
-            images.pr12_t9_5_anillo,
-            images.pr12_t9_6_bicicleta
-        ],
-        correcta: 0,
-        errores: {
-            morfologicos: [3],
-            foneticos: [4],
-            semanticos: [1, 5]
-        }
-    },
-    {
-        palabra: 'castaña',
-        imagenes: [
-            images.pr12_t10_1_castania,
-            images.pr12_t10_2_casco,
-            images.pr12_t10_3_sillaoficina,
-            images.pr12_t10_4_pipas,
-            images.pr12_t10_5_regadera,
-            images.pr12_t10_6_arania
-        ],
-        correcta: 0,
-        errores: {
-            morfologicos: [2],
-            foneticos: [3],
-            semanticos: [1, 5]
-        }
-    },
-    {
-        palabra: 'secador',
-        imagenes: [
-            images.pr12_t11_1_secador,
-            images.pr12_t11_2_maza,
-            images.pr12_t11_3_margarita,
-            images.pr12_t11_4_manzana,
-            images.pr12_t11_5_baniador,
-            images.pr12_t11_6_lavadora
-        ],
-        correcta: 0,
-        errores: {
-            morfologicos: [4],
-            foneticos: [5],
-            semanticos: [2, 3]
-        }
-    }
-];
-
 const Test_12 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);
     const [entrenamiento, setEntrenamiento] = useState(true);
@@ -275,6 +89,25 @@ const Test_12 = ({ navigation, route }) => {
     const [excedidoTiempo, setExcedidoTiempo] = useState(0);
     const [respuestaIncorrecta, setRespuestaIncorrecta] = useState(0);
     const [inicioEnsayo, setInicioEnsayo] = useState(null);
+
+    /******************** CARGA DE TRADUCCIONES ********************/
+
+    const [translations, setTranslations] = useState({});
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        const loadLanguage = async () => {
+            const savedLanguage = await AsyncStorage.getItem('language');
+            const lang = savedLanguage || 'es';
+            setTranslations(getTranslation(lang));
+        };
+
+        if (isFocused) {
+            loadLanguage();
+        }
+    }, [isFocused]);
+
+    /***************** FIN DE CARGA DE TRADUCCIONES ****************/
 
     /******************** MENÚ DE EVALUACIÓN ********************/
     const handleToggleVoice = () => {
@@ -294,6 +127,196 @@ const Test_12 = ({ navigation, route }) => {
     };
 
     /***************** FIN MENÚ DE EVALUACIÓN *****************/
+
+    const secuencias = [
+        {
+            palabra: translations.pr12Nombre1,
+            imagenes: [
+                images.pr12_t1_1_copa,
+                images.pr12_t1_2_plato,
+                images.pr12_t1_3_sopa,
+                images.pr12_t1_4_ventilador,
+                images.pr12_t1_5_perro,
+                images.pr12_t1_6_martillo
+            ],
+            correcta: 0,
+            errores: {
+                morfologicos: [1],
+                foneticos: [3],
+                semanticos: [2, 4]
+            }
+        },
+        {
+            palabra: translations.pr12Nombre2,
+            imagenes: [
+                images.pr12_t2_1_tarta,
+                images.pr12_t2_2_carta,
+                images.pr12_t2_3_cepillodientes,
+                images.pr12_t2_4_serpiente,
+                images.pr12_t2_5_pandereta,
+                images.pr12_t2_6_cruasan
+            ],
+            correcta: 0,
+            errores: {
+                morfologicos: [1],
+                foneticos: [2],
+                semanticos: [3, 5]
+            }
+        },
+        {
+            palabra: translations.pr12Nombre3,
+            imagenes: [
+                images.pr12_t3_1_pato,
+                images.pr12_t3_2_pinguino,
+                images.pr12_t3_3_zanahoria,
+                images.pr12_t3_4_silbato,
+                images.pr12_t3_5_tetera,
+                images.pr12_t3_6_barbacoa
+            ],
+            correcta: 0,
+            errores: {
+                morfologicos: [2],
+                foneticos: [3],
+                semanticos: [1, 5]
+            }
+        },
+        {
+            palabra: translations.pr12Nombre4,
+            imagenes: [
+                images.pr12_t4_1_mano,
+                images.pr12_t4_2_hoja,
+                images.pr12_t4_3_tijeras,
+                images.pr12_t4_4_triciclo,
+                images.pr12_t4_5_pie,
+                images.pr12_t4_6_piano
+            ],
+            correcta: 0,
+            errores: {
+                morfologicos: [4],
+                foneticos: [5],
+                semanticos: [2, 3]
+            }
+        },
+        {
+            palabra: translations.pr12Nombre5,
+            imagenes: [
+                images.pr12_t5_1_cama,
+                images.pr12_t5_2_sofa,
+                images.pr12_t5_3_carreta,
+                images.pr12_t5_4_lana,
+                images.pr12_t5_5_tambor,
+                images.pr12_t5_6_gato
+            ],
+            correcta: 0,
+            errores: {
+                morfologicos: [1],
+                foneticos: [5],
+                semanticos: [2, 4]
+            }
+        },
+        {
+            palabra: translations.pr12Nombre6,
+            imagenes: [
+                images.pr12_t6_1_boton,
+                images.pr12_t6_2_melon,
+                images.pr12_t6_3_cremallera,
+                images.pr12_t6_4_enchufe,
+                images.pr12_t6_5_barco,
+                images.pr12_t6_6_reloj
+            ],
+            correcta: 0,
+            errores: {
+                morfologicos: [4],
+                foneticos: [5],
+                semanticos: [2, 3]
+            }
+        },
+        {
+            palabra: translations.pr12Nombre7,
+            imagenes: [
+                images.pr12_t7_1_cereza,
+                images.pr12_t7_2_paraguas,
+                images.pr12_t7_3_percha,
+                images.pr12_t7_4_cerveza,
+                images.pr12_t7_5_fresa,
+                images.pr12_t7_6_lupa
+            ],
+            correcta: 0,
+            errores: {
+                morfologicos: [3],
+                foneticos: [4],
+                semanticos: [2, 5]
+            }
+        },
+        {
+            palabra: translations.pr12Nombre8,
+            imagenes: [
+                images.pr12_t8_1_bombilla,
+                images.pr12_t8_2_tortilla,
+                images.pr12_t8_3_pera,
+                images.pr12_t8_4_elefante,
+                images.pr12_t8_5_guitarra,
+                images.pr12_t8_6_linterna
+            ],
+            correcta: 0,
+            errores: {
+                morfologicos: [2],
+                foneticos: [3],
+                semanticos: [1, 5]
+            }
+        },
+        {
+            palabra: translations.pr12Nombre9,
+            imagenes: [
+                images.pr12_t9_1_rastrillo,
+                images.pr12_t9_2_rana,
+                images.pr12_t9_3_peine,
+                images.pr12_t9_4_pala,
+                images.pr12_t9_5_anillo,
+                images.pr12_t9_6_bicicleta
+            ],
+            correcta: 0,
+            errores: {
+                morfologicos: [3],
+                foneticos: [4],
+                semanticos: [1, 5]
+            }
+        },
+        {
+            palabra: translations.pr12Nombre10,
+            imagenes: [
+                images.pr12_t10_1_castania,
+                images.pr12_t10_2_casco,
+                images.pr12_t10_3_sillaoficina,
+                images.pr12_t10_4_pipas,
+                images.pr12_t10_5_regadera,
+                images.pr12_t10_6_arania
+            ],
+            correcta: 0,
+            errores: {
+                morfologicos: [2],
+                foneticos: [3],
+                semanticos: [1, 5]
+            }
+        },
+        {
+            palabra: translations.pr12Nombre11,
+            imagenes: [
+                images.pr12_t11_1_secador,
+                images.pr12_t11_2_maza,
+                images.pr12_t11_3_margarita,
+                images.pr12_t11_4_manzana,
+                images.pr12_t11_5_baniador,
+                images.pr12_t11_6_lavadora
+            ],
+            correcta: 0,
+            errores: {
+                morfologicos: [4],
+                foneticos: [5],
+                semanticos: [2, 3]
+            }
+        }
+    ];
 
     const iniciarPrueba = () => {
         setModalVisible(false);
@@ -348,8 +371,8 @@ const Test_12 = ({ navigation, route }) => {
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={iniciarPrueba}
-                    title={entrenamiento ? "Entrenamiento" : "Inicio de Prueba"}
-                    instructions={entrenamiento ? "Usted va a escuchar ahora una palabra. Toque el dibujo que va con ella lo más rápido posible. Para realizar el ensayo de entrenamiento pulse el botón 'comenzar'." : "Preste atención, la prueba va a empezar, responda lo más rápido posible. Para realizarla pulse el botón 'comenzar'."}
+                    title="Test 12"
+                    instructions={entrenamiento ? translations.pr12ItemStart : translations.ItemStartPrueba}
                 />
                 {!modalVisible && (
                     <>

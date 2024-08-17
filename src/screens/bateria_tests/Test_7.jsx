@@ -1,8 +1,14 @@
+//FIXME: LA LOGICA DEL TEST NO ESTA COMPLETA, SE DEBE REVISAR Y COMPLETAR
+
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../../locales";
+import { useIsFocused } from '@react-navigation/native';
 
 const Test_7 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);
@@ -12,7 +18,6 @@ const Test_7 = ({ navigation, route }) => {
     const [fase, setFase] = useState(1); // 1 para parte 1, 2 para parte 2, 3 para parte 3
     const [colorNombre, setColorNombre] = useState('');
     const [colorFuente, setColorFuente] = useState('');
-    const [respuestas] = useState(['Rojo', 'Verde', 'Azul', 'Amarillo']);
     const [correctas, setCorrectas] = useState(0);
     const [errores, setErrores] = useState(0);
     const [tiempoInicio, setTiempoInicio] = useState(0);
@@ -20,13 +25,24 @@ const Test_7 = ({ navigation, route }) => {
 
     const colorAnteriorRef = useRef('');
 
-    const colores = ['Rojo', 'Verde', 'Azul', 'Amarillo'];
-    const colorMap = {
-        Rojo: 'red',
-        Verde: 'green',
-        Azul: 'blue',
-        Amarillo: 'yellow'
-    };
+    /******************** CARGA DE TRADUCCIONES ********************/
+
+    const [translations, setTranslations] = useState({});
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        const loadLanguage = async () => {
+            const savedLanguage = await AsyncStorage.getItem('language');
+            const lang = savedLanguage || 'es';
+            setTranslations(getTranslation(lang));
+        };
+
+        if (isFocused) {
+            loadLanguage();
+        }
+    }, [isFocused]);
+
+    /***************** FIN DE CARGA DE TRADUCCIONES ****************/
 
     /******************** MENÚ DE EVALUACIÓN ********************/
     const handleToggleVoice = () => {
@@ -42,11 +58,20 @@ const Test_7 = ({ navigation, route }) => {
     };
 
     const handleNavigatePrevious = () => {
-        navigation.navigate('Test_7', { idSesion: route.params.idSesion });
+        navigation.navigate('Test_6', { idSesion: route.params.idSesion });
     };
 
     /***************** FIN MENÚ DE EVALUACIÓN *****************/
 
+    const respuestas = [translations.pr07Rojo, translations.pr07Verde, translations.pr07Azul, translations.pr07Amarillo];
+    const colores = [translations.pr07Rojo, translations.pr07Verde, translations.pr07Azul, translations.pr07Amarillo];
+    const colorMap = {
+        [translations.pr07Rojo]: 'red',
+        [translations.pr07Verde]: 'green',
+        [translations.pr07Azul]: 'blue',
+        [translations.pr07Amarillo]: 'yellow'
+    };
+    
     useEffect(() => {
         if (!modalVisible && !testRealVisible) {
             iniciarEnsayo();
@@ -56,10 +81,13 @@ const Test_7 = ({ navigation, route }) => {
     const iniciarEnsayo = () => {
         let colorAleatorio;
         let colorFuenteAleatorio;
+
+        // Elección del color
         do {
             colorAleatorio = colores[Math.floor(Math.random() * colores.length)];
         } while (colorAleatorio === colorAnteriorRef.current);
 
+        // Elección del color de la fuente (fase 3)
         do {
             colorFuenteAleatorio = colores[Math.floor(Math.random() * colores.length)];
         } while (fase === 3 && colorFuenteAleatorio === colorAleatorio);
@@ -129,19 +157,19 @@ const Test_7 = ({ navigation, route }) => {
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={() => setModalVisible(false)}
-                    title={`Test 7 - Parte ${fase}`}
+                    title={`Test 7 - ${fase}`}
                     instructions={fase === 1 ?
-                        "En esta prueba, debe asociar el nombre del color que aparece en la pantalla con un botón del mismo nombre. Vamos a comenzar con unos ensayos de práctica." :
+                        translations.pr07ItemStart :
                         fase === 2 ?
-                            "En esta prueba, debe asociar el color del rectángulo que aparece en la pantalla con un botón del mismo nombre. Vamos a comenzar con unos ensayos de práctica." :
-                            "En esta prueba, debe asociar el color de la fuente con el botón del nombre del color correspondiente. Vamos a comenzar con unos ensayos de práctica."
+                        translations.pr07ItemStart2 :
+                        translations.pr07ItemStart3
                     }
                 />
                 <InstruccionesModal
                     visible={testRealVisible}
                     onClose={iniciarTestReal}
                     title="Test Real"
-                    instructions="Vamos a comenzar el test real."
+                    instructions={translations.ItemStartPrueba}
                 />
                 {!modalVisible && !testRealVisible && (
                     <View style={styles.contenedor}>

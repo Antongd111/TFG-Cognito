@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Alert, TouchableOpacity, StyleSheet } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
 
-const nombresAprendidos = ['Carlos', 'Marta', 'Juan', 'María', 'Jorge', 'Clara', 'Carmen', 'José', 'Miguel'];
-const nombresDistractores = ['Ana', 'Pedro', 'Laura', 'Antonio', 'Lucía', 'Manuel', 'Sara', 'David', 'Elena'];
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../../locales";
+import { useIsFocused } from '@react-navigation/native';
 
 const Test_17 = ({ navigation, route }) => {
     const [fase, setFase] = useState(1);
@@ -17,6 +18,28 @@ const Test_17 = ({ navigation, route }) => {
     const [nombresIdentificados, setNombresIdentificados] = useState([]);
     const [erroresIdentificados, setErroresIdentificados] = useState(0);
     const [rechazosReconocimiento, setRechazosReconocimiento] = useState(0);
+
+    /******************** CARGA DE TRADUCCIONES ********************/
+
+    const [translations, setTranslations] = useState({});
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        const loadLanguage = async () => {
+            const savedLanguage = await AsyncStorage.getItem('language');
+            const lang = savedLanguage || 'es';
+            setTranslations(getTranslation(lang));
+        };
+
+        if (isFocused) {
+            loadLanguage();
+        }
+    }, [isFocused]);
+
+    /***************** FIN DE CARGA DE TRADUCCIONES ****************/
+
+    const nombresAprendidos = [translations.pr08Nombre1, translations.pr08Nombre2, translations.pr08Nombre3, translations.pr08Nombre4, translations.pr08Nombre5, translations.pr08Nombre6, translations.pr08Nombre7, translations.pr08Nombre8, translations.pr08Nombre9];
+    const nombresDistractores = [translations.pr17Nombre1, translations.pr17Nombre2, translations.pr17Nombre3, translations.pr17Nombre4, translations.pr17Nombre5, translations.pr17Nombre6, translations.pr17Nombre7, translations.pr17Nombre8, translations.pr17Nombre9];
 
     const handleRecordarNombre = (nombre) => {
         setNombresRecordados((prev) => {
@@ -116,20 +139,20 @@ const Test_17 = ({ navigation, route }) => {
                 <InstruccionesModal
                     visible={modalVisible && fase === 1}
                     onClose={iniciarTarea}
-                    title="Test 17"
-                    instructions="Por favor, gire la pantalla hacia usted para que el sujeto no la vea. Ahora quiero que me diga todos los nombres de persona que le pedí que aprendiera antes."
+                    title="Test 17 - 1"
+                    instructions={translations.pr17ItemStart}
                 />
                 <InstruccionesModal
                     visible={modalVisible && fase === 2}
                     onClose={iniciarTarea}
-                    title="Segunda Tarea"
-                    instructions="Continúe con la pantalla girada hacia usted. Ahora vamos a continuar con la tarea. Dígame los nombres que empiezan por M, luego por J, y finalmente por C."
+                    title="Test 17 - 2"
+                    instructions={translations.pr17ItemStart2}
                 />
                 <InstruccionesModal
                     visible={modalVisible && fase === 3}
                     onClose={iniciarTarea}
-                    title="Tercera Tarea"
-                    instructions="Ahora puede girar la pantalla hacia el paciente. Pida al sujeto que seleccione los nombres que aprendió anteriormente entre la lista que se muestra."
+                    title="Test 17 - 3"
+                    instructions={translations.pr17ItemStart3}
                 />
                 {!modalVisible && fase === 1 && (
                     <View>
@@ -141,18 +164,18 @@ const Test_17 = ({ navigation, route }) => {
                         />
                         <View style={styles.botonera}>
                             <TouchableOpacity style={[styles.boton, { width: '40%' }]} onPress={handlePerseveracion}>
-                                <Text style={styles.textoBotonValidar}>Perseveración</Text>
+                                <Text style={styles.textoBotonValidar}>{translations.Perseveracion}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={[styles.boton, { width: '40%' }]} onPress={handleIntrusion}>
-                                <Text style={styles.textoBotonValidar}>Intrusión</Text>
+                                <Text style={styles.textoBotonValidar}>{translations.Intrusion}</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.botonera}>
                             <TouchableOpacity style={styles.botonRechazo} onPress={handleRechazo}>
-                                <Text style={styles.textoBotonValidar}>Rechazo</Text>
+                                <Text style={styles.textoBotonValidar}>{translations.Rechazo}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.botonValidar} onPress={validarFase}>
-                                <Text style={styles.textoBotonValidar}>Validar</Text>
+                                <Text style={styles.textoBotonValidar}>{translations.Validar}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -190,18 +213,18 @@ const Test_17 = ({ navigation, route }) => {
                         </View>
                         <View style={styles.botonera}>
                             <TouchableOpacity style={[styles.boton, { width: '40%' }]} onPress={handlePerseveracion}>
-                                <Text style={styles.textoBotonValidar}>Perseveración</Text>
+                                <Text style={styles.textoBotonValidar}>{translations.Perseveracion}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={[styles.boton, { width: '40%' }]} onPress={handleIntrusion}>
-                                <Text style={styles.textoBotonValidar}>Intrusión</Text>
+                                <Text style={styles.textoBotonValidar}>{translations.Intrusion}</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.botonera}>
                             <TouchableOpacity style={styles.botonRechazo} onPress={handleRechazo}>
-                                <Text style={styles.textoBotonValidar}>Rechazo</Text>
+                                <Text style={styles.textoBotonValidar}>{translations.Rechazo}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.botonValidar} onPress={validarFase}>
-                                <Text style={styles.textoBotonValidar}>Validar</Text>
+                                <Text style={styles.textoBotonValidar}>{translations.Validar}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -218,11 +241,11 @@ const Test_17 = ({ navigation, route }) => {
                         />
                         <View style={styles.botonera}>
                             <TouchableOpacity style={styles.botonRechazo} onPress={handleRechazoReconocimiento}>
-                                <Text style={styles.textoBotonValidar}>Rechazo</Text>
+                                <Text style={styles.textoBotonValidar}>{translations.Rechazo}</Text>
                             </TouchableOpacity>
                         </View>
                         <TouchableOpacity style={styles.botonValidar} onPress={validarFase}>
-                            <Text style={styles.textoBotonValidar}>Validar</Text>
+                            <Text style={styles.textoBotonValidar}>{translations.Validar}</Text>
                         </TouchableOpacity>
                     </View>
                 )}

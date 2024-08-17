@@ -6,7 +6,9 @@ import stylesComunes from '../../styles/ComunStyles';
 import correct from '../../../assets/images/correct.png';
 import incorrect from '../../../assets/images/incorrect.png';
 
-const nombres = ['Miguel', 'Mario', 'Jorge', 'María', 'Jesús', 'Marina', 'Guillermo', 'Judith', 'Gabriela'];
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../../locales";
+import { useIsFocused } from '@react-navigation/native';
 
 const Test_8 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);
@@ -22,6 +24,26 @@ const Test_8 = ({ navigation, route }) => {
     const [nombreActual, setNombreActual] = useState('');
     const [mostrarNombres, setMostrarNombres] = useState(false);
     const [memorizarNombres, setMemorizarNombres] = useState(false);
+    const [faseCompletada, setFaseCompletada] = useState(false); // Nuevo estado para controlar la finalización de la fase
+
+    /******************** CARGA DE TRADUCCIONES ********************/
+
+    const [translations, setTranslations] = useState({});
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        const loadLanguage = async () => {
+            const savedLanguage = await AsyncStorage.getItem('language');
+            const lang = savedLanguage || 'es';
+            setTranslations(getTranslation(lang));
+        };
+
+        if (isFocused) {
+            loadLanguage();
+        }
+    }, [isFocused]);
+
+    /***************** FIN DE CARGA DE TRADUCCIONES ****************/
 
     /******************** MENÚ DE EVALUACIÓN ********************/
     const handleToggleVoice = () => {
@@ -42,8 +64,14 @@ const Test_8 = ({ navigation, route }) => {
 
     /***************** FIN MENÚ DE EVALUACIÓN *****************/
 
+    const nombres = [
+        translations.pr08Nombre1, translations.pr08Nombre2, translations.pr08Nombre3,
+        translations.pr08Nombre4, translations.pr08Nombre5, translations.pr08Nombre6,
+        translations.pr08Nombre7, translations.pr08Nombre8, translations.pr08Nombre9
+    ];
+
     useEffect(() => {
-        if (fase === 2 && memorizarNombres) {
+        if (fase === 2 && memorizarNombres && !faseCompletada) {
             if (ensayoActual < nombres.length) {
                 setNombreActual(nombres[ensayoActual]);
                 const timer = setTimeout(() => {
@@ -51,8 +79,10 @@ const Test_8 = ({ navigation, route }) => {
                 }, 3000);
                 return () => clearTimeout(timer);
             } else {
+                // Fase 2 completada
                 setMemorizarNombres(false);
-                setModalVisible(true);
+                setFaseCompletada(true); // Indicamos que la fase ha terminado
+                setModalVisible(true); // Mostramos el modal de la siguiente parte
             }
         }
     }, [fase, memorizarNombres, ensayoActual]);
@@ -70,10 +100,19 @@ const Test_8 = ({ navigation, route }) => {
         if (ensayoActual < nombres.length - 1) {
             setEnsayoActual(ensayoActual + 1);
         } else {
-            setEnsayoActual(0);
-            setFase(2);
-            setMemorizarNombres(true);
+            if (fase === 1) {
+                // Al finalizar la fase 1, mostrar el modal antes de iniciar la fase 2
+                setModalVisible(true);
+                setFase(2);
+            }
         }
+    };
+
+    const iniciarFase2 = () => {
+        setMemorizarNombres(true);
+        setEnsayoActual(0);
+        setFaseCompletada(false); // Reiniciar el control de la fase
+        setModalVisible(false);
     };
 
     const iniciarEvaluacion = () => {
@@ -94,7 +133,7 @@ const Test_8 = ({ navigation, route }) => {
     const validarFase2 = () => {
         Alert.alert('Resultados', `Pronunciaciones correctas: ${pronunciacionesCorrectas}, Pronunciaciones incorrectas: ${pronunciacionesIncorrectas}, Recordadas correctas: ${recordadasCorrectas}, Intrusiones: ${intrusiones}, Perseveraciones: ${perseveraciones}, Rechazos: ${rechazos}`);
         //await guardarResultadosTest_8(route.params.idSesion, pronunciacionesCorrectas, pronunciacionesIncorrectas, recordadasCorrectas, intrusiones, perseveraciones, rechazos);
-        navigation.navigate('Test_9', { idSesion: route.params.idSesion });
+        //navigation.navigate('Test_9', { idSesion: route.params.idSesion });
     };
 
     return (
@@ -110,24 +149,24 @@ const Test_8 = ({ navigation, route }) => {
                     <InstruccionesModal
                         visible={modalVisible}
                         onClose={() => setModalVisible(false)}
-                        title="Test 8 - Parte 1"
-                        instructions="El evaluador lee en voz alta los nombres que aparecen en la pantalla. El sujeto debe repetir cada nombre. Marque si el sujeto articuló correctamente el nombre. Pulse 'Entendido' para comenzar."
+                        title="Test 8 - 1"
+                        instructions={translations.pr08ItemStart}
                     />
                 )}
-                {fase === 2 && memorizarNombres && (
+                {fase === 2 && !memorizarNombres && !faseCompletada && (
                     <InstruccionesModal
                         visible={modalVisible}
-                        onClose={() => setModalVisible(false)}
-                        title="Test 8 - Parte 2"
-                        instructions="Memorice los nombres que van a aparecer en la pantalla."
+                        onClose={iniciarFase2} // Iniciar memorización al cerrar el modal
+                        title="Test 8 - 2"
+                        instructions={translations.pr08ItemStart2}
                     />
                 )}
-                {fase === 2 && !memorizarNombres && !mostrarNombres && (
+                {fase === 2 && faseCompletada && !mostrarNombres && (
                     <InstruccionesModal
                         visible={modalVisible}
                         onClose={iniciarEvaluacion}
-                        title="Test 8 - Parte 2"
-                        instructions="Ahora el evaluador debe registrar los nombres que el sujeto recuerda correctamente. También puede registrar intrusiones, perseveraciones y rechazos."
+                        title="Test 8 - 3"
+                        instructions={translations.pr08ItemStart3}
                     />
                 )}
                 {!modalVisible && fase === 1 && (
@@ -174,25 +213,25 @@ const Test_8 = ({ navigation, route }) => {
                                 style={stylesComunes.boton}
                                 onPress={() => setIntrusiones(intrusiones + 1)}
                             >
-                                <Text style={stylesComunes.textoBoton}>Intrusión</Text>
+                                <Text style={stylesComunes.textoBoton}>{translations.Intrusion}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={stylesComunes.boton}
                                 onPress={() => setPerseveraciones(perseveraciones + 1)}
                             >
-                                <Text style={stylesComunes.textoBoton}>Perseveración</Text>
+                                <Text style={stylesComunes.textoBoton}>{translations.Perseveracion}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={stylesComunes.boton}
                                 onPress={() => setRechazos(rechazos + 1)}
                             >
-                                <Text style={stylesComunes.textoBoton}>Rechazo</Text>
+                                <Text style={stylesComunes.textoBoton}>{translations.Rechazo}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={stylesComunes.boton}
                                 onPress={validarFase2}
                             >
-                                <Text style={stylesComunes.textoBoton}>Validar</Text>
+                                <Text style={stylesComunes.textoBoton}>{translations.Validar}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

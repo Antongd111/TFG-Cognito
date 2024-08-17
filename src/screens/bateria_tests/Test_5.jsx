@@ -1,3 +1,5 @@
+//FIXME: EL SONIDO SE SIGUE ESCUCHANDO AL CAMBIAR DE TEST
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';

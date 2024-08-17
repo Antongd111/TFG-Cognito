@@ -14,7 +14,7 @@ import Test_4 from "./bateria_tests/Test_4";
 import Test_5 from "./bateria_tests/Test_5";
 import Test_6 from "./bateria_tests/Test_6";
 import Test_7 from "./bateria_tests/Test_7";
-import Test_8 from "./bateria_tests/Test_9";
+import Test_8 from "./bateria_tests/Test_8";
 import Test_9 from "./bateria_tests/Test_9";
 import Test_10 from "./bateria_tests/Test_10";
 import Test_11 from "./bateria_tests/Test_11";

@@ -6,6 +6,10 @@ import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../../locales";
+import { useIsFocused } from '@react-navigation/native';
+
 const images = {
     pr14_t10_1: require('../../../assets/images/Test_14/pr14_t10_1.png'),
     pr14_t10_2: require('../../../assets/images/Test_14/pr14_t10_2.png'),
@@ -378,6 +382,25 @@ const Test_14 = ({ navigation, route }) => {
     const [tiempoTotal, setTiempoTotal] = useState(0);
     const [inicioEnsayo, setInicioEnsayo] = useState(null);
 
+        /******************** CARGA DE TRADUCCIONES ********************/
+
+        const [translations, setTranslations] = useState({});
+        const isFocused = useIsFocused();
+    
+        useEffect(() => {
+            const loadLanguage = async () => {
+                const savedLanguage = await AsyncStorage.getItem('language');
+                const lang = savedLanguage || 'es';
+                setTranslations(getTranslation(lang));
+            };
+    
+            if (isFocused) {
+                loadLanguage();
+            }
+        }, [isFocused]);
+    
+        /***************** FIN DE CARGA DE TRADUCCIONES ****************/
+
     /******************** MENÚ DE EVALUACIÓN ********************/
     const handleToggleVoice = () => {
         console.log("Toggle voice feature");
@@ -450,8 +473,8 @@ const Test_14 = ({ navigation, route }) => {
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={iniciarPrueba}
-                    title={entrenamiento ? "Entrenamiento" : "Inicio de Prueba"}
-                    instructions={entrenamiento ? "Usted tiene tres ensayos de entrenamiento. Toque la pieza que completa correctamente el diseño. Aquí hay un diseño que ha perdido una pieza abajo a la derecha. Sólo una de estas piezas puede completar el diseño horizontal o verticalmente. Toque la pieza correcta." : "Preste atención, la prueba va a empezar, responda lo más rapido posible. Para realizarla toque el botón 'comenzar'."}
+                    title = "Test 14"
+                    instructions={entrenamiento ? translations.pr14ItemStart : translations.ItemStartPrueba}
                 />
                 {!modalVisible && (
                     <>

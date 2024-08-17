@@ -4,6 +4,10 @@ import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../../locales";
+import { useIsFocused } from '@react-navigation/native';
+
 // Importar imágenes
 import pr11_t1_1 from '../../../assets/images/Test_11/pr11_t1_1.png';
 import pr11_t1_2 from '../../../assets/images/Test_11/pr11_t1_2.png';
@@ -79,6 +83,25 @@ const Test_11 = ({ navigation, route }) => {
     const [correctas, setCorrectas] = useState(0);
     const [inversiones, setInversiones] = useState(0);
     const [campoNegligencia, setCampoNegligencia] = useState(false);
+
+    /******************** CARGA DE TRADUCCIONES ********************/
+
+    const [translations, setTranslations] = useState({});
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        const loadLanguage = async () => {
+            const savedLanguage = await AsyncStorage.getItem('language');
+            const lang = savedLanguage || 'es';
+            setTranslations(getTranslation(lang));
+        };
+
+        if (isFocused) {
+            loadLanguage();
+        }
+    }, [isFocused]);
+
+    /***************** FIN DE CARGA DE TRADUCCIONES ****************/
 
     /******************** MENÚ DE EVALUACIÓN ********************/
     const handleToggleVoice = () => {
@@ -160,8 +183,8 @@ const Test_11 = ({ navigation, route }) => {
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={iniciarPrueba}
-                    title={entrenamiento ? "Entrenamiento" : "Inicio de Prueba"}
-                    instructions={entrenamiento ? "Mire el modelo que se encuentra a la izquierda de la pantalla. A la derecha puede ver otras 6 figuras, solamente una es idéntica al modelo de la izquierda. ¡Tóquela!. Realice éste ejemplo para practicar." : "Preste atención, la prueba va a comenzar, responda lo más rápido posible. Pulse el botón 'comenzar'. Toque la figura que sea idéntica al modelo de la derecha."}
+                    title="Test 11"
+                    instructions={entrenamiento ? translations.pr11ItemStart : translations.ItemStartPrueba}
                 />
                 {!modalVisible && (
                     <>

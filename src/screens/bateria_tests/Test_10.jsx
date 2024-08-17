@@ -9,6 +9,11 @@ import stylesComunes from '../../styles/ComunStyles';
 import pitido from '../../../assets/sounds/pitido_corto.mp3';
 import payaso from '../../../assets/images/payaso.png';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../../locales";
+import { useIsFocused } from '@react-navigation/native';
+
+
 const secuenciasEntrenamiento = [
     [0, 1],
     [0, 1, 2]
@@ -40,6 +45,25 @@ const Test_10 = ({ navigation, route }) => {
     const [fallos, setFallos] = useState(0);
 
     const cuadrados = Array.from({ length: 9 }, (_, i) => i);
+
+    /******************** CARGA DE TRADUCCIONES ********************/
+
+    const [translations, setTranslations] = useState({});
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        const loadLanguage = async () => {
+            const savedLanguage = await AsyncStorage.getItem('language');
+            const lang = savedLanguage || 'es';
+            setTranslations(getTranslation(lang));
+        };
+
+        if (isFocused) {
+            loadLanguage();
+        }
+    }, [isFocused]);
+
+    /***************** FIN DE CARGA DE TRADUCCIONES ****************/
 
     /******************** MENÚ DE EVALUACIÓN ********************/
     const handleToggleVoice = () => {
@@ -175,13 +199,13 @@ const Test_10 = ({ navigation, route }) => {
                     visible={modalVisible}
                     onClose={iniciarEnsayo}
                     title="Test 10"
-                    instructions="Se presenta una pantalla con 9 cuadrados de color azul. Un payaso aparece en uno de los cuadrados y después se desplaza a otro, quedándose sobre cada uno un segundo y con un intervalo de un segundo entre las apariciones. Un sonido indica el fin del trayecto del payaso tras lo cual deberá repetir el mismo trayecto tocando los cuadrados sobre la pantalla."
+                    instructions={translations.pr10ItemStart}
                 />
                 <InstruccionesModal
                     visible={mostrarModalInicioPruebas}
                     onClose={iniciarPruebasReales}
-                    title="Inicio de Pruebas Reales"
-                    instructions="Los ensayos de entrenamiento han finalizado. Ahora comenzarán los ensayos reales."
+                    title="Test 10"
+                    instructions={translations.ItemStartPrueba}
                 />
                 {!modalVisible && !mostrarModalInicioPruebas && (
                     <>

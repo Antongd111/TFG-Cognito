@@ -1,13 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../../locales";
+import { useIsFocused } from '@react-navigation/native';
 
 const Test_5 = ({ navigation, route }) => {
 
     const [modalVisible, setModalVisible] = useState(true);
+
+    /******************** CARGA DE TRADUCCIONES ********************/
+
+    const [translations, setTranslations] = useState({});
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        const loadLanguage = async () => {
+            const savedLanguage = await AsyncStorage.getItem('language');
+            const lang = savedLanguage || 'es';
+            setTranslations(getTranslation(lang));
+        };
+
+        if (isFocused) {
+            loadLanguage();
+        }
+    }, [isFocused]);
+
+    /***************** FIN DE CARGA DE TRADUCCIONES ****************/
 
     /******************** MENÚ DE EVALUACIÓN ********************/
     const handleToggleVoice = () => {
@@ -19,7 +41,7 @@ const Test_5 = ({ navigation, route }) => {
     };
 
     const handleNavigateNext = () => {
-        navigation.navigate('Test_6', { idSesion: route.params.idSesion });
+        navigation.navigate('Test_7', { idSesion: route.params.idSesion });
     };
 
     const handleNavigatePrevious = () => {
@@ -41,7 +63,7 @@ const Test_5 = ({ navigation, route }) => {
                     visible={modalVisible}
                     onClose={() => setModalVisible(false)}
                     title="Test 6"
-                    instructions="Test 6."
+                    instructions={translations.pr06ItemStart + "\n \n" + translations.ItemStartBasico}
                 />
                 {!modalVisible && (
                     <View></View>

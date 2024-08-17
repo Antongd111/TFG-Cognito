@@ -4,6 +4,11 @@ import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../../locales";
+import { useIsFocused } from '@react-navigation/native';
+
+
 // Importa las imágenes de las caras
 import miguel from '../../../assets/images/Caras/cara1.png';
 import mario from '../../../assets/images/Caras/cara2.png';
@@ -15,19 +20,26 @@ import guillermo from '../../../assets/images/Caras/cara7.png';
 import judith from '../../../assets/images/Caras/cara8.png';
 import gabriela from '../../../assets/images/Caras/cara9.png';
 
-const nombresYCaras = [
-    { nombre: 'Miguel', cara: miguel },
-    { nombre: 'Mario', cara: mario },
-    { nombre: 'Jorge', cara: jorge },
-    { nombre: 'María', cara: maria },
-    { nombre: 'Jesús', cara: jesus },
-    { nombre: 'Marina', cara: marina },
-    { nombre: 'Guillermo', cara: guillermo },
-    { nombre: 'Judith', cara: judith },
-    { nombre: 'Gabriela', cara: gabriela }
-];
-
 const Test_9 = ({ navigation, route }) => {
+
+    /******************** CARGA DE TRADUCCIONES ********************/
+
+    const [translations, setTranslations] = useState({});
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        const loadLanguage = async () => {
+            const savedLanguage = await AsyncStorage.getItem('language');
+            const lang = savedLanguage || 'es';
+            setTranslations(getTranslation(lang));
+        };
+
+        if (isFocused) {
+            loadLanguage();
+        }
+    }, [isFocused]);
+
+    /***************** FIN DE CARGA DE TRADUCCIONES ****************/
 
     /******************** MENÚ DE EVALUACIÓN ********************/
     const handleToggleVoice = () => {
@@ -47,6 +59,18 @@ const Test_9 = ({ navigation, route }) => {
     };
 
     /***************** FIN MENÚ DE EVALUACIÓN *****************/
+
+    const nombresYCaras = [
+        { nombre: translations.pr08Nombre1, cara: miguel },
+        { nombre: translations.pr08Nombre2, cara: mario },
+        { nombre: translations.pr08Nombre3, cara: jorge },
+        { nombre: translations.pr08Nombre4, cara: maria },
+        { nombre: translations.pr08Nombre5, cara: jesus },
+        { nombre: translations.pr08Nombre6, cara: marina },
+        { nombre: translations.pr08Nombre7, cara: guillermo },
+        { nombre: translations.pr08Nombre8, cara: judith },
+        { nombre: translations.pr08Nombre9, cara: gabriela }
+    ];
 
     const [modalVisible, setModalVisible] = useState(true);
     const [indexActual, setIndexActual] = useState(0);
@@ -88,7 +112,7 @@ const Test_9 = ({ navigation, route }) => {
                     visible={modalVisible}
                     onClose={() => setModalVisible(false)}
                     title="Test 9"
-                    instructions="Los nombres de persona utilizados en la tarea previa son presentados de nuevo pero asociados a una cara que deberá recordar más tarde durante el transcurso del examen. Cada cara se presenta durante 5 segundos."
+                    instructions = {translations.pr09ItemStart}
                 />
                 {!modalVisible && (
                     <View style={styles.caraContainer}>

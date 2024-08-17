@@ -5,6 +5,10 @@ import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../../locales";
+import { useIsFocused } from '@react-navigation/native';
+
 const Test_19 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);
     const [tiempoRestante, setTiempoRestante] = useState(60);
@@ -16,6 +20,25 @@ const Test_19 = ({ navigation, route }) => {
     const [respuestasCorrectasTiempos, setRespuestasCorrectasTiempos] = useState([0, 0, 0, 0]);
     const [intrusionesTiempos, setIntrusionesTiempos] = useState([0, 0, 0, 0]);
     const [perseveracionesTiempos, setPerseveracionesTiempos] = useState([0, 0, 0, 0]);
+
+    /******************** CARGA DE TRADUCCIONES ********************/
+
+    const [translations, setTranslations] = useState({});
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        const loadLanguage = async () => {
+            const savedLanguage = await AsyncStorage.getItem('language');
+            const lang = savedLanguage || 'es';
+            setTranslations(getTranslation(lang));
+        };
+
+        if (isFocused) {
+            loadLanguage();
+        }
+    }, [isFocused]);
+
+    /***************** FIN DE CARGA DE TRADUCCIONES ****************/
 
     useEffect(() => {
         if (!modalVisible && tiempoRestante > 0) {
@@ -83,7 +106,7 @@ const Test_19 = ({ navigation, route }) => {
                     visible={modalVisible}
                     onClose={iniciarTarea}
                     title="Test 19"
-                    instructions="Por favor, pida al sujeto que nombre todas las verduras que pueda en un minuto. El evaluador debe registrar las respuestas correctas, intrusiones y perseveraciones presionando los botones correspondientes. El tiempo restante se muestra mediante una barra de progreso."
+                    instructions = {translations.pr19ItemStart}
                 />
                 {!modalVisible && (
                     <View style={styles.container}>
@@ -94,13 +117,13 @@ const Test_19 = ({ navigation, route }) => {
 
                         <View style={styles.botonera}>
                             <TouchableOpacity style={styles.boton} onPress={handleRespuestaCorrecta}>
-                                <Text style={styles.textoBoton}>Respuesta Correcta</Text>
+                                <Text style={styles.textoBoton}>{translations.RespuestaCorrecta}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.boton} onPress={handleIntrusion}>
-                                <Text style={styles.textoBoton}>Intrusión</Text>
+                                <Text style={styles.textoBoton}>{translations.Intrusion}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.boton} onPress={handlePerseveracion}>
-                                <Text style={styles.textoBoton}>Perseveración</Text>
+                                <Text style={styles.textoBoton}>{translations.Perseveracion}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

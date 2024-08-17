@@ -4,6 +4,11 @@ import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../../locales";
+import { useIsFocused } from '@react-navigation/native';
+
+
 const images = {
     pr13_t10_1: require('../../../assets/images/Test_13/pr13_t10_1.png'),
     pr13_t10_2: require('../../../assets/images/Test_13/pr13_t10_2.png'),
@@ -62,185 +67,6 @@ const images = {
     pr13_t9_5: require('../../../assets/images/Test_13/pr13_t9_5.png')
 };
 
-const secuencias = [
-    {
-        objeto: 'pipeta',
-        imagenes: [images.pr13_t1_1],
-        asociaciones: [
-            images.pr13_t1_2,
-            images.pr13_t1_3,
-            images.pr13_t1_4,
-            images.pr13_t1_5
-        ],
-        correcta: 0,
-        errores: {
-            general: [1],
-            parcial: [2],
-            otros: [3]
-        }
-    },
-    {
-        objeto: 'teléfono',
-        imagenes: [images.pr13_t2_1],
-        asociaciones: [
-            images.pr13_t2_2,
-            images.pr13_t2_3,
-            images.pr13_t2_4,
-            images.pr13_t2_5
-        ],
-        correcta: 0,
-        errores: {
-            general: [2],
-            parcial: [3],
-            otros: [1]
-        }
-    },
-    {
-        objeto: 'avión',
-        imagenes: [images.pr13_t3_1],
-        asociaciones: [
-            images.pr13_t3_2,
-            images.pr13_t3_3,
-            images.pr13_t3_4,
-            images.pr13_t3_5
-        ],
-        correcta: 0,
-        errores: {
-            general: [3],
-            parcial: [2],
-            otros: [1]
-        }
-    },
-    {
-        objeto: 'libro',
-        imagenes: [images.pr13_t4_1],
-        asociaciones: [
-            images.pr13_t4_2,
-            images.pr13_t4_3,
-            images.pr13_t4_4,
-            images.pr13_t4_5
-        ],
-        correcta: 0,
-        errores: {
-            general: [2],
-            parcial: [1],
-            otros: [3]
-        }
-    },
-    {
-        objeto: 'flor',
-        imagenes: [images.pr13_t5_1],
-        asociaciones: [
-            images.pr13_t5_2,
-            images.pr13_t5_3,
-            images.pr13_t5_4,
-            images.pr13_t5_5
-        ],
-        correcta: 0,
-        errores: {
-            general: [3],
-            parcial: [1],
-            otros: [2]
-        }
-    },
-    {
-        objeto: 'guitarra',
-        imagenes: [images.pr13_t6_1],
-        asociaciones: [
-            images.pr13_t6_2,
-            images.pr13_t6_3,
-            images.pr13_t6_4,
-            images.pr13_t6_5
-        ],
-        correcta: 0,
-        errores: {
-            general: [1],
-            parcial: [2],
-            otros: [3]
-        }
-    },
-    {
-        objeto: 'zapato',
-        imagenes: [images.pr13_t7_1],
-        asociaciones: [
-            images.pr13_t7_2,
-            images.pr13_t7_3,
-            images.pr13_t7_4,
-            images.pr13_t7_5
-        ],
-        correcta: 0,
-        errores: {
-            general: [3],
-            parcial: [1],
-            otros: [2]
-        }
-    },
-    {
-        objeto: 'manzana',
-        imagenes: [images.pr13_t8_1],
-        asociaciones: [
-            images.pr13_t8_2,
-            images.pr13_t8_3,
-            images.pr13_t8_4,
-            images.pr13_t8_5
-        ],
-        correcta: 0,
-        errores: {
-            general: [2],
-            parcial: [1],
-            otros: [3]
-        }
-    },
-    {
-        objeto: 'bicicleta',
-        imagenes: [images.pr13_t9_1],
-        asociaciones: [
-            images.pr13_t9_2,
-            images.pr13_t9_3,
-            images.pr13_t9_4,
-            images.pr13_t9_5
-        ],
-        correcta: 0,
-        errores: {
-            general: [1],
-            parcial: [3],
-            otros: [2]
-        }
-    },
-    {
-        objeto: 'pelota',
-        imagenes: [images.pr13_t10_1],
-        asociaciones: [
-            images.pr13_t10_2,
-            images.pr13_t10_3,
-            images.pr13_t10_4,
-            images.pr13_t10_5
-        ],
-        correcta: 0,
-        errores: {
-            general: [2],
-            parcial: [3],
-            otros: [1]
-        }
-    },
-    {
-        objeto: 'árbol',
-        imagenes: [images.pr13_t11_1],
-        asociaciones: [
-            images.pr13_t11_2,
-            images.pr13_t11_3,
-            images.pr13_t11_4,
-            images.pr13_t11_5
-        ],
-        correcta: 0,
-        errores: {
-            general: [1],
-            parcial: [3],
-            otros: [2]
-        }
-    }
-];
-
 const Test_13 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);
     const [entrenamiento, setEntrenamiento] = useState(true);
@@ -254,6 +80,25 @@ const Test_13 = ({ navigation, route }) => {
     const [excesoTiempoAsoc, setExcesoTiempoAsoc] = useState(0);
     const [inicioEnsayo, setInicioEnsayo] = useState(null);
     const [respuestaSecuencia, setRespuestaSecuencia] = useState([]);
+
+    /******************** CARGA DE TRADUCCIONES ********************/
+
+    const [translations, setTranslations] = useState({});
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        const loadLanguage = async () => {
+            const savedLanguage = await AsyncStorage.getItem('language');
+            const lang = savedLanguage || 'es';
+            setTranslations(getTranslation(lang));
+        };
+
+        if (isFocused) {
+            loadLanguage();
+        }
+    }, [isFocused]);
+
+    /***************** FIN DE CARGA DE TRADUCCIONES ****************/
 
     /******************** MENÚ DE EVALUACIÓN ********************/
     const handleToggleVoice = () => {
@@ -273,6 +118,185 @@ const Test_13 = ({ navigation, route }) => {
     };
 
     /***************** FIN MENÚ DE EVALUACIÓN *****************/
+
+    const secuencias = [
+        {
+            objeto: 'pipeta',
+            imagenes: [images.pr13_t1_1],
+            asociaciones: [
+                images.pr13_t1_2,
+                images.pr13_t1_3,
+                images.pr13_t1_4,
+                images.pr13_t1_5
+            ],
+            correcta: 0,
+            errores: {
+                general: [1],
+                parcial: [2],
+                otros: [3]
+            }
+        },
+        {
+            objeto: 'teléfono',
+            imagenes: [images.pr13_t2_1],
+            asociaciones: [
+                images.pr13_t2_2,
+                images.pr13_t2_3,
+                images.pr13_t2_4,
+                images.pr13_t2_5
+            ],
+            correcta: 0,
+            errores: {
+                general: [2],
+                parcial: [3],
+                otros: [1]
+            }
+        },
+        {
+            objeto: 'avión',
+            imagenes: [images.pr13_t3_1],
+            asociaciones: [
+                images.pr13_t3_2,
+                images.pr13_t3_3,
+                images.pr13_t3_4,
+                images.pr13_t3_5
+            ],
+            correcta: 0,
+            errores: {
+                general: [3],
+                parcial: [2],
+                otros: [1]
+            }
+        },
+        {
+            objeto: 'libro',
+            imagenes: [images.pr13_t4_1],
+            asociaciones: [
+                images.pr13_t4_2,
+                images.pr13_t4_3,
+                images.pr13_t4_4,
+                images.pr13_t4_5
+            ],
+            correcta: 0,
+            errores: {
+                general: [2],
+                parcial: [1],
+                otros: [3]
+            }
+        },
+        {
+            objeto: 'flor',
+            imagenes: [images.pr13_t5_1],
+            asociaciones: [
+                images.pr13_t5_2,
+                images.pr13_t5_3,
+                images.pr13_t5_4,
+                images.pr13_t5_5
+            ],
+            correcta: 0,
+            errores: {
+                general: [3],
+                parcial: [1],
+                otros: [2]
+            }
+        },
+        {
+            objeto: 'guitarra',
+            imagenes: [images.pr13_t6_1],
+            asociaciones: [
+                images.pr13_t6_2,
+                images.pr13_t6_3,
+                images.pr13_t6_4,
+                images.pr13_t6_5
+            ],
+            correcta: 0,
+            errores: {
+                general: [1],
+                parcial: [2],
+                otros: [3]
+            }
+        },
+        {
+            objeto: 'zapato',
+            imagenes: [images.pr13_t7_1],
+            asociaciones: [
+                images.pr13_t7_2,
+                images.pr13_t7_3,
+                images.pr13_t7_4,
+                images.pr13_t7_5
+            ],
+            correcta: 0,
+            errores: {
+                general: [3],
+                parcial: [1],
+                otros: [2]
+            }
+        },
+        {
+            objeto: 'manzana',
+            imagenes: [images.pr13_t8_1],
+            asociaciones: [
+                images.pr13_t8_2,
+                images.pr13_t8_3,
+                images.pr13_t8_4,
+                images.pr13_t8_5
+            ],
+            correcta: 0,
+            errores: {
+                general: [2],
+                parcial: [1],
+                otros: [3]
+            }
+        },
+        {
+            objeto: 'bicicleta',
+            imagenes: [images.pr13_t9_1],
+            asociaciones: [
+                images.pr13_t9_2,
+                images.pr13_t9_3,
+                images.pr13_t9_4,
+                images.pr13_t9_5
+            ],
+            correcta: 0,
+            errores: {
+                general: [1],
+                parcial: [3],
+                otros: [2]
+            }
+        },
+        {
+            objeto: 'pelota',
+            imagenes: [images.pr13_t10_1],
+            asociaciones: [
+                images.pr13_t10_2,
+                images.pr13_t10_3,
+                images.pr13_t10_4,
+                images.pr13_t10_5
+            ],
+            correcta: 0,
+            errores: {
+                general: [2],
+                parcial: [3],
+                otros: [1]
+            }
+        },
+        {
+            objeto: 'árbol',
+            imagenes: [images.pr13_t11_1],
+            asociaciones: [
+                images.pr13_t11_2,
+                images.pr13_t11_3,
+                images.pr13_t11_4,
+                images.pr13_t11_5
+            ],
+            correcta: 0,
+            errores: {
+                general: [1],
+                parcial: [3],
+                otros: [2]
+            }
+        }
+    ];
 
     useEffect(() => {
         if (fase === 1) {
@@ -375,8 +399,8 @@ const Test_13 = ({ navigation, route }) => {
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={iniciarPrueba}
-                    title={entrenamiento ? "Entrenamiento" : "Inicio de Prueba"}
-                    instructions={entrenamiento ? "Mire el objeto en la pantalla y nómbrelo. Pulse el botón 'RC' si el objeto ha sido identificado correctamente. Para realizar el ensayo de entrenamiento pulse el botón 'comenzar'." : "Preste atención, la prueba va a empezar, responda lo más rápido posible. Para realizarla pulse el botón 'comenzar'."}
+                    title = "Test 13"
+                    instructions={entrenamiento ? translations.pr13ItemStart : translations.ItemStartPrueba}
                 />
                 {!modalVisible && (
                     <View style={styles.container}>
@@ -402,7 +426,7 @@ const Test_13 = ({ navigation, route }) => {
                             <View style={styles.contenedorImagenes}>
                                 {secuencias[ensayoActual].asociaciones.map((opcion, index) => (
                                     <TouchableOpacity key={index} onPress={() => manejarSeleccion(index)}>
-                                        <Image source={opcion} style={styles.imagen} resizeMode="contain"/>
+                                        <Image source={opcion} style={styles.imagen} resizeMode="contain" />
                                     </TouchableOpacity>
                                 ))}
                             </View>

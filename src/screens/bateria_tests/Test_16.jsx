@@ -1,12 +1,16 @@
-// FIXME: EL ULTIMO ENSAYO NO SE REGISTRA EN LOS RESULTADOS
+// FIXME: NO SE DEBE PREGUNTAR AQUI SI LA PERSPECTIVA ES CORRECTA, SINO EN EL ULTIMO TEST
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
 import correct from '../../../assets/images/correct.png';
 import incorrect from '../../../assets/images/incorrect.png';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../../locales";
+import { useIsFocused } from '@react-navigation/native';
 
 // Importar la imagen abstracta
 const images = {
@@ -20,6 +24,25 @@ const Test_16 = ({ navigation, route }) => {
     const [aceptaPrueba, setAceptaPrueba] = useState(false);
     const [dibujoCorrecto, setDibujoCorrecto] = useState(null);
     const [perspectivaCorrecta, setPerspectivaCorrecta] = useState(null);
+
+    /******************** CARGA DE TRADUCCIONES ********************/
+
+    const [translations, setTranslations] = useState({});
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        const loadLanguage = async () => {
+            const savedLanguage = await AsyncStorage.getItem('language');
+            const lang = savedLanguage || 'es';
+            setTranslations(getTranslation(lang));
+        };
+
+        if (isFocused) {
+            loadLanguage();
+        }
+    }, [isFocused]);
+
+    /***************** FIN DE CARGA DE TRADUCCIONES ****************/
 
     /******************** MENÚ DE EVALUACIÓN ********************/
     const handleToggleVoice = () => {
@@ -93,32 +116,32 @@ const Test_16 = ({ navigation, route }) => {
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={iniciarPrueba}
-                    title="Instrucciones"
-                    instructions="Aquí tiene una hoja de papel, reproduzca esta figura lo mejor posible. Tiene todo el tiempo que necesite. Puede mirar el modelo tantas veces como desee." />
+                    title="Test 16"
+                    instructions={translations.pr16ItemStart} />
                 {!modalVisible && (
                     <>
                         {fase === 1 && (
                             <View style={styles.container}>
-                                <Text style={styles.pregunta}>¿Tiene alguna incapacidad para realizar la prueba?</Text>
+                                <Text style={styles.pregunta}>{translations.pr16Incapacidad}</Text>
                                 <View style={styles.botonesContainer}>
                                     <TouchableOpacity style={styles.botonNo} onPress={() => manejarIncapacidad(true)}>
-                                        <Text style={styles.textoBoton}>Sí</Text>
+                                        <Text style={styles.textoBoton}>{translations.Si}</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.botonSi} onPress={() => manejarIncapacidad(false)}>
-                                        <Text style={styles.textoBoton}>No</Text>
+                                        <Text style={styles.textoBoton}>{translations.No}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
                         )}
                         {fase === 2 && (
                             <View style={styles.container}>
-                                <Text style={styles.pregunta}>¿Desea realizar la prueba?</Text>
+                                <Text style={styles.pregunta}>{translations.pr16Rechazo}</Text>
                                 <View style={styles.botonesContainer}>
                                     <TouchableOpacity style={styles.botonSi} onPress={() => manejarAceptacion(true)}>
-                                        <Text style={styles.textoBoton}>Sí</Text>
+                                        <Text style={styles.textoBoton}>{translations.Si}</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.botonNo} onPress={() => manejarAceptacion(false)}>
-                                        <Text style={styles.textoBoton}>No</Text>
+                                        <Text style={styles.textoBoton}>{translations.No}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
