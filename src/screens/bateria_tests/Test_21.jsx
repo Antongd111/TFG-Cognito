@@ -1,43 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
+import InstruccionesModal from '../../components/instrucciones';
 
-const historia = [
-    "Mi vecina",
-    "tenía",
-    "un perro",
-    "que no quería",
-    "estar encerrado en casa.",
-    "Él pasaba",
-    "el tiempo",
-    "vagando",
-    "por la calle.",
-    "Una furgoneta",
-    "lo atropelló",
-    "y le rompió",
-    "una pata.",
-    "Un peatón",
-    "lo recogió",
-    "y lo llevó",
-    "a un veterinario",
-    "que lo curó.",
-    "Desde",
-    "su recuperación,",
-    "nunca",
-    "quiere",
-    "salir",
-    "de casa",
-    "y lloriquea",
-    "cuando escucha",
-    "un coche pasar."
-];
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../../locales";
+import { useIsFocused } from '@react-navigation/native';
+import { tr } from 'date-fns/locale';
 
 const Test_21 = ({ navigation, route }) => {
-    const [selecciones, setSelecciones] = useState(new Array(historia.length).fill(false));
     const [respuestas, setRespuestas] = useState(0);
     const [intrusiones, setIntrusiones] = useState(0);
     const [rechazado, setRechazado] = useState(false);
+    const [modalVisible, setModalVisible] = useState(true);
+
+    /******************** CARGA DE TRADUCCIONES ********************/
+
+    const [translations, setTranslations] = useState({});
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        const loadLanguage = async () => {
+            const savedLanguage = await AsyncStorage.getItem('language');
+            const lang = savedLanguage || 'es';
+            setTranslations(getTranslation(lang));
+        };
+
+        if (isFocused) {
+            loadLanguage();
+        }
+    }, [isFocused]);
+
+    /***************** FIN DE CARGA DE TRADUCCIONES ****************/
 
     /******************** MENÚ DE EVALUACIÓN ********************/
     const handleToggleVoice = () => {
@@ -57,6 +52,42 @@ const Test_21 = ({ navigation, route }) => {
     };
 
     /***************** FIN MENÚ DE EVALUACIÓN *****************/
+
+    const historia = [
+        translations.pr21txt1,
+        translations.pr21txt2,
+        translations.pr21txt3,
+        translations.pr21txt4,
+        translations.pr21txt5,
+        translations.pr21txt6,
+        translations.pr21txt7,
+        translations.pr21txt8,
+        translations.pr21txt9,
+        translations.pr21txt10,
+        translations.pr21txt11,
+        translations.pr21txt12,
+        translations.pr21txt13,
+        translations.pr21txt14,
+        translations.pr21txt15,
+        translations.pr21txt16,
+        translations.pr21txt17,
+        translations.pr21txt18,
+        translations.pr21txt19,
+        translations.pr21txt20,
+        translations.pr21txt21,
+        translations.pr21txt22,
+        translations.pr21txt23,
+        translations.pr21txt24,
+        translations.pr21txt25,
+        translations.pr21txt26,
+        translations.pr21txt27,
+    ];
+    
+    const [selecciones, setSelecciones] = useState(new Array(historia.length).fill(false));
+
+    const iniciarPrueba = () => {
+        setModalVisible(false);
+    };
 
     const toggleSeleccion = (index) => {
         const nuevasSelecciones = [...selecciones];
@@ -96,41 +127,50 @@ const Test_21 = ({ navigation, route }) => {
                     onNavigateNext={handleNavigateNext}
                     onNavigatePrevious={handleNavigatePrevious}
                 />
-                <View style={styles.historiaContainer}>
-                    {historia.map((frase, index) => (
-                        <TouchableOpacity
-                            key={index}
-                            onPress={() => toggleSeleccion(index)}
-                            style={[
-                                styles.fraseContainer,
-                                selecciones[index] ? styles.fraseSeleccionada : styles.fraseNoSeleccionada
-                            ]}
-                        >
-                            <Text style={styles.fraseTexto}>{`${(index + 1).toString().padStart(2, '0')}. ${frase}`}</Text>
+                <InstruccionesModal
+                    visible={modalVisible}
+                    onClose={iniciarPrueba}
+                    title="Test 21"
+                    instructions={translations.pr21ItemStart} />
+                {!modalVisible && (
+                    <>
+                        <View style={styles.historiaContainer}>
+                            {historia.map((frase, index) => (
+                                <TouchableOpacity
+                                    key={index}
+                                    onPress={() => toggleSeleccion(index)}
+                                    style={[
+                                        styles.fraseContainer,
+                                        selecciones[index] ? styles.fraseSeleccionada : styles.fraseNoSeleccionada
+                                    ]}
+                                >
+                                    <Text style={styles.fraseTexto}>{`${(index + 1).toString().padStart(2, '0')}. ${frase}`}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                        <View style={styles.botonesContainer}>
+                            <TouchableOpacity style={styles.botonIntrusion} onPress={registrarIntrusion}>
+                                <Text style={styles.textoBoton}>{translations.Intrusion}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.botonRechazar} onPress={rechazarPrueba}>
+                                <Text style={styles.textoBoton}>{translations.Rechazar}</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.resultadosContainer}>
+                            <View style={styles.tablaFila}>
+                                <Text style={styles.tablaCeldaHeader}>{translations.Respuestas}</Text>
+                                <Text style={styles.tablaCelda}>{respuestas}</Text>
+                            </View>
+                            <View style={styles.tablaFila}>
+                                <Text style={styles.tablaCeldaHeader}>{translations.Intrusiones}</Text>
+                                <Text style={styles.tablaCelda}>{intrusiones}</Text>
+                            </View>
+                        </View>
+                        <TouchableOpacity style={styles.botonValidar} onPress={validarRespuestas}>
+                            <Text style={styles.textoBotonValidar}>{translations.Validar}</Text>
                         </TouchableOpacity>
-                    ))}
-                </View>
-                <View style={styles.botonesContainer}>
-                    <TouchableOpacity style={styles.botonIntrusion} onPress={registrarIntrusion}>
-                        <Text style={styles.textoBoton}>INTRUSIÓN</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.botonRechazar} onPress={rechazarPrueba}>
-                        <Text style={styles.textoBoton}>RECHAZAR</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.resultadosContainer}>
-                    <View style={styles.tablaFila}>
-                        <Text style={styles.tablaCeldaHeader}>Respuestas</Text>
-                        <Text style={styles.tablaCelda}>{respuestas}</Text>
-                    </View>
-                    <View style={styles.tablaFila}>
-                        <Text style={styles.tablaCeldaHeader}>Intrusiones</Text>
-                        <Text style={styles.tablaCelda}>{intrusiones}</Text>
-                    </View>
-                </View>
-                <TouchableOpacity style={styles.botonValidar} onPress={validarRespuestas}>
-                    <Text style={styles.textoBotonValidar}>Validar</Text>
-                </TouchableOpacity>
+                    </>
+                )}
             </View>
         </View>
     );

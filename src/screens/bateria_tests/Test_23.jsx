@@ -3,50 +3,16 @@ import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../../locales";
+import { useIsFocused } from '@react-navigation/native';
 
-const TOTAL_ENSAYOS = 35; // Total de ensayos incluyendo los de práctica
-
-const opcionesEnsayo = [
-    { palabra: "inteligente", opciones: ["asesinado", "astuto", "lira", "vulgar", "motivado", "audaz"], correcta: 1 },
-    { palabra: "gremio", opciones: ["trampa", "líder", "empresa", "construcción", "explorador", "medalla"], correcta: 2 },
-    { palabra: "ramillete", opciones: ["actividad", "ramo", "bolsillo", "aroma", "color", "palabra"], correcta: 1 },
-    { palabra: "taciturno", opciones: ["restringido", "estúpido", "sobrio", "habitual", "esponjoso", "melancólico"], correcta: 5 },
-    { palabra: "ambiguo", opciones: ["mediocre", "analógico", "equívoco", "torturado", "estrecho", "aspirante"], correcta: 2 },
-    { palabra: "andanza", opciones: ["aventura", "adversidad", "creación", "evasión", "pala", "fuga"], correcta: 0 },
-    { palabra: "anteponer", opciones: ["supervisar", "cambiar", "deslizar", "brillar", "llevar", "prevalecer"], correcta: 5 },
-    { palabra: "obsoleto", opciones: ["arcaico", "privado", "frustrado", "tangible", "pobre", "visible"], correcta: 0 },
-    { palabra: "alcaide", opciones: ["conductor", "sargento", "arquitecto", "árbitro", "guardián", "enfermero"], correcta: 4 },
-    { palabra: "presunto", opciones: ["descalificado", "violento", "planeado", "supuesto", "indeciso", "premeditado"], correcta: 3 },
-    { palabra: "manivela", opciones: ["caja", "zapato", "anillo", "flauta", "linterna", "palanca"], correcta: 5 },
-    { palabra: "audaz", opciones: ["inteligente", "repentino", "intenso", "fácil", "ingenioso", "valiente"], correcta: 5 },
-    { palabra: "pelea", opciones: ["disputa", "igualar", "multitud", "contenedor", "medir", "mina"], correcta: 0 },
-    { palabra: "pueril", opciones: ["repugnante", "podrido", "siniestro", "inmaduro", "agotado", "estéril"], correcta: 3 },
-    { palabra: "insípido", opciones: ["graso", "coherente", "soso", "ligero", "miedoso", "inofensivo"], correcta: 2 },
-    { palabra: "adherir", opciones: ["exaltar", "reñir", "aconsejar", "pegar", "censurar", "idolatrar"], correcta: 3 },
-    { palabra: "ubicuo", opciones: ["indiferente", "ulcerado", "virtuoso", "abandonado", "omnipresente", "ambivalente"], correcta: 5 },
-    { palabra: "aparato", opciones: ["cortina", "lámpara", "cerradura", "tazón", "compañero", "dispositivo"], correcta: 5 },
-    { palabra: "volante", opciones: ["brújula", "timón", "ventilador", "borrador", "mama", "bomba"], correcta: 1 },
-    { palabra: "decreto", opciones: ["división", "reparto", "señal", "expulsión", "dictamen", "etapa"], correcta: 4 },
-    { palabra: "colador", opciones: ["filtro", "purificar", "lavabo", "abusar", "apuesta", "embudo"], correcta: 0 },
-    { palabra: "bochornoso", opciones: ["discordante", "aceptable", "depravado", "vergonzoso", "digno", "respetado"], correcta: 3 },
-    { palabra: "cadena", opciones: ["teoría", "grillete", "esclavo", "creencia", "engranaje", "cebolleta"], correcta: 1 },
-    { palabra: "ataque", opciones: ["recibir", "cántico", "apoyar", "apaciguar", "agresión", "planear"], correcta: 4 },
-    { palabra: "muesca", opciones: ["mosaico", "cornisa", "marca", "cemento", "ataúd", "aglomerado"], correcta: 2 },
-    { palabra: "obsequioso", opciones: ["pretencioso", "miserable", "atento", "servicial", "decorativo", "pervertido"], correcta: 3 },
-    { palabra: "esotérico", opciones: ["banal", "abovedado", "misterioso", "sabio", "profundo", "antiguo"], correcta: 2 },
-    { palabra: "espasmo", opciones: ["repetición", "derrota", "contradicción", "parálisis", "convulsión", "infección"], correcta: 4 },
-    { palabra: "indemnización", opciones: ["compensación", "obligación", "condimento", "responsabilidad", "impuesto", "deber"], correcta: 0 },
-    { palabra: "arcilla", opciones: ["aceite", "instrumento", "pájaro", "deporte", "marsupial", "roca"], correcta: 5 },
-    { palabra: "revocar", opciones: ["abolir", "oponer", "revelar", "difamar", "agravar", "elicitar"], correcta: 0 },
-    { palabra: "deambular", opciones: ["reparar", "enfurecer", "lamentar", "pasear", "protestar", "titubear"], correcta: 3 },
-    { palabra: "apócrifo", opciones: ["autorizado", "complicado", "catastrófico", "revelador", "falso", "arrepentido"], correcta: 4 },
-    { palabra: "adulador", opciones: ["pez", "zalamero", "deportista", "gigante", "escarabajo", "maníaco"], correcta: 1 },
-    { palabra: "epígono", opciones: ["clímax", "abdomen", "sucesor", "sátira", "sobre", "rectángulo"], correcta: 2 },
-];
+const TOTAL_ENSAYOS = 35;
 
 const Test_23 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);
     const [ensayoActual, setEnsayoActual] = useState(0);
+    const [opcionesEnsayo, setOpcionesEnsayo] = useState([]);
     const [resultados, setResultados] = useState([]);
     const [correctas, setCorrectas] = useState(0);
     const [errores, setErrores] = useState(0);
@@ -54,6 +20,43 @@ const Test_23 = ({ navigation, route }) => {
     const [tiempoRestante, setTiempoRestante] = useState(10);
     const [tiempoInicial, setTiempoInicial] = useState(null);
     const [modalPruebaVisible, setModalPruebaVisible] = useState(false);
+
+    /******************** CARGA DE TRADUCCIONES ********************/
+
+    const [translations, setTranslations] = useState({});
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        const loadLanguage = async () => {
+            const savedLanguage = await AsyncStorage.getItem('language');
+            const lang = savedLanguage || 'es';
+            setTranslations(getTranslation(lang));
+        };
+
+        if (isFocused) {
+            loadLanguage();
+        }
+    }, [isFocused]);
+
+    /***************** FIN DE CARGA DE TRADUCCIONES ****************/
+
+    useEffect(() => {
+        if (translations && Object.keys(translations).length > 0) {
+            // Construye la estructura de opcionesEnsayo usando los datos de translations
+            const opcionesEnsayoGeneradas = [];
+            for (let i = 1; i <= TOTAL_ENSAYOS; i++) {
+                const palabras = translations[`pr23txt${i}`]?.split(',').filter(Boolean) || [];
+                if (palabras.length > 0) {
+                    opcionesEnsayoGeneradas.push({
+                        palabra: palabras[0],
+                        opciones: palabras.slice(1),
+                        correcta: 0, // Ajusta esto según la lógica de cuál es la opción correcta.
+                    });
+                }
+            }
+            setOpcionesEnsayo(opcionesEnsayoGeneradas);
+        }
+    }, [translations]);
 
     useEffect(() => {
         if (!modalVisible && tiempoRestante > 0) {
@@ -161,21 +164,21 @@ const Test_23 = ({ navigation, route }) => {
                     visible={modalVisible}
                     onClose={iniciarTarea}
                     title="Test 23"
-                    instructions="Usted va a ver 6 palabras en la parte derecha de la pantalla, quiero que toque la palabra que tenga el mismo significado que la situada a la izquierda. Para comenzar los ensayos de entrenamiento pulse el botón 'empezar'."
+                    instructions={translations.pr23ItemStart}
                 />
                 <InstruccionesModal
                     visible={modalPruebaVisible}
                     onClose={iniciarPruebaReal}
-                    title="Inicio de la Prueba"
-                    instructions="La prueba real va a comenzar ahora. Por favor, toque la palabra que tenga el mismo significado que la situada a la izquierda."
+                    title="Test 23"
+                    instructions={translations.ItemStartPrueba}
                 />
                 {!modalVisible && !modalPruebaVisible && (
                     <View style={styles.container}>
                         <View style={styles.palabraContainer}>
-                            <Text style={styles.palabraTexto}>{opcionesEnsayo[ensayoActual].palabra}</Text>
+                            <Text style={styles.palabraTexto}>{opcionesEnsayo[ensayoActual]?.palabra}</Text>
                         </View>
                         <View style={styles.opcionesContainer}>
-                            {opcionesEnsayo[ensayoActual].opciones.map((opcion, index) => (
+                            {opcionesEnsayo[ensayoActual]?.opciones.map((opcion, index) => (
                                 <TouchableOpacity
                                     key={index}
                                     style={styles.opcionBoton}
