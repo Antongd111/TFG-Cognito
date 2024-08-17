@@ -88,6 +88,18 @@ export const obtenerPacientes = async () => {
   }
 };
 
+export const obtenerSesionesPaciente = async (id_paciente) => {
+  const db = await dbPromise;
+  try {
+    const allRows = await db.getAllAsync('SELECT * FROM SesionTest WHERE id_paciente = ?', [id_paciente]);
+    console.log("Sesiones de paciente obtenidas:", allRows);
+    return allRows;  // Devuelve los resultados directamente.
+  } catch (error) {
+    console.error("Error al obtener sesiones de paciente:", error);
+    throw error;  // Propaga el error para ser manejado por el llamador.
+  }
+}
+
 export const obtenerPaciente = async (id) => {
   const db = await dbPromise;
   try {
@@ -126,7 +138,7 @@ export const crearSesionTest = async (id_paciente, fecha_sesion) => {
     const result = await statement.executeAsync({ $id_paciente: id_paciente, $fecha_sesion: fecha_sesion });
     await statement.finalizeAsync();
     console.log("Sesión de test creada con ID:", result.lastInsertRowId);
-    return result.lastInsertRowId;  // Devuelve el ID de la sesión para usar en tests subsiguientes.
+    return result.lastInsertRowId;
   } catch (error) {
     console.error("Error al crear sesión de test:", error);
     throw error;

@@ -4,7 +4,7 @@ import { Text, View, TouchableOpacity, TextInput, ScrollView } from "react-nativ
 import { useState, useLayoutEffect, useEffect } from 'react';
 import FichaPacientesStyles from '../styles/FichaPacientesStyles';
 import styles from '../styles/ComunStyles';
-import { obtenerPaciente } from '../api/PacienteApi';
+import { obtenerPaciente, obtenerSesionesPaciente } from '../api/PacienteApi';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../locales";
@@ -16,6 +16,7 @@ const FichaPaciente = ({ route, navigation }) => {
   const { idPaciente } = route.params;
 
   const [paciente, setPaciente] = useState([]);
+  const [tests, setTests] = useState([]);
 
   /** CARGA DE TRADUCCIONES **************************************/
 
@@ -46,7 +47,18 @@ const FichaPaciente = ({ route, navigation }) => {
       }
     };
 
+    const cargarTests = async () => {
+      try {
+        const testsCargados = await obtenerSesionesPaciente(idPaciente);
+        setTests(testsCargados);
+        console.log("Tests cargados:", testsCargados);
+      } catch (error) {
+        console.error("Error al cargar los tests:", error);
+      }
+    };
+
     cargarDatos();
+    cargarTests();
   }, []);
 
   return (
@@ -114,7 +126,17 @@ const FichaPaciente = ({ route, navigation }) => {
         <View style={FichaPacientesStyles.contenedor_tests}>
           <Text style={FichaPacientesStyles.tituloTests}>{translations.TestRealizados}</Text>
           <ScrollView style={FichaPacientesStyles.lista_tests}>
-
+            {tests.map((test, index) => (
+              <View key={index} style={FichaPacientesStyles.test}>
+                <TouchableOpacity>
+                  {/* <TouchableOpacity onPress={() => navigation.navigate('Test_' + test.id_test, { idSesion: test.id })}> */}
+                  <Text style={FichaPacientesStyles.testFecha}>
+                    <Text style={{ fontWeight: 'bold' }}>{index + 1}</Text> - {test.fecha_sesion}
+                  </Text>
+                </TouchableOpacity>
+                <View style={FichaPacientesStyles.separador} />
+              </View>
+            ))}
           </ScrollView>
           <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('Pacientes')}>
             <Text style={styles.textoBoton}>  {translations.Volver}  </Text>

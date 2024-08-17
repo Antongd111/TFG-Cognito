@@ -1,5 +1,6 @@
 import { agregarPaciente as BD_AgregarPaciente, obtenerPacientes as BD_ObtenerPacientes, 
-  obtenerPaciente as BD_ObtenerPaciente, actualizarPaciente as BD_ActualizarPaciente} from '../database/db';
+  obtenerPaciente as BD_ObtenerPaciente, actualizarPaciente as BD_ActualizarPaciente,
+  obtenerSesionesPaciente as BD_ObtenerSesionesPaciente} from '../database/db';
 
 export const agregarPaciente = async (identificacion, nombre, apellidos, fecha_nacimiento, sexo, observaciones) => {
   try {
@@ -36,3 +37,12 @@ export const actualizarPaciente = async (id, identificacion, nombre, apellidos, 
     throw error;
   }
 };
+
+export const obtenerSesionesPaciente = async (id_paciente) => {
+  try {
+    const sesiones = await BD_ObtenerSesionesPaciente(id_paciente);
+    return sesiones;
+  } catch (error) {
+    throw error;
+  }
+}

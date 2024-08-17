@@ -93,4 +93,23 @@ export default FichaPacientesStyle = StyleSheet.create({
         margin: 5,
         marginTop: 20,        
     },
+    test: {
+        backgroundColor: 'white',
+        width: '100%',
+        height: 20,
+        borderRadius: 10,
+        margin: 5,
+        marginLeft: 15,
+        marginTop: 20,
+    },
+    testFecha: {
+        fontSize: 15,
+        marginTop: 5,
+    },
+    separador: {
+        width: '90%',
+        height: 2,
+        backgroundColor: 'black',
+        marginTop: 15,
+    },
 });
