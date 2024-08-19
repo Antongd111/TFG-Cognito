@@ -1,7 +1,5 @@
-//FIXME: EL SONIDO SE SIGUE ESCUCHANDO AL CAMBIAR DE TEST
-
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, Alert } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
@@ -26,29 +24,22 @@ const margenLateral = 100;
 const margenVertical = 50;
 
 const Test_5 = ({ navigation, route }) => {
-
     const [modalVisible, setModalVisible] = useState(true);
+    const [modalEnsayoReal, setModalEnsayoReal] = useState(false);
     const [figuras, setFiguras] = useState([]);
     const [mostrarFiguraCorrecta, setMostrarFiguraCorrecta] = useState(true);
     const [figuraCorrecta, setFiguraCorrecta] = useState(null);
-
     const [faseEntrenamiento, setFaseEntrenamiento] = useState(true);
-
-    const imagenesFiguras = {
-        figura_1: figura_1,
-        figura_2: figura_2,
-        figura_3: figura_3,
-        figura_4: figura_4,
-        figura_5: figura_5,
-        figura_6: figura_6,
-        figura_7: figura_7,
-        figura_8: figura_8
-    };
-
-    /** CARGA DE TRADUCCIONES **************************************/
-
+    const [ensayoActual, setEnsayoActual] = useState(0);
+    const [figurasSeleccionadas, setFigurasSeleccionadas] = useState([]);
+    const [tiempoRestante, setTiempoRestante] = useState(30);
+    const [correctos, setCorrectos] = useState(0);
+    const [incorrectos, setIncorrectos] = useState(0);
+    const [erroresTiempo, setErroresTiempo] = useState(0);
+    const [resultados, setResultados] = useState([]);
     const [translations, setTranslations] = useState({});
     const isFocused = useIsFocused();
+    const imagenesFiguras = { figura_1, figura_2, figura_3, figura_4, figura_5, figura_6, figura_7, figura_8 };
 
     useEffect(() => {
         const loadLanguage = async () => {
@@ -62,30 +53,23 @@ const Test_5 = ({ navigation, route }) => {
         }
     }, [isFocused]);
 
-    /** FIN CARGA DE TRADUCCIONES **************************************/
-
-    /******************** MENÚ DE EVALUACIÓN ********************/
-    const handleToggleVoice = () => {
-        console.log("Toggle voice feature");
-    };
-
-    const handleNavigateHome = () => {
-        navigation.navigate('Pacientes');
-    };
-
-    const handleNavigateNext = () => {
-        navigation.navigate('Test_6', { idSesion: route.params.idSesion });
-    };
-
-    const handleNavigatePrevious = () => {
-        navigation.navigate('Test_4', { idSesion: route.params.idSesion });
-    };
-
-    /***************** FIN MENÚ DE EVALUACIÓN *****************/
+    useEffect(() => {
+        if (!modalVisible) {
+            iniciarEnsayo();
+        }
+    }, [modalVisible]);
 
     useEffect(() => {
-        generarFiguras();
-    }, []);
+        if (!mostrarFiguraCorrecta && tiempoRestante > 0) {
+            const timer = setInterval(() => {
+                setTiempoRestante(prev => prev - 1);
+            }, 1000);
+
+            return () => clearInterval(timer);
+        } else if (tiempoRestante === 0) {
+            manejarErrorDeTiempo();
+        }
+    }, [tiempoRestante, mostrarFiguraCorrecta]);
 
     const generarPosicionAleatoria = (figurasExistentes) => {
         let newX, newY, overlap;
@@ -94,60 +78,146 @@ const Test_5 = ({ navigation, route }) => {
             newX = Math.floor(Math.random() * (screenWidth - figuraSize - margenLateral * 2)) + margenLateral;
             newY = Math.floor(Math.random() * (screenHeight - figuraSize - margenVertical * 2)) + margenVertical;
 
-            // Verifica que no se solape con otras figuras
-            overlap = figurasExistentes.some(fig => {
-                return Math.abs(newX - fig.x) < figuraSize && Math.abs(newY - fig.y) < figuraSize;
-            });
-            console.log("Overlap: ", overlap);
+            overlap = figurasExistentes.some(fig => Math.abs(newX - fig.x) < figuraSize && Math.abs(newY - fig.y) < figuraSize);
         } while (overlap);
         return { x: newX, y: newY };
     };
 
     const generarFiguras = () => {
-        console.log("Generando figuras");
         const nuevasFiguras = [];
-        // Suponiendo que hay 8 tipos de figuras y solo dos deben ser correctas
         const tipos = ["figura_1", "figura_2", "figura_3", "figura_4", "figura_5", "figura_6", "figura_7", "figura_8"];
         const indiceCorrecto = Math.floor(Math.random() * tipos.length);
 
-        for (let i = 0; i < 20; i++) {
+        // Asegurarse de tener exactamente 2 figuras correctas
+        for (let i = 0; i < 2; i++) {
             const { x, y } = generarPosicionAleatoria(nuevasFiguras);
             nuevasFiguras.push({
-                tipo: i < 2 ? tipos[indiceCorrecto] : tipos[Math.floor(Math.random() * tipos.length)],
+                tipo: tipos[indiceCorrecto],
                 x,
                 y,
-                esCorrecta: i < 2
+                esCorrecta: true,
+                seleccionada: false
             });
         }
 
-        console.log(nuevasFiguras);
+        // Generar figuras incorrectas
+        for (let i = 0; i < 18; i++) {
+            const { x, y } = generarPosicionAleatoria(nuevasFiguras);
+            let tipoIncorrecto;
+            do {
+                tipoIncorrecto = tipos[Math.floor(Math.random() * tipos.length)];
+            } while (tipoIncorrecto === tipos[indiceCorrecto]);
+
+            nuevasFiguras.push({
+                tipo: tipoIncorrecto,
+                x,
+                y,
+                esCorrecta: false,
+                seleccionada: false
+            });
+        }
+
         setFiguras(nuevasFiguras);
         setFiguraCorrecta(imagenesFiguras[tipos[indiceCorrecto]]);
     };
 
-    const handleStartTest = () => {
-        setModalVisible(false);
-        generarFiguras();
+    const iniciarEnsayo = () => {
+        if (ensayoActual < 2) {
+            // Fase de entrenamiento
+            if (ensayoActual === 1) {
+                setModalEnsayoReal(true);
+            } else {
+                generarFiguras();
+                setMostrarFiguraCorrecta(true);
+                setFigurasSeleccionadas([]);
+                setTiempoRestante(30);
+                setTimeout(() => {
+                    setMostrarFiguraCorrecta(false);
+                }, 2000);
+            }
+        } else if (ensayoActual < 12) {
+            // Ensayos reales
+            generarFiguras();
+            setMostrarFiguraCorrecta(true);
+            setFigurasSeleccionadas([]);
+            setTiempoRestante(30);
+            setTimeout(() => {
+                setMostrarFiguraCorrecta(false);
+            }, 2000);
+        } else {
+            finalizarTest();
+        }
+    };
 
-        setTimeout(() => {
-            setMostrarFiguraCorrecta(false);
-        }, 2000); // Oculta la figura correcta después de 2 segundos
+    const manejarSeleccionFigura = (index) => {
+        const figura = figuras[index];
+        if (figura.seleccionada) return;
+
+        const nuevasFiguras = [...figuras];
+        nuevasFiguras[index].seleccionada = true;
+        setFiguras(nuevasFiguras);
+
+        const nuevasSeleccionadas = [...figurasSeleccionadas, figura];
+        setFigurasSeleccionadas(nuevasSeleccionadas);
+
+        if (figura.esCorrecta) {
+            if (nuevasSeleccionadas.filter(fig => fig.esCorrecta).length === 2) {
+                manejarRespuestaCorrecta();
+            }
+        } else {
+            manejarRespuestaIncorrecta();
+        }
+    };
+
+    const manejarRespuestaCorrecta = () => {
+        if (ensayoActual >= 3) setCorrectos(correctos + 1); // Solo contar en ensayos reales
+        siguienteEnsayo();
+    };
+
+    const manejarRespuestaIncorrecta = () => {
+        if (ensayoActual >= 3) setIncorrectos(incorrectos + 1); // Solo contar en ensayos reales
+    };
+
+    const manejarErrorDeTiempo = () => {
+        if (ensayoActual >= 3) setErroresTiempo(erroresTiempo + 1); // Solo contar en ensayos reales
+        siguienteEnsayo();
+    };
+
+    const siguienteEnsayo = () => {
+        setEnsayoActual(ensayoActual + 1);
+        iniciarEnsayo();
+    };
+
+    const finalizarTest = () => {
+        Alert.alert('Resultados', `Correctos: ${correctos}\nIncorrectos: ${incorrectos}\nErrores de tiempo: ${erroresTiempo}`);
+        // Aquí se guardan los resultados en la base de datos
+        navigation.navigate('Test_6', { idSesion: route.params.idSesion });
     };
 
     return (
         <View style={stylesComunes.borde_tests}>
             <View style={stylesComunes.contenedor_test}>
                 <MenuComponent
-                    onToggleVoice={handleToggleVoice}
-                    onNavigateHome={handleNavigateHome}
-                    onNavigateNext={handleNavigateNext}
-                    onNavigatePrevious={handleNavigatePrevious}
+                    onToggleVoice={() => { }}
+                    onNavigateHome={() => navigation.navigate('Pacientes')}
+                    onNavigateNext={() => navigation.navigate('Test_6', { idSesion: route.params.idSesion })}
+                    onNavigatePrevious={() => navigation.navigate('Test_4', { idSesion: route.params.idSesion })}
                 />
                 <InstruccionesModal
                     visible={modalVisible}
-                    onClose={handleStartTest}
+                    onClose={() => setModalVisible(false)}
                     title="Test 5"
                     instructions={translations.pr05ItemStart + "\n \n" + translations.ItemStartBasico}
+                />
+                <InstruccionesModal
+                    visible={modalEnsayoReal}
+                    onClose={() => {
+                        setModalEnsayoReal(false);
+                        setEnsayoActual(3); // Iniciar los ensayos reales
+                        iniciarEnsayo();
+                    }}
+                    title= "Test 5"
+                    instructions = {translations.ItemStartBasico}
                 />
                 {!modalVisible && mostrarFiguraCorrecta && figuraCorrecta && (
                     <View style={styles.figuraCorrecta}>
@@ -160,11 +230,20 @@ const Test_5 = ({ navigation, route }) => {
                 {!modalVisible && !mostrarFiguraCorrecta && (
                     <View>
                         {figuras.map((fig, index) => (
-                            <Image
+                            <TouchableOpacity
                                 key={index}
-                                source={imagenesFiguras[fig.tipo]}
-                                style={{ height: 50, width: 50, position: 'absolute', left: fig.x, top: fig.y }}
-                            />
+                                style={{ position: 'absolute', left: fig.x, top: fig.y }}
+                                onPress={() => manejarSeleccionFigura(index)}
+                            >
+                                <Image
+                                    source={imagenesFiguras[fig.tipo]}
+                                    style={{
+                                        height: figuraSize,
+                                        width: figuraSize,
+                                        tintColor: fig.seleccionada ? (fig.esCorrecta ? 'blue' : 'red') : 'red'
+                                    }}
+                                />
+                            </TouchableOpacity>
                         ))}
                     </View>
                 )}

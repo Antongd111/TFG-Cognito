@@ -1,5 +1,7 @@
 import { guardarResultadosTest_1 as BD_GuardarResultadosTest_1, guardarResultadosTest_3 as BD_GuardarResultadosTest_3, 
-         guardarResultadosTest_4 as BD_GuardarResultadosTest_4, crearSesionTest as BD_CrearSesionTest } from '../database/db';
+         guardarResultadosTest_4 as BD_GuardarResultadosTest_4, guardarResultadosTest_5 as BD_GuardarResultadosTest_5,
+         obtenerResultadosSesion as BD_ObtenerResultadosSesion,
+         crearSesionTest as BD_CrearSesionTest } from '../database/db';
 
 export const guardarResultadosTest_1 = async (id_sesion, numero_ensayos, reaccion, errores_anticipacion, errores_tiempo, errores_retrasos) => {
     try {
@@ -31,6 +33,25 @@ export const guardarResultadosTest_3 = async (id_sesion, numeroAciertos, lectura
 export const guardarResultadosTest_4 = async (id_sesion, numeroAciertos, numeroSobreestimaciones, numeroSubestimaciones) => {
     try {
         const result = await BD_GuardarResultadosTest_4(id_sesion, numeroAciertos, numeroSobreestimaciones, numeroSubestimaciones);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const guardarResultadosTest_5 = async (id_sesion, ensayosCorrectos, numeroErrores, erroresTiempo) => {
+    try {
+        const result = await BD_GuardarResultadosTest_5(id_sesion, ensayosCorrectos, numeroErrores, erroresTiempo);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+
+
+export const obtenerResultadosSesion = async (id_sesion) => {
+    try {
+        const result = await BD_ObtenerResultadosSesion(id_sesion);
         return result;
     } catch (error) {
         throw error;

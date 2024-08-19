@@ -53,6 +53,16 @@ const initDB = async () => {
       numero_subestimaciones INTEGER NOT NULL,
       FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
     );
+
+    CREATE TABLE IF NOT EXISTS Test_5 (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_sesion INTEGER NOT NULL,
+      ensayos_correctos INTEGER NOT NULL,
+      numero_errores INTEGER NOT NULL,
+      errores_tiempo INTEGER NOT NULL,
+      FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
+    );
+
   `);
 
   console.log("Tabla Paciente creada o ya existente");
@@ -202,6 +212,69 @@ export const guardarResultadosTest_4 = async (id_sesion, numeroAciertos, numeroS
     return result.lastInsertRowId;
   } catch (error) {
     console.error("Error al guardar resultados del Test 4:", error);
+    throw error;
+  }
+};
+
+export const guardarResultadosTest_5 = async (id_sesion, ensayosCorrectos, numeroErrores, erroresTiempo) => {
+  const db = await dbPromise;
+  console.log("Guardando resultados del Test 5:", id_sesion, ensayosCorrectos, numeroErrores, erroresTiempo);
+  try {
+    const statement = await db.prepareAsync(
+      'INSERT INTO Test_5 (id_sesion, ensayos_correctos, numero_errores, errores_tiempo) VALUES ($id_sesion, $ensayos_correctos, $numero_errores, $errores_tiempo)'
+    );
+    const result = await statement.executeAsync({ $id_sesion: id_sesion, $ensayos_correctos: ensayosCorrectos, $numero_errores: numeroErrores, $errores_tiempo: erroresTiempo });
+    await statement.finalizeAsync();
+    console.log("Resultados del Test 5 guardados:", result.lastInsertRowId);
+    return result.lastInsertRowId;
+  } catch (error) {
+    console.error("Error al guardar resultados del Test 5:", error);
+    throw error;
+  }
+};
+
+
+
+export const obtenerResultadosSesion = async (idSesion) => {
+  const db = await dbPromise;
+
+  try {
+    // Obtén los resultados del Test 1
+    const resultadosTest1 = await db.getAllAsync(
+      'SELECT * FROM Test_1 WHERE id_sesion = ?',
+      [idSesion]
+    );
+
+    // Obtén los resultados del Test 3
+    const resultadosTest3 = await db.getAllAsync(
+      'SELECT * FROM Test_3 WHERE id_sesion = ?',
+      [idSesion]
+    );
+
+    // Obtén los resultados del Test 4
+    const resultadosTest4 = await db.getAllAsync(
+      'SELECT * FROM Test_4 WHERE id_sesion = ?',
+      [idSesion]
+    );
+
+    // Obtén los resultados del Test 5
+    const resultadosTest5 = await db.getAllAsync(
+      'SELECT * FROM Test_5 WHERE id_sesion = ?',
+      [idSesion]
+    );
+
+    // Organiza todos los resultados en un objeto para retornarlo
+    const resultados = {
+      test_1: resultadosTest1,
+      test_3: resultadosTest3,
+      test_4: resultadosTest4,
+      test_5: resultadosTest5,
+    };
+
+    console.log("Resultados de la sesión obtenidos:", resultados);
+    return resultados;
+  } catch (error) {
+    console.error("Error al obtener resultados de la sesión:", error);
     throw error;
   }
 };
