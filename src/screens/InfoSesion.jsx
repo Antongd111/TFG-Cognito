@@ -1,3 +1,5 @@
+//TODO: TRADUCIR ESTO Y PONER TODOS LOS DATOS
+
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';

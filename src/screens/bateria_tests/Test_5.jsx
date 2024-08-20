@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, Alert } from 'react-native';
+import { View, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
+import { guardarResultadosTest_5 } from '../../api/TestApi';
 
 import figura_1 from '../../../assets/images/Test_5/figura_1.png';
 import figura_2 from '../../../assets/images/Test_5/figura_2.png';
@@ -29,14 +30,12 @@ const Test_5 = ({ navigation, route }) => {
     const [figuras, setFiguras] = useState([]);
     const [mostrarFiguraCorrecta, setMostrarFiguraCorrecta] = useState(true);
     const [figuraCorrecta, setFiguraCorrecta] = useState(null);
-    const [faseEntrenamiento, setFaseEntrenamiento] = useState(true);
     const [ensayoActual, setEnsayoActual] = useState(0);
     const [figurasSeleccionadas, setFigurasSeleccionadas] = useState([]);
     const [tiempoRestante, setTiempoRestante] = useState(30);
     const [correctos, setCorrectos] = useState(0);
     const [incorrectos, setIncorrectos] = useState(0);
     const [erroresTiempo, setErroresTiempo] = useState(0);
-    const [resultados, setResultados] = useState([]);
     const [translations, setTranslations] = useState({});
     const isFocused = useIsFocused();
     const imagenesFiguras = { figura_1, figura_2, figura_3, figura_4, figura_5, figura_6, figura_7, figura_8 };
@@ -70,6 +69,17 @@ const Test_5 = ({ navigation, route }) => {
             manejarErrorDeTiempo();
         }
     }, [tiempoRestante, mostrarFiguraCorrecta]);
+
+    useEffect(() => {
+        const guardarResultados = async () => {
+            await guardarResultadosTest_5(route.params.idSesion, correctos, incorrectos, erroresTiempo);
+            navigation.navigate('Test_6', { idSesion: route.params.idSesion });
+        };
+
+        if (ensayoActual === 13) {
+            guardarResultados();
+        }
+    }, [ensayoActual]);
 
     const generarPosicionAleatoria = (figurasExistentes) => {
         let newX, newY, overlap;
@@ -144,8 +154,6 @@ const Test_5 = ({ navigation, route }) => {
             setTimeout(() => {
                 setMostrarFiguraCorrecta(false);
             }, 2000);
-        } else {
-            finalizarTest();
         }
     };
 
@@ -170,7 +178,8 @@ const Test_5 = ({ navigation, route }) => {
     };
 
     const manejarRespuestaCorrecta = () => {
-        if (ensayoActual >= 3) setCorrectos(correctos + 1); // Solo contar en ensayos reales
+        let nuevoCorrectos = correctos + 1;
+        if (ensayoActual >= 3) setCorrectos(nuevoCorrectos) // Solo contar en ensayos reales
         siguienteEnsayo();
     };
 
@@ -186,12 +195,6 @@ const Test_5 = ({ navigation, route }) => {
     const siguienteEnsayo = () => {
         setEnsayoActual(ensayoActual + 1);
         iniciarEnsayo();
-    };
-
-    const finalizarTest = () => {
-        Alert.alert('Resultados', `Correctos: ${correctos}\nIncorrectos: ${incorrectos}\nErrores de tiempo: ${erroresTiempo}`);
-        // Aquí se guardan los resultados en la base de datos
-        navigation.navigate('Test_6', { idSesion: route.params.idSesion });
     };
 
     return (
