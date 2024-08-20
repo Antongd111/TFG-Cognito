@@ -1,3 +1,5 @@
+//TODO: REVISAR SI SE GFUARDA EL ULTIMO ENSAYO
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Audio } from 'expo-av';
