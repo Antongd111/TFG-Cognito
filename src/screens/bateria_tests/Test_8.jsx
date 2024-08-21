@@ -5,6 +5,7 @@ import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
 import correct from '../../../assets/images/correct.png';
 import incorrect from '../../../assets/images/incorrect.png';
+import { guardarResultadosTest_8 } from '../../api/TestApi';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../../locales";
@@ -130,10 +131,9 @@ const Test_8 = ({ navigation, route }) => {
         }
     };
 
-    const validarFase2 = () => {
-        Alert.alert('Resultados', `Pronunciaciones correctas: ${pronunciacionesCorrectas}, Pronunciaciones incorrectas: ${pronunciacionesIncorrectas}, Recordadas correctas: ${recordadasCorrectas}, Intrusiones: ${intrusiones}, Perseveraciones: ${perseveraciones}, Rechazos: ${rechazos}`);
-        //await guardarResultadosTest_8(route.params.idSesion, pronunciacionesCorrectas, pronunciacionesIncorrectas, recordadasCorrectas, intrusiones, perseveraciones, rechazos);
-        //navigation.navigate('Test_9', { idSesion: route.params.idSesion });
+    const validarFase2 = async () => { 
+        await guardarResultadosTest_8(route.params.idSesion, pronunciacionesCorrectas, pronunciacionesIncorrectas, recordadasCorrectas, intrusiones, perseveraciones, rechazos);
+        navigation.navigate('Test_9', { idSesion: route.params.idSesion });
     };
 
     return (

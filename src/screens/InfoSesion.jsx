@@ -43,26 +43,8 @@ const InfoSesion = ({ navigation, route }) => {
   }, [idSesion]);
 
   const repetirTest = (testId) => {
-    // Aquí deberías manejar la lógica para navegar a la pantalla del test específico
-    switch (testId) {
-      case 1:
-        navigation.navigate('Test_1', { idPaciente, idSesion });
-        break;
-      case 3:
-        navigation.navigate('Test_3', { idPaciente, idSesion });
-        break;
-      case 4:
-        navigation.navigate('Test_4', { idPaciente, idSesion });
-        break;
-      case 5:
-        navigation.navigate('Test_5', { idPaciente, idSesion });
-        break;
-      default:
-        console.log('Test no encontrado');
-        break;
-    }
+    navigation.navigate(`Test_${testId}`, { idPaciente, idSesion });
   };
-
   const renderItem = ({ item }) => (
     <View style={styles.testItem}>
       <Text style={styles.testName}>{item.nombre}</Text>
@@ -113,6 +95,11 @@ const InfoSesion = ({ navigation, route }) => {
       id: 5,
       nombre: 'Test 5',
       resultado: `Correctos: ${resultados.test_5[0]?.ensayos_correctos || 0}, Errores: ${resultados.test_5[0]?.numero_errores || 0}, Errores de Tiempo: ${resultados.test_5[0]?.errores_tiempo || 0}`,
+    },
+    {
+      id: 8,
+      nombre: 'Test 8',
+      resultado: `Pronunciaciones correctas: ${resultados.test_8[0]?.pronunciaciones_correctas || 0}, Pronunciaciones incorrectas: ${resultados.test_8[0]?.pronunciaciones_incorrectas || 0}, Recordados: ${resultados.test_8[0]?.recordados || 0}, Intrusiones: ${resultados.test_8[0]?.intrusiones || 0}, Perseveraciones: ${resultados.test_8[0]?.perseveraciones || 0}, Rechazos: ${resultados.test_8[0]?.rechazos || 0}`,
     },
   ];
 

@@ -62,6 +62,35 @@ const initDB = async () => {
       errores_tiempo INTEGER NOT NULL,
       FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
     );
+
+    CREATE TABLE IF NOT EXISTS Test_6 (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_sesion INTEGER NOT NULL UNIQUE,
+      numero_aciertos INTEGER NOT NULL,
+      numero_errores INTEGER NOT NULL,
+      FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS Test_7 (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_sesion INTEGER NOT NULL UNIQUE,
+      numero_aciertos INTEGER NOT NULL,
+      numero_errores INTEGER NOT NULL,
+      tiempo_medio INTEGER NOT NULL,
+      FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS Test_8 (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_sesion INTEGER NOT NULL UNIQUE,
+      pronunciaciones_correctas INTEGER NOT NULL,
+      pronunciaciones_incorrectas INTEGER NOT NULL,
+      recordados INTEGER NOT NULL,
+      intrusiones INTEGER NOT NULL,
+      perseveraciones INTEGER NOT NULL,
+      rechazos INTEGER NOT NULL,
+      FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
+      );
   `);
 
   console.log("Tabla Paciente creada o ya existente");
@@ -231,6 +260,40 @@ export const guardarResultadosTest_5 = async (id_sesion, ensayosCorrectos, numer
   }
 };
 
+export const guardarResultadosTest_7 = async (id_sesion, numeroAciertos, numeroErrores, tiempoMedio) => {
+  const db = await dbPromise;
+  console.log("Guardando resultados del Test 7:", id_sesion, numeroAciertos, numeroErrores, tiempoMedio);
+  try {
+    const statement = await db.prepareAsync(
+      'INSERT OR REPLACE INTO Test_7 (id_sesion, numero_aciertos, numero_errores, tiempo_medio) VALUES ($id_sesion, $numero_aciertos, $numero_errores, $tiempo_medio)'
+    );
+    const result = await statement.executeAsync({ $id_sesion: id_sesion, $numero_aciertos: numeroAciertos, $numero_errores: numeroErrores, $tiempo_medio: tiempoMedio });
+    await statement.finalizeAsync();
+    console.log("Resultados del Test 7 guardados:", result.lastInsertRowId);
+    return result.lastInsertRowId;
+  } catch (error) {
+    console.error("Error al guardar resultados del Test 7:", error);
+    throw error;
+  }
+};
+
+export const guardarResultadosTest_8 = async (id_sesion, pronunciacionesCorrectas, pronunciacionesIncorrectas, recordados, intrusiones, perseveraciones, rechazos) => {
+  const db = await dbPromise;
+  console.log("Guardando resultados del Test 8:", id_sesion, pronunciacionesCorrectas, pronunciacionesIncorrectas, recordados, intrusiones, perseveraciones, rechazos);
+  try {
+    const statement = await db.prepareAsync(
+      'INSERT OR REPLACE INTO Test_8 (id_sesion, pronunciaciones_correctas, pronunciaciones_incorrectas, recordados, intrusiones, perseveraciones, rechazos) VALUES ($id_sesion, $pronunciaciones_correctas, $pronunciaciones_incorrectas, $recordados, $intrusiones, $perseveraciones, $rechazos)'
+    );
+    const result = await statement.executeAsync({ $id_sesion: id_sesion, $pronunciaciones_correctas: pronunciacionesCorrectas, $pronunciaciones_incorrectas: pronunciacionesIncorrectas, $recordados: recordados, $intrusiones: intrusiones, $perseveraciones: perseveraciones, $rechazos: rechazos });
+    await statement.finalizeAsync();
+    console.log("Resultados del Test 8 guardados:", result.lastInsertRowId);
+    return result.lastInsertRowId;
+  } catch (error) {
+    console.error("Error al guardar resultados del Test 8:", error);
+    throw error;
+  }
+};
+
 
 
 export const obtenerResultadosSesion = async (idSesion) => {
@@ -261,12 +324,18 @@ export const obtenerResultadosSesion = async (idSesion) => {
       [idSesion]
     );
 
+    const resultadosTest8 = await db.getAllAsync(
+      'SELECT * FROM Test_8 WHERE id_sesion = ?',
+      [idSesion]
+    );
+
     // Organiza todos los resultados en un objeto para retornarlo
     const resultados = {
       test_1: resultadosTest1,
       test_3: resultadosTest3,
       test_4: resultadosTest4,
       test_5: resultadosTest5,
+      test_8: resultadosTest8,
     };
 
     console.log("Resultados de la sesión obtenidos:", resultados);

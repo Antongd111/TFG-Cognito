@@ -36,6 +36,7 @@ import Test_23 from "./bateria_tests/Test_23";
 
 const Stack = createNativeStackNavigator();
 
+//TODO: Se puede usar replace en lugar de navigate para que no se guarde en la pila de navegación, y que asi no se guarden los datos de la sesión
 const Main = () => {
   return (
     <View style={{ flex: 1, backgroundColor: '#F2E8E1' }}>

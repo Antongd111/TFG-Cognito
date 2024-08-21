@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from 'react';
 import { View, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';

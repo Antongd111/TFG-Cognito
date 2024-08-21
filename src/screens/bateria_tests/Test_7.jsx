@@ -1,11 +1,9 @@
-//FIXME: LA LOGICA DEL TEST NO ESTA COMPLETA, SE DEBE REVISAR Y COMPLETAR
-
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
-
+import { guardarResultadosTest_7 } from '../../api/TestApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../../locales";
 import { useIsFocused } from '@react-navigation/native';
@@ -15,21 +13,23 @@ const Test_7 = ({ navigation, route }) => {
     const [testRealVisible, setTestRealVisible] = useState(false);
     const [ensayoActual, setEnsayoActual] = useState(0);
     const [practica, setPractica] = useState(true);
-    const [fase, setFase] = useState(1); // 1 para parte 1, 2 para parte 2, 3 para parte 3
+    const [fase, setFase] = useState(1);
     const [colorNombre, setColorNombre] = useState('');
     const [colorFuente, setColorFuente] = useState('');
     const [correctas, setCorrectas] = useState(0);
     const [errores, setErrores] = useState(0);
-    const [tiempoInicio, setTiempoInicio] = useState(0);
+    const [tiempoInicioFase, setTiempoInicioFase] = useState(0);
     const [tiempoTotal, setTiempoTotal] = useState(0);
+    const [tiemposCorrectos, setTiemposCorrectos] = useState([]);
+    const [tiempoParte, setTiempoParte] = useState(0);
+    const [cronometroActivo, setCronometroActivo] = useState(false);
+    const [tiempoFaseTerminado, setTiempoFaseTerminado] = useState(false);
+    const [faseCompletada, setFaseCompletada] = useState(false);
 
     const colorAnteriorRef = useRef('');
-
-    /******************** CARGA DE TRADUCCIONES ********************/
-
-    const [translations, setTranslations] = useState({});
     const isFocused = useIsFocused();
 
+    const [translations, setTranslations] = useState({});
     useEffect(() => {
         const loadLanguage = async () => {
             const savedLanguage = await AsyncStorage.getItem('language');
@@ -37,31 +37,8 @@ const Test_7 = ({ navigation, route }) => {
             setTranslations(getTranslation(lang));
         };
 
-        if (isFocused) {
-            loadLanguage();
-        }
+        if (isFocused) loadLanguage();
     }, [isFocused]);
-
-    /***************** FIN DE CARGA DE TRADUCCIONES ****************/
-
-    /******************** MENÚ DE EVALUACIÓN ********************/
-    const handleToggleVoice = () => {
-        console.log("Toggle voice feature");
-    };
-
-    const handleNavigateHome = () => {
-        navigation.navigate('Pacientes');
-    };
-
-    const handleNavigateNext = () => {
-        navigation.navigate('Test_8', { idSesion: route.params.idSesion });
-    };
-
-    const handleNavigatePrevious = () => {
-        navigation.navigate('Test_6', { idSesion: route.params.idSesion });
-    };
-
-    /***************** FIN MENÚ DE EVALUACIÓN *****************/
 
     const respuestas = [translations.pr07Rojo, translations.pr07Verde, translations.pr07Azul, translations.pr07Amarillo];
     const colores = [translations.pr07Rojo, translations.pr07Verde, translations.pr07Azul, translations.pr07Amarillo];
@@ -71,23 +48,50 @@ const Test_7 = ({ navigation, route }) => {
         [translations.pr07Azul]: 'blue',
         [translations.pr07Amarillo]: 'yellow'
     };
-    
+
     useEffect(() => {
         if (!modalVisible && !testRealVisible) {
             iniciarEnsayo();
         }
     }, [modalVisible, testRealVisible]);
 
+    useEffect(() => {
+        if (cronometroActivo) {
+            const intervalo = setInterval(() => {
+                setTiempoParte((prev) => prev + 1000);
+            }, 1000);
+            return () => clearInterval(intervalo);
+        }
+    }, [cronometroActivo]);
+
+    useEffect(() => {
+        if (tiempoParte >= 5000) {
+            setCronometroActivo(false);
+            setTiempoFaseTerminado(true);
+        }
+    }, [tiempoParte]);
+
+    useEffect(() => {
+        if (fase > 3) {
+            guardarResultados();
+        }
+    }, [faseCompletada]);
+
+    const guardarResultados = async () => {
+        console.log('Guardando resultados del test 7...');
+        const tiempoMedio = tiemposCorrectos.length > 0 ? tiemposCorrectos.reduce((a, b) => a + b, 0) / tiemposCorrectos.length : 0;
+        await guardarResultadosTest_7(route.params.idSesion, correctas, errores, tiempoMedio);
+        navigation.navigate('Test_8', { idSesion: route.params.idSesion });
+    };
+
     const iniciarEnsayo = () => {
         let colorAleatorio;
         let colorFuenteAleatorio;
 
-        // Elección del color
         do {
             colorAleatorio = colores[Math.floor(Math.random() * colores.length)];
         } while (colorAleatorio === colorAnteriorRef.current);
 
-        // Elección del color de la fuente (fase 3)
         do {
             colorFuenteAleatorio = colores[Math.floor(Math.random() * colores.length)];
         } while (fase === 3 && colorFuenteAleatorio === colorAleatorio);
@@ -95,84 +99,97 @@ const Test_7 = ({ navigation, route }) => {
         colorAnteriorRef.current = colorAleatorio;
         setColorNombre(colorAleatorio);
         setColorFuente(fase === 3 ? colorMap[colorFuenteAleatorio] : '');
-        setTiempoInicio(Date.now());
     };
 
     const handleRespuesta = (respuesta) => {
-        const tiempoRespuesta = Date.now() - tiempoInicio;
-
+        const tiempoRespuesta = Date.now() - tiempoInicioFase;
         const esCorrecta = fase === 3 ? colorMap[respuesta] === colorFuente : respuesta === colorNombre;
 
-        if (esCorrecta) {
-            if (!practica) {
-                setCorrectas(correctas + 1);
-                setTiempoTotal(tiempoTotal + tiempoRespuesta);
-            }
-        } else {
-            if (!practica) {
-                setErrores(errores + 1);
+        if (!tiempoFaseTerminado) {
+            if (esCorrecta) {
+                if (!practica) {
+                    setCorrectas(prev => prev + 1);
+                    setTiempoTotal(prev => prev + tiempoRespuesta);
+                    setTiemposCorrectos([...tiemposCorrectos, tiempoRespuesta]);
+                }
+            } else {
+                if (!practica) setErrores(prev => prev + 1);
             }
         }
 
         if (ensayoActual < 1) {
-            setEnsayoActual(ensayoActual + 1);
+            setEnsayoActual(prev => prev + 1);
             iniciarEnsayo();
         } else {
             if (practica) {
                 setEnsayoActual(0);
                 setPractica(false);
                 setTestRealVisible(true);
-            } else {
-                setEnsayoActual(0);
+            } else if (!tiempoFaseTerminado) {
+                setEnsayoActual(prev => prev + 1);
                 iniciarEnsayo();
-                // Aquí puedes guardar los resultados y continuar con la lógica deseada.
+            } else {
+                if (fase < 3) {
+                    avanzarFase();
+                } else if (fase === 3 && !faseCompletada) {
+                    setFaseCompletada(true);
+                }
             }
         }
     };
 
     const iniciarTestReal = () => {
+        setTiempoInicioFase(Date.now());
         setTestRealVisible(false);
+        setTiempoParte(0);
+        setTiempoFaseTerminado(false);
+        setCronometroActivo(true);
         iniciarEnsayo();
     };
 
     const avanzarFase = () => {
-        setFase(fase + 1);
-        setPractica(true);
-        setModalVisible(true);
-        setEnsayoActual(0);
-        setCorrectas(0);
-        setErrores(0);
-        setTiempoTotal(0);
+        setFase(prevFase => prevFase + 1);
+        if (fase < 3) {
+            setPractica(true);
+            setModalVisible(true);
+            setEnsayoActual(0);
+            setCorrectas(0);
+            setErrores(0);
+            setTiempoTotal(0);
+            setTiemposCorrectos([]);
+            setTiempoParte(0);
+            setTiempoFaseTerminado(false);
+        } else {
+            setFaseCompletada(true); // Marcar la fase como completada correctamente
+        }
     };
 
     return (
         <View style={stylesComunes.borde_tests}>
             <View style={stylesComunes.contenedor_test}>
                 <MenuComponent
-                    onToggleVoice={handleToggleVoice}
-                    onNavigateHome={handleNavigateHome}
-                    onNavigateNext={handleNavigateNext}
-                    onNavigatePrevious={handleNavigatePrevious}
+                    onToggleVoice={() => { }}
+                    onNavigateHome={() => navigation.navigate('Pacientes')}
+                    onNavigateNext={() => navigation.navigate('Test_8', { idSesion: route.params.idSesion })}
+                    onNavigatePrevious={() => navigation.navigate('Test_6', { idSesion: route.params.idSesion })}
                 />
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={() => setModalVisible(false)}
                     title={`Test 7 - ${fase}`}
-                    instructions={fase === 1 ?
-                        translations.pr07ItemStart :
-                        fase === 2 ?
-                        translations.pr07ItemStart2 :
-                        translations.pr07ItemStart3
-                    }
+                    instructions={fase === 1 ? translations.pr07ItemStart :
+                        fase === 2 ? translations.pr07ItemStart2 :
+                        fase === 3 ? translations.pr07ItemStart3 : ''}
                 />
                 <InstruccionesModal
                     visible={testRealVisible}
                     onClose={iniciarTestReal}
-                    title="Test Real"
+                    title="Test 7"
                     instructions={translations.ItemStartPrueba}
                 />
                 {!modalVisible && !testRealVisible && (
                     <View style={styles.contenedor}>
+                        <Text style={styles.cronometroText}>Tiempo transcurrido: {Math.floor(tiempoParte / 1000)} s</Text>
                         {fase === 1 ? (
                             <Text style={styles.colorNombre}>{colorNombre}</Text>
                         ) : fase === 2 ? (
@@ -191,17 +208,6 @@ const Test_7 = ({ navigation, route }) => {
                                 </TouchableOpacity>
                             ))}
                         </View>
-                        <View style={styles.estadisticas}>
-                            {/* <Text>Correctas: {correctas}</Text>
-                            <Text>Errores: {errores}</Text>
-                            <Text>Tiempo total: {tiempoTotal} ms</Text>
-                            <Text>Ensayos completados: {ensayoActual}</Text> */}
-                        </View>
-                        {fase < 3 && ensayoActual === 0 && !practica && (
-                            <TouchableOpacity onPress={avanzarFase} style={styles.botonSiguiente}>
-                                <Text style={styles.textoBoton}>Pasar a la siguiente parte</Text>
-                            </TouchableOpacity>
-                        )}
                     </View>
                 )}
             </View>
@@ -239,15 +245,10 @@ const styles = StyleSheet.create({
     textoBoton: {
         fontSize: 20,
     },
-    estadisticas: {
-        marginTop: 20,
-        alignItems: 'center',
-    },
-    botonSiguiente: {
-        backgroundColor: '#DDDDDD',
-        padding: 15,
-        marginTop: 20,
-        borderRadius: 5,
+    cronometroText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 20,
     }
 });
 

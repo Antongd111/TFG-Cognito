@@ -75,7 +75,7 @@ const Test_6 = ({ navigation, route }) => {
   useEffect(() => {
     const guardarResultados = async () => {
       await guardarResultadosTest_6(route.params.idSesion, correctos, incorrectos, erroresTiempo, sonidosContados);
-      navigation.navigate('Resultados', { idSesion: route.params.idSesion });
+      navigation.replace('Test_7', { idSesion: route.params.idSesion });
     };
 
     if (ensayoActual > numeroEnsayos) guardarResultados();
@@ -185,9 +185,9 @@ const Test_6 = ({ navigation, route }) => {
       <View style={stylesComunes.contenedor_test}>
         <MenuComponent
           onToggleVoice={() => { }}
-          onNavigateHome={() => navigation.navigate('Pacientes')}
-          onNavigateNext={() => navigation.navigate('Resultados', { idSesion: route.params.idSesion })}
-          onNavigatePrevious={() => navigation.navigate('Test_5', { idSesion: route.params.idSesion })}
+          onNavigateHome={() => navigation.replace('Pacientes')}
+          onNavigateNext={() => navigation.replace('Test_7', { idSesion: route.params.idSesion })}
+          onNavigatePrevious={() => navigation.replace('Test_5', { idSesion: route.params.idSesion })}
         />
         <InstruccionesModal
           visible={modalVisible}

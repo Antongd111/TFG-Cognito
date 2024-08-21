@@ -53,15 +53,15 @@ const Test_4 = ({ navigation, route }) => {
     };
 
     const handleNavigateHome = () => {
-        navigation.navigate('Pacientes');
+        navigation.replace('Pacientes');
     };
 
     const handleNavigateNext = () => {
-        navigation.navigate('Test_5', { idSesion: route.params.idSesion });
+        navigation.replace('Test_5', { idSesion: route.params.idSesion });
     };
 
     const handleNavigatePrevious = () => {
-        navigation.navigate('Test_3', { idSesion: route.params.idSesion });
+        navigation.replace('Test_3', { idSesion: route.params.idSesion });
     };
 
     /***************** FIN MENÚ DE EVALUACIÓN *****************/
@@ -147,7 +147,7 @@ const Test_4 = ({ navigation, route }) => {
 
         if (ensayoActual > numeroEnsayos) {
             await guardarResultadosTest_4(route.params.idSesion, numeroAciertos, numeroSobreestimaciones, numeroSubestimaciones);
-            navigation.navigate('Test_5', { idSesion: route.params.idSesion });
+            navigation.replace('Test_5', { idSesion: route.params.idSesion });
         }
     };
 
