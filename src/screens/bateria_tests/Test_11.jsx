@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-na
 import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
+import { guardarResultadosTest_11 } from '../../api/TestApi';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../../locales";
@@ -218,7 +219,6 @@ const Test_11 = ({ navigation, route }) => {
                                 <Text style={stylesComunes.textoBoton}>Rectificación</Text>
                             </TouchableOpacity>
                         </View>
-                        <Text style={styles.tiempoRestante}>Tiempo restante: {tiempoRestante}s</Text>
                     </>
                 )}
             </View>
@@ -249,12 +249,6 @@ const styles = StyleSheet.create({
         height: 200,
         margin: 10
     },
-    tiempoRestante: {
-        fontSize: 20,
-        textAlign: 'center',
-        marginTop: 20,
-        color: 'red'
-    }
 });
 
 export default Test_11;

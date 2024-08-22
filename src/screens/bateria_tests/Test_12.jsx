@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-na
 import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
+import { guardarResultadosTest_12 } from '../../api/TestApi';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../../locales";
@@ -89,8 +90,7 @@ const Test_12 = ({ navigation, route }) => {
     const [excedidoTiempo, setExcedidoTiempo] = useState(0);
     const [respuestaIncorrecta, setRespuestaIncorrecta] = useState(0);
     const [inicioEnsayo, setInicioEnsayo] = useState(null);
-
-    /******************** CARGA DE TRADUCCIONES ********************/
+    const [seleccion, setSeleccion] = useState(null);
 
     const [translations, setTranslations] = useState({});
     const isFocused = useIsFocused();
@@ -107,58 +107,37 @@ const Test_12 = ({ navigation, route }) => {
         }
     }, [isFocused]);
 
-    /***************** FIN DE CARGA DE TRADUCCIONES ****************/
-
-    /******************** MENÚ DE EVALUACIÓN ********************/
-    const handleToggleVoice = () => {
-        console.log("Toggle voice feature");
-    };
-
-    const handleNavigateHome = () => {
-        navigation.navigate('Pacientes');
-    };
-
-    const handleNavigateNext = () => {
-        navigation.navigate('Test_13', { idSesion: route.params.idSesion });
-    };
-
-    const handleNavigatePrevious = () => {
-        navigation.navigate('Test_11', { idSesion: route.params.idSesion });
-    };
-
-    /***************** FIN MENÚ DE EVALUACIÓN *****************/
-
     const secuencias = [
         {
             palabra: translations.pr12Nombre1,
             imagenes: [
-                images.pr12_t1_1_copa,
-                images.pr12_t1_2_plato,
-                images.pr12_t1_3_sopa,
-                images.pr12_t1_4_ventilador,
-                images.pr12_t1_5_perro,
-                images.pr12_t1_6_martillo
+                images.pr12_t1_2_plato,         // Error fonético
+                images.pr12_t1_3_sopa,          // Error morfológico
+                images.pr12_t1_4_ventilador,    // Error semántico
+                images.pr12_t1_1_copa,          // Correcta
+                images.pr12_t1_5_perro,         // Error semántico
+                images.pr12_t1_6_martillo       // Sin error específico
             ],
-            correcta: 0,
+            correcta: 3,
             errores: {
-                morfologicos: [1],
-                foneticos: [3],
-                semanticos: [2, 4]
+                morfologicos: [],
+                foneticos: [],
+                semanticos: []
             }
         },
         {
             palabra: translations.pr12Nombre2,
             imagenes: [
-                images.pr12_t2_1_tarta,
-                images.pr12_t2_2_carta,
-                images.pr12_t2_3_cepillodientes,
-                images.pr12_t2_4_serpiente,
-                images.pr12_t2_5_pandereta,
-                images.pr12_t2_6_cruasan
+                images.pr12_t2_2_carta,         // Error morfológico
+                images.pr12_t2_1_tarta,         // Correcta
+                images.pr12_t2_3_cepillodientes,// Error fonético
+                images.pr12_t2_4_serpiente,     // Error semántico
+                images.pr12_t2_5_pandereta,     // Sin error específico
+                images.pr12_t2_6_cruasan        // Error semántico
             ],
-            correcta: 0,
+            correcta: 1,
             errores: {
-                morfologicos: [1],
+                morfologicos: [0],
                 foneticos: [2],
                 semanticos: [3, 5]
             }
@@ -166,50 +145,50 @@ const Test_12 = ({ navigation, route }) => {
         {
             palabra: translations.pr12Nombre3,
             imagenes: [
-                images.pr12_t3_1_pato,
-                images.pr12_t3_2_pinguino,
-                images.pr12_t3_3_zanahoria,
-                images.pr12_t3_4_silbato,
-                images.pr12_t3_5_tetera,
-                images.pr12_t3_6_barbacoa
+                images.pr12_t3_2_pinguino,      // Error semántico
+                images.pr12_t3_3_zanahoria,     // Error morfológico
+                images.pr12_t3_4_silbato,       // Error fonético
+                images.pr12_t3_5_tetera,        // Sin error específico
+                images.pr12_t3_6_barbacoa,      // Error semántico
+                images.pr12_t3_1_pato           // Correcta
             ],
-            correcta: 0,
+            correcta: 5,
             errores: {
-                morfologicos: [2],
-                foneticos: [3],
-                semanticos: [1, 5]
+                morfologicos: [1],
+                foneticos: [2],
+                semanticos: [0, 4]
             }
         },
         {
             palabra: translations.pr12Nombre4,
             imagenes: [
-                images.pr12_t4_1_mano,
-                images.pr12_t4_2_hoja,
-                images.pr12_t4_3_tijeras,
-                images.pr12_t4_4_triciclo,
-                images.pr12_t4_5_pie,
-                images.pr12_t4_6_piano
+                images.pr12_t4_2_hoja,          // Sin error específico
+                images.pr12_t4_3_tijeras,       // Error semántico
+                images.pr12_t4_4_triciclo,      // Error semántico
+                images.pr12_t4_5_pie,           // Error morfológico
+                images.pr12_t4_1_mano,          // Correcta
+                images.pr12_t4_6_piano          // Error fonético
             ],
-            correcta: 0,
+            correcta: 4,
             errores: {
-                morfologicos: [4],
+                morfologicos: [3],
                 foneticos: [5],
-                semanticos: [2, 3]
+                semanticos: [1, 2]
             }
         },
         {
             palabra: translations.pr12Nombre5,
             imagenes: [
-                images.pr12_t5_1_cama,
-                images.pr12_t5_2_sofa,
-                images.pr12_t5_3_carreta,
-                images.pr12_t5_4_lana,
-                images.pr12_t5_5_tambor,
-                images.pr12_t5_6_gato
+                images.pr12_t5_2_sofa,          
+                images.pr12_t5_1_cama,          // Correcta
+                images.pr12_t5_3_carreta,       // Error semántico
+                images.pr12_t5_4_lana,          // Sin error específico
+                images.pr12_t5_5_tambor,        // Error semántico
+                images.pr12_t5_6_gato           // Error fonético
             ],
-            correcta: 0,
+            correcta: 1,
             errores: {
-                morfologicos: [1],
+                morfologicos: [0],
                 foneticos: [5],
                 semanticos: [2, 4]
             }
@@ -217,67 +196,67 @@ const Test_12 = ({ navigation, route }) => {
         {
             palabra: translations.pr12Nombre6,
             imagenes: [
-                images.pr12_t6_1_boton,
-                images.pr12_t6_2_melon,
-                images.pr12_t6_3_cremallera,
-                images.pr12_t6_4_enchufe,
-                images.pr12_t6_5_barco,
-                images.pr12_t6_6_reloj
+                images.pr12_t6_2_melon,         // Error semántico
+                images.pr12_t6_3_cremallera,    // Error semántico
+                images.pr12_t6_1_boton,         // Correcta
+                images.pr12_t6_4_enchufe,       // Error morfológico
+                images.pr12_t6_5_barco,         // Error fonético
+                images.pr12_t6_6_reloj          // Sin error específico
             ],
-            correcta: 0,
+            correcta: 2,
             errores: {
-                morfologicos: [4],
-                foneticos: [5],
-                semanticos: [2, 3]
+                morfologicos: [3],
+                foneticos: [4],
+                semanticos: [0, 1]
             }
         },
         {
             palabra: translations.pr12Nombre7,
             imagenes: [
-                images.pr12_t7_1_cereza,
-                images.pr12_t7_2_paraguas,
-                images.pr12_t7_3_percha,
-                images.pr12_t7_4_cerveza,
-                images.pr12_t7_5_fresa,
-                images.pr12_t7_6_lupa
+                images.pr12_t7_2_paraguas,      // Error semántico
+                images.pr12_t7_3_percha,        // Error semántico
+                images.pr12_t7_4_cerveza,       // Error fonético
+                images.pr12_t7_1_cereza,        // Correcta
+                images.pr12_t7_5_fresa,         // Sin error específico
+                images.pr12_t7_6_lupa           // Error morfológico
             ],
-            correcta: 0,
+            correcta: 3,
             errores: {
-                morfologicos: [3],
-                foneticos: [4],
-                semanticos: [2, 5]
+                morfologicos: [5],
+                foneticos: [3],
+                semanticos: [0, 1]
             }
         },
         {
             palabra: translations.pr12Nombre8,
             imagenes: [
-                images.pr12_t8_1_bombilla,
-                images.pr12_t8_2_tortilla,
-                images.pr12_t8_3_pera,
-                images.pr12_t8_4_elefante,
-                images.pr12_t8_5_guitarra,
-                images.pr12_t8_6_linterna
+                images.pr12_t8_2_tortilla,      // Error fonético
+                images.pr12_t8_3_pera,          // Error semántico
+                images.pr12_t8_4_elefante,      // Error morfológico
+                images.pr12_t8_5_guitarra,      // Sin error específico
+                images.pr12_t8_6_linterna,      // Error semántico
+                images.pr12_t8_1_bombilla       // Correcta
             ],
-            correcta: 0,
+            correcta: 5,
             errores: {
                 morfologicos: [2],
-                foneticos: [3],
+                foneticos: [0],
                 semanticos: [1, 5]
             }
         },
         {
             palabra: translations.pr12Nombre9,
             imagenes: [
-                images.pr12_t9_1_rastrillo,
-                images.pr12_t9_2_rana,
-                images.pr12_t9_3_peine,
-                images.pr12_t9_4_pala,
-                images.pr12_t9_5_anillo,
-                images.pr12_t9_6_bicicleta
+                images.pr12_t9_1_rastrillo,     // Correcta
+                images.pr12_t9_2_rana,          // Error semántico
+                images.pr12_t9_3_peine,         // Error morfológico
+                images.pr12_t9_4_pala,          // Sin error específico
+                images.pr12_t9_5_anillo,        // Error fonético
+                images.pr12_t9_6_bicicleta      // Error semántico
             ],
             correcta: 0,
             errores: {
-                morfologicos: [3],
+                morfologicos: [2],
                 foneticos: [4],
                 semanticos: [1, 5]
             }
@@ -285,38 +264,56 @@ const Test_12 = ({ navigation, route }) => {
         {
             palabra: translations.pr12Nombre10,
             imagenes: [
-                images.pr12_t10_1_castania,
-                images.pr12_t10_2_casco,
-                images.pr12_t10_3_sillaoficina,
-                images.pr12_t10_4_pipas,
-                images.pr12_t10_5_regadera,
-                images.pr12_t10_6_arania
+                images.pr12_t10_2_casco,        // Error semántico
+                images.pr12_t10_3_sillaoficina, // Error fonético
+                images.pr12_t10_4_pipas,        // Error morfológico
+                images.pr12_t10_5_regadera,     // Sin error específico
+                images.pr12_t10_1_castania,     // Correcta
+                images.pr12_t10_6_arania        // Error semántico
             ],
-            correcta: 0,
+            correcta: 4,
             errores: {
                 morfologicos: [2],
-                foneticos: [3],
-                semanticos: [1, 5]
+                foneticos: [1],
+                semanticos: [0, 5]
             }
         },
         {
             palabra: translations.pr12Nombre11,
             imagenes: [
-                images.pr12_t11_1_secador,
-                images.pr12_t11_2_maza,
-                images.pr12_t11_3_margarita,
-                images.pr12_t11_4_manzana,
-                images.pr12_t11_5_baniador,
-                images.pr12_t11_6_lavadora
+                images.pr12_t11_2_maza,         // Error semántico
+                images.pr12_t11_3_margarita,    // Error semántico
+                images.pr12_t11_1_secador,      // Correcta
+                images.pr12_t11_4_manzana,      // Error fonético
+                images.pr12_t11_5_baniador,     // Error morfológico
+                images.pr12_t11_6_lavadora      // Sin error específico
             ],
-            correcta: 0,
+            correcta: 2,
             errores: {
                 morfologicos: [4],
-                foneticos: [5],
-                semanticos: [2, 3]
+                foneticos: [3],
+                semanticos: [0, 1]
             }
         }
     ];
+
+    useEffect(() => {
+        const guardarResultados = async () => {
+            await guardarResultadosTest_12(route.params.idSesion, correctas, erroresMorfológicos, erroresFonéticos, erroresSemánticos, excedidoTiempo, respuestaIncorrecta);
+            navigation.replace('Test_13', { idSesion: route.params.idSesion });
+        };
+
+        if (ensayoActual === secuencias.length) {
+            guardarResultados();
+        }
+
+    } , [ensayoActual]);
+
+    useEffect(() => {
+        if (seleccion !== null) {
+            analizarRespuesta();
+        }
+    }, [seleccion]);
 
     const iniciarPrueba = () => {
         setModalVisible(false);
@@ -324,49 +321,64 @@ const Test_12 = ({ navigation, route }) => {
     };
 
     const manejarSeleccion = (index) => {
+        setSeleccion(index);
+    };
+
+    const analizarRespuesta = () => {
         const tiempoRespuesta = Date.now() - inicioEnsayo;
         const secuenciaActual = secuencias[ensayoActual];
-
+        
         if (!entrenamiento) {
             if (tiempoRespuesta > 10000) {
                 setExcedidoTiempo(prev => prev + 1);
-            } else if (index === secuenciaActual.correcta) {
+            } else if (seleccion === secuenciaActual.correcta) {
                 setCorrectas(prev => prev + 1);
             } else {
                 setRespuestaIncorrecta(prev => prev + 1);
-                if (secuenciaActual.errores.morfologicos.includes(index)) {
+                if (secuenciaActual.errores.morfologicos.includes(seleccion)) {
                     setErroresMorfológicos(prev => prev + 1);
-                } else if (secuenciaActual.errores.foneticos.includes(index)) {
+                } else if (secuenciaActual.errores.foneticos.includes(seleccion)) {
                     setErroresFonéticos(prev => prev + 1);
-                } else if (secuenciaActual.errores.semanticos.includes(index)) {
+                } else if (secuenciaActual.errores.semanticos.includes(seleccion)) {
                     setErroresSemánticos(prev => prev + 1);
                 }
             }
         }
 
+        avanzarEnsayo();
+    };
+
+    const avanzarEnsayo = () => {
         if (entrenamiento) {
             setEntrenamiento(false);
             setModalVisible(true);
+            setEnsayoActual(prev => prev + 1);
         } else if (ensayoActual < secuencias.length - 1) {
             setEnsayoActual(prev => prev + 1);
             setInicioEnsayo(Date.now());
         } else {
-            mostrarResultados();
+            setEnsayoActual(prev => prev + 1);  // Para que se muestren los resultados
         }
+        setSeleccion(null); // Reiniciar la selección para el siguiente ensayo
     };
 
     const mostrarResultados = () => {
         Alert.alert('Resultados', `Total respuestas correctas: ${correctas}\nErrores morfológicos: ${erroresMorfológicos}\nErrores fonéticos: ${erroresFonéticos}\nErrores semánticos: ${erroresSemánticos}\nExcediendo el tiempo: ${excedidoTiempo}\nRespuestas incorrectas: ${respuestaIncorrecta}`);
     };
 
+    // Se evita renderizar si ya se ha completado la prueba
+    if (ensayoActual >= secuencias.length) {
+        return null; 
+    }
+
     return (
         <View style={stylesComunes.borde_tests}>
             <View style={stylesComunes.contenedor_test}>
                 <MenuComponent
-                    onToggleVoice={handleToggleVoice}
-                    onNavigateHome={handleNavigateHome}
-                    onNavigateNext={handleNavigateNext}
-                    onNavigatePrevious={handleNavigatePrevious}
+                    onToggleVoice={() => {}}
+                    onNavigateHome={() => navigation.navigate('Pacientes')}
+                    onNavigateNext={() => navigation.navigate('Test_13', { idSesion: route.params.idSesion })}
+                    onNavigatePrevious={() => navigation.navigate('Test_11', { idSesion: route.params.idSesion })}
                 />
                 <InstruccionesModal
                     visible={modalVisible}

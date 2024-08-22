@@ -121,7 +121,7 @@ const Test_13 = ({ navigation, route }) => {
 
     const secuencias = [
         {
-            objeto: 'pipeta',
+            objeto: 'cepillo',
             imagenes: [images.pr13_t1_1],
             asociaciones: [
                 images.pr13_t1_2,
@@ -137,7 +137,7 @@ const Test_13 = ({ navigation, route }) => {
             }
         },
         {
-            objeto: 'teléfono',
+            objeto: 'tornillo',
             imagenes: [images.pr13_t2_1],
             asociaciones: [
                 images.pr13_t2_2,
@@ -153,7 +153,7 @@ const Test_13 = ({ navigation, route }) => {
             }
         },
         {
-            objeto: 'avión',
+            objeto: 'jaula',
             imagenes: [images.pr13_t3_1],
             asociaciones: [
                 images.pr13_t3_2,
@@ -169,7 +169,7 @@ const Test_13 = ({ navigation, route }) => {
             }
         },
         {
-            objeto: 'libro',
+            objeto: 'candado',
             imagenes: [images.pr13_t4_1],
             asociaciones: [
                 images.pr13_t4_2,
@@ -185,7 +185,7 @@ const Test_13 = ({ navigation, route }) => {
             }
         },
         {
-            objeto: 'flor',
+            objeto: 'gafas',
             imagenes: [images.pr13_t5_1],
             asociaciones: [
                 images.pr13_t5_2,
@@ -201,7 +201,7 @@ const Test_13 = ({ navigation, route }) => {
             }
         },
         {
-            objeto: 'guitarra',
+            objeto: 'coche',
             imagenes: [images.pr13_t6_1],
             asociaciones: [
                 images.pr13_t6_2,
@@ -217,7 +217,7 @@ const Test_13 = ({ navigation, route }) => {
             }
         },
         {
-            objeto: 'zapato',
+            objeto: 'pantalones',
             imagenes: [images.pr13_t7_1],
             asociaciones: [
                 images.pr13_t7_2,
@@ -233,7 +233,7 @@ const Test_13 = ({ navigation, route }) => {
             }
         },
         {
-            objeto: 'manzana',
+            objeto: 'tren',
             imagenes: [images.pr13_t8_1],
             asociaciones: [
                 images.pr13_t8_2,
@@ -249,7 +249,7 @@ const Test_13 = ({ navigation, route }) => {
             }
         },
         {
-            objeto: 'bicicleta',
+            objeto: 'piano',
             imagenes: [images.pr13_t9_1],
             asociaciones: [
                 images.pr13_t9_2,
@@ -265,7 +265,7 @@ const Test_13 = ({ navigation, route }) => {
             }
         },
         {
-            objeto: 'pelota',
+            objeto: 'árbol',
             imagenes: [images.pr13_t10_1],
             asociaciones: [
                 images.pr13_t10_2,
@@ -281,7 +281,7 @@ const Test_13 = ({ navigation, route }) => {
             }
         },
         {
-            objeto: 'árbol',
+            objeto: 'estatua',
             imagenes: [images.pr13_t11_1],
             asociaciones: [
                 images.pr13_t11_2,

@@ -45,7 +45,7 @@ export default function TarjetaPaciente({ navigation, id, nombre, apellidos, fec
                 <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('ModificarPaciente', { idPaciente: id })}>
                     <Text style={styles.textoBoton}>{translations.ModificarDatos}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('Test_10', { idPaciente: id })}>
+                <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('Test_1', { idPaciente: id })}>
                     <Text style={styles.textoBoton}>{translations.ComenzarTest}</Text>
                 </TouchableOpacity>
             </View>

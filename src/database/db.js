@@ -109,6 +109,19 @@ const initDB = async () => {
       figuras_seleccionadas TEXT NOT NULL,
       FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
     );
+
+    CREATE TABLE IF NOT EXISTS Test_12 (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_sesion INTEGER NOT NULL UNIQUE,
+      correctas INTEGER NOT NULL,
+      errores_morfológicos INTEGER NOT NULL,
+      errores_fonéticos INTEGER NOT NULL,
+      errores_semánticos INTEGER NOT NULL,
+      excedido_tiempo INTEGER NOT NULL,
+      respuesta_incorrecta INTEGER NOT NULL,
+      FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
+    );
+    
   `);
 
   console.log("Tabla Paciente creada o ya existente");
@@ -342,6 +355,23 @@ export const guardarResultadosTest_11 = async (idSesion, correctas, inversiones,
     return result.lastInsertRowId;
   } catch (error) {
     console.error("Error al guardar resultados del Test 11:", error);
+    throw error;
+  }
+};
+
+export const guardarResultadosTest_12 = async (idSesion, correctas, erroresMorfológicos, erroresFonéticos, erroresSemánticos, excedidoTiempo, respuestaIncorrecta) => {
+  const db = await dbPromise;
+  console.log("Guardando resultados del Test 12:", idSesion, correctas, erroresMorfológicos, erroresFonéticos, erroresSemánticos, excedidoTiempo, respuestaIncorrecta);
+  try {
+    const statement = await db.prepareAsync(
+      'INSERT OR REPLACE INTO Test_12 (id_sesion, correctas, errores_morfológicos, errores_fonéticos, errores_semánticos, excedido_tiempo, respuesta_incorrecta) VALUES ($id_sesion, $correctas, $errores_morfológicos, $errores_fonéticos, $errores_semánticos, $excedido_tiempo, $respuesta_incorrecta)'
+    );
+    const result = await statement.executeAsync({ $id_sesion: idSesion, $correctas: correctas, $errores_morfológicos: erroresMorfológicos, $errores_fonéticos: erroresFonéticos, $errores_semánticos: erroresSemánticos, $excedido_tiempo: excedidoTiempo, $respuesta_incorrecta: respuestaIncorrecta });
+    await statement.finalizeAsync();
+    console.log("Resultados del Test 12 guardados:", result.lastInsertRowId);
+    return result.lastInsertRowId;
+  } catch (error) {
+    console.error("Error al guardar resultados del Test 12:", error);
     throw error;
   }
 };

@@ -2,7 +2,7 @@ import {    guardarResultadosTest_1 as BD_GuardarResultadosTest_1, guardarResult
             guardarResultadosTest_4 as BD_GuardarResultadosTest_4, guardarResultadosTest_5 as BD_GuardarResultadosTest_5,
             obtenerResultadosSesion as BD_ObtenerResultadosSesion, guardarResultadosTest_7 as BD_GuardarResultadosTest_7,
             guardarResultadosTest_8 as BD_GuardarResultadosTest_8, guardarResultadosTest_10 as BD_GuardarResultadosTest_10,
-            guardarResultadosTest_11 as BD_GuardarResultadosTest_11,
+            guardarResultadosTest_11 as BD_GuardarResultadosTest_11, guardarResultadosTest_12 as BD_GuardarResultadosTest_12,
             crearSesionTest as BD_CrearSesionTest } from '../database/db';
 
 export const guardarResultadosTest_1 = async (id_sesion, numero_ensayos, reaccion, errores_anticipacion, errores_tiempo, errores_retrasos) => {
@@ -80,6 +80,15 @@ export const guardarResultadosTest_10 = async (id_sesion) => {
 export const guardarResultadosTest_11 = async (id_sesion, correctas, inversiones, rectificaciones, tiemposRespuestas, figurasSeleccionadas) => {
     try {
         const result = await BD_GuardarResultadosTest_11(id_sesion, correctas, inversiones, rectificaciones, tiemposRespuestas, figurasSeleccionadas);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const guardarResultadosTest_12 = async (id_sesion, correctas, erroresMorfológicos, erroresFonéticos, erroresSemánticos, excedidoTiempo, respuestaIncorrecta) => {
+    try {
+        const result = await BD_GuardarResultadosTest_12(id_sesion, correctas, erroresMorfológicos, erroresFonéticos, erroresSemánticos, excedidoTiempo, respuestaIncorrecta);
         return result;
     } catch (error) {
         throw error;

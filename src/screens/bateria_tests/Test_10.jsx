@@ -6,7 +6,7 @@ import { Audio } from 'expo-av';
 import stylesComunes from '../../styles/ComunStyles';
 import pitido from '../../../assets/sounds/pitido_corto.mp3';
 import payaso from '../../../assets/images/payaso.png';
-import { guardarResultadosTest_10 } from '../../api/TestApi'; // Asegúrate de tener esta función implementada
+import { guardarResultadosTest_10 } from '../../api/TestApi';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../../locales";
