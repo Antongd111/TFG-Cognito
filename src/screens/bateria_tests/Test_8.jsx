@@ -52,15 +52,15 @@ const Test_8 = ({ navigation, route }) => {
     };
 
     const handleNavigateHome = () => {
-        navigation.navigate('Pacientes');
+        navigation.replace('Pacientes');
     };
 
     const handleNavigateNext = () => {
-        navigation.navigate('Test_9', { idSesion: route.params.idSesion });
+        navigation.replace('Test_9', { idSesion: route.params.idSesion });
     };
 
     const handleNavigatePrevious = () => {
-        navigation.navigate('Test_7', { idSesion: route.params.idSesion });
+        navigation.replace('Test_7', { idSesion: route.params.idSesion });
     };
 
     /***************** FIN MENÚ DE EVALUACIÓN *****************/
@@ -133,7 +133,7 @@ const Test_8 = ({ navigation, route }) => {
 
     const validarFase2 = async () => { 
         await guardarResultadosTest_8(route.params.idSesion, pronunciacionesCorrectas, pronunciacionesIncorrectas, recordadasCorrectas, intrusiones, perseveraciones, rechazos);
-        navigation.navigate('Test_9', { idSesion: route.params.idSesion });
+        navigation.replace('Test_9', { idSesion: route.params.idSesion });
     };
 
     return (

@@ -91,6 +91,24 @@ const initDB = async () => {
       rechazos INTEGER NOT NULL,
       FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
       );
+
+    CREATE TABLE IF NOT EXISTS Test_10 (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_sesion INTEGER NOT NULL UNIQUE,
+      resultados TEXT NOT NULL,
+      FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS Test_11 (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_sesion INTEGER NOT NULL UNIQUE,
+      correctas INTEGER NOT NULL,
+      inversiones INTEGER NOT NULL,
+      rectificaciones INTEGER NOT NULL,
+      tiempos_respuestas TEXT NOT NULL,
+      figuras_seleccionadas TEXT NOT NULL,
+      FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
+    );
   `);
 
   console.log("Tabla Paciente creada o ya existente");
@@ -294,7 +312,39 @@ export const guardarResultadosTest_8 = async (id_sesion, pronunciacionesCorrecta
   }
 };
 
+export const guardarResultadosTest_10 = async (idSesion, resultados) => {
+  const db = await dbPromise;
+  console.log("Guardando resultados del Test 10:", idSesion, resultados);
+  try {
+    const statement = await db.prepareAsync(
+      'INSERT OR REPLACE INTO Test_10 (id_sesion, resultados) VALUES ($id_sesion, $resultados)'
+    );
+    const result = await statement.executeAsync({ $id_sesion: idSesion, $resultados: JSON.stringify(resultados) });
+    await statement.finalizeAsync();
+    console.log("Resultados del Test 10 guardados:", result.lastInsertRowId);
+    return result.lastInsertRowId;
+  } catch (error) {
+    console.error("Error al guardar resultados del Test 10:", error);
+    throw error;
+  }
+};
 
+export const guardarResultadosTest_11 = async (idSesion, correctas, inversiones, rectificaciones, tiemposRespuestas, figurasSeleccionadas) => {
+  const db = await dbPromise;
+  console.log("Guardando resultados del Test 11:", idSesion, correctas, inversiones, rectificaciones, tiemposRespuestas, figurasSeleccionadas);
+  try {
+    const statement = await db.prepareAsync(
+      'INSERT OR REPLACE INTO Test_11 (id_sesion, correctas, inversiones, rectificaciones, tiempos_respuestas, figuras_seleccionadas) VALUES ($id_sesion, $correctas, $inversiones, $rectificaciones, $tiempos_respuestas, $figuras_seleccionadas)'
+    );
+    const result = await statement.executeAsync({ $id_sesion: idSesion, $correctas: correctas, $inversiones: inversiones, $rectificaciones: rectificaciones, $tiempos_respuestas: JSON.stringify(tiemposRespuestas), $figuras_seleccionadas: JSON.stringify(figurasSeleccionadas) });
+    await statement.finalizeAsync();
+    console.log("Resultados del Test 11 guardados:", result.lastInsertRowId);
+    return result.lastInsertRowId;
+  } catch (error) {
+    console.error("Error al guardar resultados del Test 11:", error);
+    throw error;
+  }
+};
 
 export const obtenerResultadosSesion = async (idSesion) => {
   const db = await dbPromise;

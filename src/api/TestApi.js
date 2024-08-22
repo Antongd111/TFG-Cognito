@@ -1,8 +1,9 @@
-import { guardarResultadosTest_1 as BD_GuardarResultadosTest_1, guardarResultadosTest_3 as BD_GuardarResultadosTest_3, 
-         guardarResultadosTest_4 as BD_GuardarResultadosTest_4, guardarResultadosTest_5 as BD_GuardarResultadosTest_5,
-         obtenerResultadosSesion as BD_ObtenerResultadosSesion, guardarResultadosTest_7 as BD_GuardarResultadosTest_7,
-            guardarResultadosTest_8 as BD_GuardarResultadosTest_8,
-         crearSesionTest as BD_CrearSesionTest } from '../database/db';
+import {    guardarResultadosTest_1 as BD_GuardarResultadosTest_1, guardarResultadosTest_3 as BD_GuardarResultadosTest_3, 
+            guardarResultadosTest_4 as BD_GuardarResultadosTest_4, guardarResultadosTest_5 as BD_GuardarResultadosTest_5,
+            obtenerResultadosSesion as BD_ObtenerResultadosSesion, guardarResultadosTest_7 as BD_GuardarResultadosTest_7,
+            guardarResultadosTest_8 as BD_GuardarResultadosTest_8, guardarResultadosTest_10 as BD_GuardarResultadosTest_10,
+            guardarResultadosTest_11 as BD_GuardarResultadosTest_11,
+            crearSesionTest as BD_CrearSesionTest } from '../database/db';
 
 export const guardarResultadosTest_1 = async (id_sesion, numero_ensayos, reaccion, errores_anticipacion, errores_tiempo, errores_retrasos) => {
     try {
@@ -67,6 +68,23 @@ export const guardarResultadosTest_8 = async (id_sesion, pronunciacionesCorrecta
     }
 };
 
+export const guardarResultadosTest_10 = async (id_sesion) => {
+    try {
+        const result = await BD_GuardarResultadosTest_10(id_sesion);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const guardarResultadosTest_11 = async (id_sesion, correctas, inversiones, rectificaciones, tiemposRespuestas, figurasSeleccionadas) => {
+    try {
+        const result = await BD_GuardarResultadosTest_11(id_sesion, correctas, inversiones, rectificaciones, tiemposRespuestas, figurasSeleccionadas);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
 
 export const obtenerResultadosSesion = async (id_sesion) => {
     try {

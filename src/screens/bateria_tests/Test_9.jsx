@@ -47,15 +47,15 @@ const Test_9 = ({ navigation, route }) => {
     };
 
     const handleNavigateHome = () => {
-        navigation.navigate('Pacientes');
+        navigation.replace('Pacientes');
     };
 
     const handleNavigateNext = () => {
-        navigation.navigate('Test_10', { idSesion: route.params.idSesion });
+        navigation.replace('Test_10', { idSesion: route.params.idSesion });
     };
 
     const handleNavigatePrevious = () => {
-        navigation.navigate('Test_8', { idSesion: route.params.idSesion });
+        navigation.replace('Test_8', { idSesion: route.params.idSesion });
     };
 
     /***************** FIN MENÚ DE EVALUACIÓN *****************/
@@ -85,7 +85,7 @@ const Test_9 = ({ navigation, route }) => {
 
     useEffect(() => {
         if (indexActual >= nombresYCaras.length) {
-            navigation.navigate('Test_10', { idSesion: route.params.idSesion });
+            navigation.replace('Test_10', { idSesion: route.params.idSesion });
         }
     }, [indexActual]);
 

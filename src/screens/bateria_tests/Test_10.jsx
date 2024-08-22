@@ -1,5 +1,3 @@
-// FIXME: EL ULTIMO ENSAYO NO SE GUARDA EN LOS RESULTADOS
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
@@ -8,11 +6,11 @@ import { Audio } from 'expo-av';
 import stylesComunes from '../../styles/ComunStyles';
 import pitido from '../../../assets/sounds/pitido_corto.mp3';
 import payaso from '../../../assets/images/payaso.png';
+import { guardarResultadosTest_10 } from '../../api/TestApi'; // Asegúrate de tener esta función implementada
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../../locales";
 import { useIsFocused } from '@react-navigation/native';
-
 
 const secuenciasEntrenamiento = [
     [0, 1],
@@ -38,15 +36,11 @@ const Test_10 = ({ navigation, route }) => {
     const [secuenciaActual, setSecuenciaActual] = useState([]);
     const [trayectoMostrado, setTrayectoMostrado] = useState(false);
     const [inicioEnsayo, setInicioEnsayo] = useState(null);
-    const [resultadoEnsayos, setResultadoEnsayos] = useState([]);
+    const [resultados, setResultados] = useState([]);
     const [payasoPosicion, setPayasoPosicion] = useState(null);
     const [mostrarModalInicioPruebas, setMostrarModalInicioPruebas] = useState(false);
-    const [aciertos, setAciertos] = useState(0);
-    const [fallos, setFallos] = useState(0);
 
     const cuadrados = Array.from({ length: 9 }, (_, i) => i);
-
-    /******************** CARGA DE TRADUCCIONES ********************/
 
     const [translations, setTranslations] = useState({});
     const isFocused = useIsFocused();
@@ -63,27 +57,6 @@ const Test_10 = ({ navigation, route }) => {
         }
     }, [isFocused]);
 
-    /***************** FIN DE CARGA DE TRADUCCIONES ****************/
-
-    /******************** MENÚ DE EVALUACIÓN ********************/
-    const handleToggleVoice = () => {
-        console.log("Toggle voice feature");
-    };
-
-    const handleNavigateHome = () => {
-        navigation.navigate('Pacientes');
-    };
-
-    const handleNavigateNext = () => {
-        navigation.navigate('Test_11', { idSesion: route.params.idSesion });
-    };
-
-    const handleNavigatePrevious = () => {
-        navigation.navigate('Test_9', { idSesion: route.params.idSesion });
-    };
-
-    /***************** FIN MENÚ DE EVALUACIÓN *****************/
-
     const playSound = async () => {
         const { sound } = await Audio.Sound.createAsync(pitido);
         await sound.playAsync();
@@ -97,6 +70,18 @@ const Test_10 = ({ navigation, route }) => {
             mostrarTrayecto(secuencia);
         }
     }, [modalVisible, mostrarModalInicioPruebas, trayectoMostrado]);
+
+    // Guardar resultados en la base de datos cuando se completa la fase 2
+    useEffect(() => {
+        const guardarResultadosBD = async () => {
+            await guardarResultadosTest_10(route.params.idSesion, resultados);
+            navigation.replace('Test_11', { idSesion: route.params.idSesion });
+        };
+
+        if (fase === 2 && ensayoActual === secuenciasPrueba.length) {
+            guardarResultadosBD();
+        }
+    }, [fase, ensayoActual]);
 
     const mostrarTrayecto = async (secuencia) => {
         for (let i = 0; i < secuencia.length; i++) {
@@ -116,19 +101,9 @@ const Test_10 = ({ navigation, route }) => {
             const nuevosCuadrados = [...prev, indice];
 
             if (nuevosCuadrados.length === secuenciaActual.length) {
-                if (fase === 2) {
-                    guardarResultados(nuevosCuadrados).then(() => {
-                        if (ensayoActual === secuenciasPrueba.length - 1) {
-                            setTimeout(() => {
-                                mostrarResultados();
-                            }, 500); // Espera un momento antes de mostrar los resultados
-                        } else {
-                            siguienteEnsayo();
-                        }
-                    });
-                } else {
+                guardarResultados(nuevosCuadrados).then(() => {
                     siguienteEnsayo();
-                }
+                });
             }
 
             return nuevosCuadrados;
@@ -141,19 +116,17 @@ const Test_10 = ({ navigation, route }) => {
 
         const esCorrecto = secuenciaActual.every((cuadrado, i) => nuevosCuadrados[i] === cuadrado);
 
-        await new Promise((resolve) => {
-            setResultadoEnsayos(prev => {
-                const nuevosResultados = [...prev, { correcto: esCorrecto, secuencia: nuevosCuadrados, tiempo: tiempoEnsayo }];
-                resolve(nuevosResultados);
-                return nuevosResultados;
-            });
-
-            if (esCorrecto) {
-                setAciertos(prev => prev + 1);
-            } else {
-                setFallos(prev => prev + 1);
-            }
-        });
+        if (fase === 2) { // Solo guardar los resultados de la fase de pruebas
+            setResultados(prev => [
+                ...prev,
+                {
+                    secuenciaMostrada: secuenciaActual,
+                    secuenciaTocada: nuevosCuadrados,
+                    correcta: esCorrecto,
+                    tiempo: tiempoEnsayo
+                }
+            ]);
+        }
     };
 
     const siguienteEnsayo = () => {
@@ -169,11 +142,9 @@ const Test_10 = ({ navigation, route }) => {
         } else if (fase === 2 && ensayoActual < secuenciasPrueba.length - 1) {
             setEnsayoActual(ensayoActual + 1);
             setTrayectoMostrado(true);
+        } else {
+            setEnsayoActual(ensayoActual + 1);
         }
-    };
-
-    const mostrarResultados = () => {
-        Alert.alert('Resultados', JSON.stringify(resultadoEnsayos));
     };
 
     const iniciarEnsayo = () => {
@@ -190,10 +161,10 @@ const Test_10 = ({ navigation, route }) => {
         <View style={stylesComunes.borde_tests}>
             <View style={stylesComunes.contenedor_test}>
                 <MenuComponent
-                    onToggleVoice={handleToggleVoice}
-                    onNavigateHome={handleNavigateHome}
-                    onNavigateNext={handleNavigateNext}
-                    onNavigatePrevious={handleNavigatePrevious}
+                    onToggleVoice={() => { }}
+                    onNavigateHome={() => navigation.replace('Pacientes')}
+                    onNavigateNext={() => navigation.replace('Test_11', { idSesion: route.params.idSesion })}
+                    onNavigatePrevious={() => navigation.replace('Test_9', { idSesion: route.params.idSesion })}
                 />
                 <InstruccionesModal
                     visible={modalVisible}
@@ -224,11 +195,6 @@ const Test_10 = ({ navigation, route }) => {
                                 </TouchableOpacity>
                             ))}
                         </View>
-                        <View style={styles.debugContainer}>
-                            <Text>Secuencia Tocada: {JSON.stringify(cuadradosTocados)}</Text>
-                            <Text>Aciertos: {aciertos}</Text>
-                            <Text>Fallos: {fallos}</Text>
-                        </View>
                     </>
                 )}
             </View>
@@ -245,7 +211,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         alignSelf: 'center',
-        marginTop: 20,
+        marginTop: 200,
     },
     cuadrado: {
         width: 90,
@@ -261,10 +227,6 @@ const styles = StyleSheet.create({
     payaso: {
         width: 50,
         height: 50,
-    },
-    debugContainer: {
-        marginTop: 20,
-        alignItems: 'center',
     },
 });
 
