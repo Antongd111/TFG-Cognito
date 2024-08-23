@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-na
 import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
+import { guardarResultadosTest_13 } from '../../api/TestApi';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../../locales";
@@ -73,6 +74,7 @@ const Test_13 = ({ navigation, route }) => {
     const [fase, setFase] = useState(1); // 1 para nombrar objeto, 2 para seleccionar relación
     const [ensayoActual, setEnsayoActual] = useState(0);
     const [correctas, setCorrectas] = useState(0);
+    const [errorAsociacion, setErrorAsociacion] = useState(0);
     const [generalizaciones, setGeneralizaciones] = useState(0);
     const [parciales, setParciales] = useState(0);
     const [otrosErrores, setOtrosErrores] = useState(0);
@@ -100,25 +102,6 @@ const Test_13 = ({ navigation, route }) => {
 
     /***************** FIN DE CARGA DE TRADUCCIONES ****************/
 
-    /******************** MENÚ DE EVALUACIÓN ********************/
-    const handleToggleVoice = () => {
-        console.log("Toggle voice feature");
-    };
-
-    const handleNavigateHome = () => {
-        navigation.navigate('Pacientes');
-    };
-
-    const handleNavigateNext = () => {
-        navigation.navigate('Test_14', { idSesion: route.params.idSesion });
-    };
-
-    const handleNavigatePrevious = () => {
-        navigation.navigate('Test_12', { idSesion: route.params.idSesion });
-    };
-
-    /***************** FIN MENÚ DE EVALUACIÓN *****************/
-
     const secuencias = [
         {
             objeto: 'cepillo',
@@ -130,11 +113,6 @@ const Test_13 = ({ navigation, route }) => {
                 images.pr13_t1_5
             ],
             correcta: 0,
-            errores: {
-                general: [1],
-                parcial: [2],
-                otros: [3]
-            }
         },
         {
             objeto: 'tornillo',
@@ -146,11 +124,6 @@ const Test_13 = ({ navigation, route }) => {
                 images.pr13_t2_5
             ],
             correcta: 0,
-            errores: {
-                general: [2],
-                parcial: [3],
-                otros: [1]
-            }
         },
         {
             objeto: 'jaula',
@@ -161,12 +134,7 @@ const Test_13 = ({ navigation, route }) => {
                 images.pr13_t3_4,
                 images.pr13_t3_5
             ],
-            correcta: 0,
-            errores: {
-                general: [3],
-                parcial: [2],
-                otros: [1]
-            }
+            correcta: 2,
         },
         {
             objeto: 'candado',
@@ -177,12 +145,7 @@ const Test_13 = ({ navigation, route }) => {
                 images.pr13_t4_4,
                 images.pr13_t4_5
             ],
-            correcta: 0,
-            errores: {
-                general: [2],
-                parcial: [1],
-                otros: [3]
-            }
+            correcta: 2,
         },
         {
             objeto: 'gafas',
@@ -193,12 +156,7 @@ const Test_13 = ({ navigation, route }) => {
                 images.pr13_t5_4,
                 images.pr13_t5_5
             ],
-            correcta: 0,
-            errores: {
-                general: [3],
-                parcial: [1],
-                otros: [2]
-            }
+            correcta: 1,
         },
         {
             objeto: 'coche',
@@ -210,11 +168,6 @@ const Test_13 = ({ navigation, route }) => {
                 images.pr13_t6_5
             ],
             correcta: 0,
-            errores: {
-                general: [1],
-                parcial: [2],
-                otros: [3]
-            }
         },
         {
             objeto: 'pantalones',
@@ -225,12 +178,7 @@ const Test_13 = ({ navigation, route }) => {
                 images.pr13_t7_4,
                 images.pr13_t7_5
             ],
-            correcta: 0,
-            errores: {
-                general: [3],
-                parcial: [1],
-                otros: [2]
-            }
+            correcta: 3,
         },
         {
             objeto: 'tren',
@@ -241,12 +189,7 @@ const Test_13 = ({ navigation, route }) => {
                 images.pr13_t8_4,
                 images.pr13_t8_5
             ],
-            correcta: 0,
-            errores: {
-                general: [2],
-                parcial: [1],
-                otros: [3]
-            }
+            correcta: 3,
         },
         {
             objeto: 'piano',
@@ -257,12 +200,7 @@ const Test_13 = ({ navigation, route }) => {
                 images.pr13_t9_4,
                 images.pr13_t9_5
             ],
-            correcta: 0,
-            errores: {
-                general: [1],
-                parcial: [3],
-                otros: [2]
-            }
+            correcta: 1,
         },
         {
             objeto: 'árbol',
@@ -273,14 +211,10 @@ const Test_13 = ({ navigation, route }) => {
                 images.pr13_t10_4,
                 images.pr13_t10_5
             ],
-            correcta: 0,
-            errores: {
-                general: [2],
-                parcial: [3],
-                otros: [1]
-            }
+            correcta: 2,
         },
         {
+            // TODO: Preguntar si se debe cambiar la imagen de la estatua
             objeto: 'estatua',
             imagenes: [images.pr13_t11_1],
             asociaciones: [
@@ -290,13 +224,19 @@ const Test_13 = ({ navigation, route }) => {
                 images.pr13_t11_5
             ],
             correcta: 0,
-            errores: {
-                general: [1],
-                parcial: [3],
-                otros: [2]
-            }
         }
     ];
+
+    useEffect(() => {
+        const guardarResultados = async () => {
+            await guardarResultadosTest_13(route.params.idSesion, correctas, errorAsociacion, generalizaciones, parciales, otrosErrores, excesoTiempoObj, excesoTiempoAsoc, JSON.stringify(respuestaSecuencia));
+            navigation.replace('Test_14', { idSesion: route.params.idSesion });
+        };
+
+        if (ensayoActual >= secuencias.length) {
+            guardarResultados();
+        }
+    }, [ensayoActual]);
 
     useEffect(() => {
         if (fase === 1) {
@@ -338,13 +278,7 @@ const Test_13 = ({ navigation, route }) => {
                     setCorrectas(prev => prev + 1);
                 } else {
                     setRespuestaSecuencia(prev => [...prev, { fase: 2, tiempo: tiempoRespuesta, seleccion: index }]);
-                    if (secuenciaActual.errores.general.includes(index)) {
-                        setGeneralizaciones(prev => prev + 1);
-                    } else if (secuenciaActual.errores.parcial.includes(index)) {
-                        setParciales(prev => prev + 1);
-                    } else {
-                        setOtrosErrores(prev => prev + 1);
-                    }
+                    setErrorAsociacion(prev => prev + 1);
                 }
             }
 
@@ -352,7 +286,7 @@ const Test_13 = ({ navigation, route }) => {
                 setEnsayoActual(prev => prev + 1);
                 setFase(1);
             } else {
-                mostrarResultados();
+                setEnsayoActual(prev => prev + 1);
             }
         }
     };
@@ -384,22 +318,27 @@ const Test_13 = ({ navigation, route }) => {
     }, [ensayoActual]);
 
     const mostrarResultados = () => {
-        Alert.alert('Resultados', `Total respuestas correctas: ${correctas}\nGeneralizaciones: ${generalizaciones}\nRespuestas parciales: ${parciales}\nOtros errores: ${otrosErrores}\nExceso de tiempo (objeto): ${excesoTiempoObj}\nExceso de tiempo (asociaciones): ${excesoTiempoAsoc}`);
+        Alert.alert('Resultados', `Total respuestas correctas: ${correctas}\n Total errores asociacion: ${errorAsociacion}\n Generalizaciones: ${generalizaciones}\nRespuestas parciales: ${parciales}\nOtros errores: ${otrosErrores}\nExceso de tiempo (objeto): ${excesoTiempoObj}\nExceso de tiempo (asociaciones): ${excesoTiempoAsoc}`);
     };
+
+    // Se evita renderizar si ya se ha completado la prueba
+    if (ensayoActual >= secuencias.length) {
+        return null;
+    }
 
     return (
         <View style={stylesComunes.borde_tests}>
             <View style={stylesComunes.contenedor_test}>
-                <MenuComponent
-                    onToggleVoice={handleToggleVoice}
-                    onNavigateHome={handleNavigateHome}
-                    onNavigateNext={handleNavigateNext}
-                    onNavigatePrevious={handleNavigatePrevious}
+            <MenuComponent
+                    onToggleVoice={() => { }}
+                    onNavigateHome={() => navigation.replace('Pacientes')}
+                    onNavigateNext={() => navigation.replace('Test_14', { idSesion: route.params.idSesion })}
+                    onNavigatePrevious={() => navigation.replace('Test_12', { idSesion: route.params.idSesion })}
                 />
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={iniciarPrueba}
-                    title = "Test 13"
+                    title="Test 13"
                     instructions={entrenamiento ? translations.pr13ItemStart : translations.ItemStartPrueba}
                 />
                 {!modalVisible && (
@@ -409,7 +348,7 @@ const Test_13 = ({ navigation, route }) => {
                                 <Image source={secuencias[ensayoActual].imagenes[0]} style={styles.imagenModelo} resizeMode="contain" />
                                 <View style={styles.column}>
                                     <TouchableOpacity style={styles.botonRC} onPress={manejarRespuestaCorrecta}>
-                                        <Text style={styles.textoBotonRC}>RC</Text>
+                                        <Text style={styles.textoBotonRC}>{translations.RC}</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.botonRC} onPress={() => manejarError('G')}>
                                         <Text style={styles.textoBotonRC}>G</Text>

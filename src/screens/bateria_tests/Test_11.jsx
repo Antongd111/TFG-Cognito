@@ -1,3 +1,5 @@
+// FIXME: poner para que las figruas se adapten al tamaño del contenedor
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';

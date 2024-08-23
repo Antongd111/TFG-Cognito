@@ -3,6 +3,7 @@ import {    guardarResultadosTest_1 as BD_GuardarResultadosTest_1, guardarResult
             obtenerResultadosSesion as BD_ObtenerResultadosSesion, guardarResultadosTest_7 as BD_GuardarResultadosTest_7,
             guardarResultadosTest_8 as BD_GuardarResultadosTest_8, guardarResultadosTest_10 as BD_GuardarResultadosTest_10,
             guardarResultadosTest_11 as BD_GuardarResultadosTest_11, guardarResultadosTest_12 as BD_GuardarResultadosTest_12,
+            guardarResultadosTest_13 as BD_GuardarResultadosTest_13, guardarResultadosTest_14 as BD_GuardarResultadosTest_14,
             crearSesionTest as BD_CrearSesionTest } from '../database/db';
 
 export const guardarResultadosTest_1 = async (id_sesion, numero_ensayos, reaccion, errores_anticipacion, errores_tiempo, errores_retrasos) => {
@@ -89,6 +90,24 @@ export const guardarResultadosTest_11 = async (id_sesion, correctas, inversiones
 export const guardarResultadosTest_12 = async (id_sesion, correctas, erroresMorfológicos, erroresFonéticos, erroresSemánticos, excedidoTiempo, respuestaIncorrecta) => {
     try {
         const result = await BD_GuardarResultadosTest_12(id_sesion, correctas, erroresMorfológicos, erroresFonéticos, erroresSemánticos, excedidoTiempo, respuestaIncorrecta);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const guardarResultadosTest_13 = async (id_sesion, correctas, errorAsociacion, generalizaciones, parciales, otrosErrores, excesoTiempoObj, excesoTiempoAsoc, respuestaSecuencia) => {
+    try {
+        const result = await BD_GuardarResultadosTest_13(id_sesion, correctas, errorAsociacion, generalizaciones, parciales, otrosErrores, excesoTiempoObj, excesoTiempoAsoc, respuestaSecuencia);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const guardarResultadosTest_14 = async (id_sesion, correctas, errores, tiempoTotal) => {
+    try {
+        const result = await BD_GuardarResultadosTest_14(id_sesion, correctas, errores, tiempoTotal);
         return result;
     } catch (error) {
         throw error;

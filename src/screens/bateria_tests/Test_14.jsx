@@ -5,10 +5,12 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-na
 import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
+import { guardarResultadosTest_14 } from '../../api/TestApi';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../../locales";
 import { useIsFocused } from '@react-navigation/native';
+
 
 const images = {
     pr14_t10_1: require('../../../assets/images/Test_14/pr14_t10_1.png'),
@@ -165,7 +167,7 @@ const secuencias = [
             images.pr14_t1_6,
             images.pr14_t1_7
         ],
-        correcta: 0
+        correcta: 4
     },
     {
         modelo: images.pr14_t2_1,
@@ -177,7 +179,7 @@ const secuencias = [
             images.pr14_t2_6,
             images.pr14_t2_7
         ],
-        correcta: 0
+        correcta: 4
     },
     {
         modelo: images.pr14_t3_1,
@@ -189,7 +191,7 @@ const secuencias = [
             images.pr14_t3_6,
             images.pr14_t3_7
         ],
-        correcta: 0
+        correcta: 5
     },
     {
         modelo: images.pr14_t4_1,
@@ -201,7 +203,7 @@ const secuencias = [
             images.pr14_t4_6,
             images.pr14_t4_7
         ],
-        correcta: 0
+        correcta: 3
     },
     {
         modelo: images.pr14_t5_1,
@@ -213,7 +215,7 @@ const secuencias = [
             images.pr14_t5_6,
             images.pr14_t5_7
         ],
-        correcta: 0
+        correcta: 2
     },
     {
         modelo: images.pr14_t6_1,
@@ -225,7 +227,7 @@ const secuencias = [
             images.pr14_t6_6,
             images.pr14_t6_7
         ],
-        correcta: 0
+        correcta: 5
     },
     {
         modelo: images.pr14_t7_1,
@@ -249,7 +251,7 @@ const secuencias = [
             images.pr14_t8_6,
             images.pr14_t8_7
         ],
-        correcta: 0
+        correcta: 3
     },
     {
         modelo: images.pr14_t9_1,
@@ -261,7 +263,7 @@ const secuencias = [
             images.pr14_t9_6,
             images.pr14_t9_7
         ],
-        correcta: 0
+        correcta: 5
     },
     {
         modelo: images.pr14_t10_1,
@@ -285,7 +287,7 @@ const secuencias = [
             images.pr14_t11_6,
             images.pr14_t11_7
         ],
-        correcta: 0
+        correcta: 5
     },
     {
         modelo: images.pr14_t12_1,
@@ -297,7 +299,7 @@ const secuencias = [
             images.pr14_t12_6,
             images.pr14_t12_7
         ],
-        correcta: 0
+        correcta: 3
     },
     {
         modelo: images.pr14_t13_1,
@@ -321,7 +323,7 @@ const secuencias = [
             images.pr14_t14_6,
             images.pr14_t14_7
         ],
-        correcta: 0
+        correcta: 5
     },
     {
         modelo: images.pr14_t15_1,
@@ -333,7 +335,7 @@ const secuencias = [
             images.pr14_t15_6,
             images.pr14_t15_7
         ],
-        correcta: 0
+        correcta: 1
     },
     {
         modelo: images.pr14_t16_1,
@@ -345,7 +347,7 @@ const secuencias = [
             images.pr14_t16_6,
             images.pr14_t16_7
         ],
-        correcta: 0
+        correcta: 4
     },
     {
         modelo: images.pr14_t17_1,
@@ -357,7 +359,7 @@ const secuencias = [
             images.pr14_t17_6,
             images.pr14_t17_7
         ],
-        correcta: 0
+        correcta: 2
     },
     {
         modelo: images.pr14_t18_1,
@@ -370,6 +372,7 @@ const secuencias = [
             images.pr14_t18_7
         ],
         correcta: 0
+        //TODO: PREGUNTAR LA RESPUESTA DE ESTO
     }
 ];
 
@@ -382,43 +385,35 @@ const Test_14 = ({ navigation, route }) => {
     const [tiempoTotal, setTiempoTotal] = useState(0);
     const [inicioEnsayo, setInicioEnsayo] = useState(null);
 
-        /******************** CARGA DE TRADUCCIONES ********************/
+    /******************** CARGA DE TRADUCCIONES ********************/
 
-        const [translations, setTranslations] = useState({});
-        const isFocused = useIsFocused();
-    
-        useEffect(() => {
-            const loadLanguage = async () => {
-                const savedLanguage = await AsyncStorage.getItem('language');
-                const lang = savedLanguage || 'es';
-                setTranslations(getTranslation(lang));
-            };
-    
-            if (isFocused) {
-                loadLanguage();
-            }
-        }, [isFocused]);
-    
-        /***************** FIN DE CARGA DE TRADUCCIONES ****************/
+    const [translations, setTranslations] = useState({});
+    const isFocused = useIsFocused();
 
-    /******************** MENÚ DE EVALUACIÓN ********************/
-    const handleToggleVoice = () => {
-        console.log("Toggle voice feature");
-    };
+    useEffect(() => {
+        const loadLanguage = async () => {
+            const savedLanguage = await AsyncStorage.getItem('language');
+            const lang = savedLanguage || 'es';
+            setTranslations(getTranslation(lang));
+        };
 
-    const handleNavigateHome = () => {
-        navigation.navigate('Pacientes');
-    };
+        if (isFocused) {
+            loadLanguage();
+        }
+    }, [isFocused]);
 
-    const handleNavigateNext = () => {
-        navigation.navigate('Test_15', { idSesion: route.params.idSesion });
-    };
+    /***************** FIN DE CARGA DE TRADUCCIONES ****************/
 
-    const handleNavigatePrevious = () => {
-        navigation.navigate('Test_13', { idSesion: route.params.idSesion });
-    };
+    useEffect(() => {
+        const guardarResultados = async () => {
+            await guardarResultadosTest_14(route.params.idSesion, correctas, errores, tiempoTotal);
+            navigation.replace('Test_15', { idSesion: route.params.idSesion });
+        };
 
-    /***************** FIN MENÚ DE EVALUACIÓN *****************/
+        if (ensayoActual >= secuencias.length) {
+            guardarResultados();
+        };
+    }, [ensayoActual]);
 
     useEffect(() => {
         setInicioEnsayo(Date.now());
@@ -449,11 +444,7 @@ const Test_14 = ({ navigation, route }) => {
                 setEnsayoActual(3); // Empezar la prueba real desde el cuarto ensayo
             }
         } else {
-            if (ensayoActual < secuencias.length - 1) {
-                setEnsayoActual(prev => prev + 1);
-            } else {
-                mostrarResultados();
-            }
+            setEnsayoActual(prev => prev + 1);
         }
     };
 
@@ -461,19 +452,24 @@ const Test_14 = ({ navigation, route }) => {
         Alert.alert('Resultados', `Total respuestas correctas: ${correctas}\nTotal errores: ${errores}\nTiempo total empleado: ${tiempoTotal / 1000} segundos`);
     };
 
+    // Se evita renderizar si ya se ha completado la prueba
+    if (ensayoActual >= secuencias.length) {
+        return null;
+    }
+
     return (
         <View style={stylesComunes.borde_tests}>
             <View style={stylesComunes.contenedor_test}>
                 <MenuComponent
-                    onToggleVoice={handleToggleVoice}
-                    onNavigateHome={handleNavigateHome}
-                    onNavigateNext={handleNavigateNext}
-                    onNavigatePrevious={handleNavigatePrevious}
+                    onToggleVoice={() => { }}
+                    onNavigateHome={() => navigation.replace('Pacientes')}
+                    onNavigateNext={() => navigation.replace('Test_15', { idSesion: route.params.idSesion })}
+                    onNavigatePrevious={() => navigation.replace('Test_13', { idSesion: route.params.idSesion })}
                 />
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={iniciarPrueba}
-                    title = "Test 14"
+                    title="Test 14"
                     instructions={entrenamiento ? translations.pr14ItemStart : translations.ItemStartPrueba}
                 />
                 {!modalVisible && (
