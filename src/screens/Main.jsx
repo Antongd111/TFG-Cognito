@@ -26,8 +26,8 @@ import Test_15 from "./bateria_tests/Test_15";  // Revisado
 import Test_16 from "./bateria_tests/Test_16";  // Revisado
 import Test_17 from "./bateria_tests/Test_17";  // Revisado sin BD
 import Test_18 from "./bateria_tests/Test_18";  // Revisado sin BD
-import Test_19 from "./bateria_tests/Test_19";
-import Test_20 from "./bateria_tests/Test_20";
+import Test_19 from "./bateria_tests/Test_19";  // Revisado sin BD
+import Test_20 from "./bateria_tests/Test_20";  // Revisado sin BD
 import Test_21 from "./bateria_tests/Test_21";
 import Test_22 from "./bateria_tests/Test_22";
 import Test_23 from "./bateria_tests/Test_23";
@@ -40,7 +40,7 @@ const Stack = createNativeStackNavigator();
 const Main = () => {
   return (
     <View style={{ flex: 1, backgroundColor: '#F2E8E1' }}>
-      <Stack.Navigator initialRouteName="Test_19" screenOptions={{headerShown: false }}>
+      <Stack.Navigator initialRouteName="Test_22" screenOptions={{headerShown: false }}>
         <Stack.Screen name="Pacientes" component={PantallaPacientes} options={{ title: 'Pantalla de Pacientes' }} />
         <Stack.Screen name="AgregarPaciente" component={AgregarPaciente} options={{ title: 'Pantalla de añadir paciente' }} />
         <Stack.Screen name="FichaPaciente" component={FichaPaciente} options={{ title: 'Pantalla de ficha de paciente' }} />

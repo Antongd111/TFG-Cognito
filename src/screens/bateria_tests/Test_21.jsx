@@ -3,17 +3,18 @@ import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
 import InstruccionesModal from '../../components/instrucciones';
+import { guardarResultadosTest_21 } from '../../api/TestApi';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../../locales";
 import { useIsFocused } from '@react-navigation/native';
-import { tr } from 'date-fns/locale';
 
 const Test_21 = ({ navigation, route }) => {
     const [respuestas, setRespuestas] = useState(0);
     const [intrusiones, setIntrusiones] = useState(0);
-    const [rechazado, setRechazado] = useState(false);
+    const [rechazos, setRechazos] = useState(0);
     const [modalVisible, setModalVisible] = useState(true);
+    const [indicesSeleccionados, setIndicesSeleccionados] = useState([]);
 
     /******************** CARGA DE TRADUCCIONES ********************/
 
@@ -33,25 +34,6 @@ const Test_21 = ({ navigation, route }) => {
     }, [isFocused]);
 
     /***************** FIN DE CARGA DE TRADUCCIONES ****************/
-
-    /******************** MENÚ DE EVALUACIÓN ********************/
-    const handleToggleVoice = () => {
-        console.log("Toggle voice feature");
-    };
-
-    const handleNavigateHome = () => {
-        navigation.navigate('Pacientes');
-    };
-
-    const handleNavigateNext = () => {
-        navigation.navigate('Test_22', { idSesion: route.params.idSesion });
-    };
-
-    const handleNavigatePrevious = () => {
-        navigation.navigate('Test_20', { idSesion: route.params.idSesion });
-    };
-
-    /***************** FIN MENÚ DE EVALUACIÓN *****************/
 
     const historia = [
         translations.pr21txt1,
@@ -96,8 +78,10 @@ const Test_21 = ({ navigation, route }) => {
 
         if (nuevasSelecciones[index]) {
             setRespuestas(respuestas + 1);
+            setIndicesSeleccionados((prev) => [...prev, index + 1]); // Añadir el índice a la lista en orden
         } else {
             setRespuestas(respuestas - 1);
+            setIndicesSeleccionados((prev) => prev.filter((i) => i !== index + 1)); // Eliminar el índice de la lista
         }
     };
 
@@ -106,26 +90,22 @@ const Test_21 = ({ navigation, route }) => {
     };
 
     const rechazarPrueba = () => {
-        setRechazado(true);
-        Alert.alert('Prueba rechazada', 'El sujeto ha decidido rechazar la prueba.');
+        setRechazos(prev => prev + 1);
     };
 
-    const validarRespuestas = () => {
-        const respuestasCorrectas = historia.filter((_, index) => selecciones[index]);
-        Alert.alert('Resultados',
-            `Respuestas correctas: ${respuestasCorrectas.length}\n` +
-            `Intrusiones: ${intrusiones}\n` +
-            `Rechazado: ${rechazado ? 'Sí' : 'No'}`);
+    const guardarResultados = async () => {
+        await guardarResultadosTest_21(route.params.idSesion, intrusiones, rechazos, JSON.stringify(indicesSeleccionados));
+        navigation.replace('Test_22', { idSesion: route.params.idSesion });
     };
 
     return (
         <View style={stylesComunes.borde_tests}>
             <View style={stylesComunes.contenedor_test}>
                 <MenuComponent
-                    onToggleVoice={handleToggleVoice}
-                    onNavigateHome={handleNavigateHome}
-                    onNavigateNext={handleNavigateNext}
-                    onNavigatePrevious={handleNavigatePrevious}
+                    onToggleVoice={() => { }}
+                    onNavigateHome={() => navigation.replace('Pacientes')}
+                    onNavigateNext={() => navigation.replace('Test_22', { idSesion: route.params.idSesion })}
+                    onNavigatePrevious={() => navigation.replace('Test_20', { idSesion: route.params.idSesion })}
                 />
                 <InstruccionesModal
                     visible={modalVisible}
@@ -166,7 +146,7 @@ const Test_21 = ({ navigation, route }) => {
                                 <Text style={styles.tablaCelda}>{intrusiones}</Text>
                             </View>
                         </View>
-                        <TouchableOpacity style={styles.botonValidar} onPress={validarRespuestas}>
+                        <TouchableOpacity style={styles.botonValidar} onPress={guardarResultados}>
                             <Text style={styles.textoBotonValidar}>{translations.Validar}</Text>
                         </TouchableOpacity>
                     </>

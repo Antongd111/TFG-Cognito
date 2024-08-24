@@ -6,6 +6,8 @@ import {
     guardarResultadosTest_11 as BD_GuardarResultadosTest_11, guardarResultadosTest_12 as BD_GuardarResultadosTest_12,
     guardarResultadosTest_13 as BD_GuardarResultadosTest_13, guardarResultadosTest_14 as BD_GuardarResultadosTest_14,
     guardarResultadosTest_17 as BD_GuardarResultadosTest_17, guardarResultadosTest_18 as BD_GuardarResultadosTest_18,
+    guardarResultadosTest_19 as BD_GuardarResultadosTest_19, guardarResultadosTest_20 as BD_GuardarResultadosTest_20,
+    guardarResultadosTest_21 as BD_GuardarResultadosTest_21, guardarResultadosTest_22 as BD_GuardarResultadosTest_22,
     crearSesionTest as BD_CrearSesionTest
 } from '../database/db';
 
@@ -151,6 +153,42 @@ export const guardarResultadosTest_17 = async (idSesion,
 export const guardarResultadosTest_18 = async (idSesion, carasReconocidasCorrectamente, carasIncorrectamenteReconocidas, nombresReconocidosCorrectamente) => {
     try {
         const result = await BD_GuardarResultadosTest_18(idSesion, carasReconocidasCorrectamente, carasIncorrectamenteReconocidas, nombresReconocidosCorrectamente);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const guardarResultadosTest_19 = async (idSesion, respuestasCorrectasTiempos, intrusionesTiempos, perseveracionesTiempos) => {
+    try {
+        const result = await BD_GuardarResultadosTest_19(idSesion, respuestasCorrectasTiempos, intrusionesTiempos, perseveracionesTiempos);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const guardarResultadosTest_20 = async (idSesion, respuestasCorrectasTiempos, intrusionesTiempos, perseveracionesTiempos) => {
+    try {
+        const result = await BD_GuardarResultadosTest_20(idSesion, respuestasCorrectasTiempos, intrusionesTiempos, perseveracionesTiempos);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const guardarResultadosTest_21 = async (idSesion, intrusiones, rechazos, indicesSeleccionados) => {
+    try {
+        const result = await BD_GuardarResultadosTest_21(idSesion, intrusiones, rechazos, indicesSeleccionados);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const guardarResultadosTest_22 = async (idSesion, intrusiones, rechazos, indicesSeleccionados) => {
+    try {
+        const result = await BD_GuardarResultadosTest_22(idSesion, intrusiones, rechazos, indicesSeleccionados);
         return result;
     } catch (error) {
         throw error;
