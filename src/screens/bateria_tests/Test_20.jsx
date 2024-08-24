@@ -4,14 +4,15 @@ import { ProgressBar } from 'react-native-paper';
 import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
+import { guardarResultadosTest_20 } from '../../api/TestApi';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../../locales";
 import { useIsFocused } from '@react-navigation/native';
 
-const Test_20 = ({ navigation, route }) => {
+const Test_19 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);
-    const [tiempoRestante, setTiempoRestante] = useState(60);
+    const [tiempoActual, setTiempoActual] = useState(0);
     const [progress, setProgress] = useState(0);
     const [respuestasCorrectas, setRespuestasCorrectas] = useState(0);
     const [intrusiones, setIntrusiones] = useState(0);
@@ -41,52 +42,47 @@ const Test_20 = ({ navigation, route }) => {
     /***************** FIN DE CARGA DE TRADUCCIONES ****************/
 
     useEffect(() => {
-        if (!modalVisible && tiempoRestante > 0) {
+        if (!modalVisible && tiempoActual < 60) {
             const interval = setInterval(() => {
-                setTiempoRestante((prevTiempo) => prevTiempo - 1);
+                setTiempoActual((prevTiempo) => prevTiempo + 1);
                 setProgress((prevProgress) => prevProgress + 1 / 60);
             }, 1000);
 
             return () => clearInterval(interval);
-        } else if (tiempoRestante === 0) {
-            mostrarResultados();
+        } else if (tiempoActual >= 60) {
+            guardarResultados();
         }
-    }, [modalVisible, tiempoRestante]);
+    }, [modalVisible, tiempoActual]);
 
     const handleRespuestaCorrecta = () => {
         setRespuestasCorrectas(respuestasCorrectas + 1);
-        actualizarContadorPorTiempo(respuestasCorrectasTiempos, setRespuestasCorrectasTiempos);
+        actualizarContadorPorTiempo(respuestasCorrectasTiempos, setRespuestasCorrectasTiempos, respuestasCorrectas);
     };
 
     const handleIntrusion = () => {
         setIntrusiones(intrusiones + 1);
-        actualizarContadorPorTiempo(intrusionesTiempos, setIntrusionesTiempos);
+        actualizarContadorPorTiempo(intrusionesTiempos, setIntrusionesTiempos, intrusiones);
     };
 
     const handlePerseveracion = () => {
         setPerseveraciones(perseveraciones + 1);
-        actualizarContadorPorTiempo(perseveracionesTiempos, setPerseveracionesTiempos);
+        actualizarContadorPorTiempo(perseveracionesTiempos, setPerseveracionesTiempos, perseveraciones);
     };
 
-    const actualizarContadorPorTiempo = (contador, setContador) => {
+    const actualizarContadorPorTiempo = (contador, setContador, tipo) => {
         let indice = 0;
-        if (tiempoRestante <= 45) indice = 1;
-        if (tiempoRestante <= 30) indice = 2;
-        if (tiempoRestante <= 15) indice = 3;
+        if (tiempoActual >= 15) indice = 1;
+        if (tiempoActual >= 30) indice = 2;
+        if (tiempoActual >= 45) indice = 3;
 
-        const nuevoContador = [...contador];
-        nuevoContador[indice] += 1;
+        const nuevoContador = contador;
+        nuevoContador[indice] = tipo + 1;
         setContador(nuevoContador);
     };
 
-    const mostrarResultados = () => {
-        const resultados = {
-            respuestasCorrectasTiempos,
-            intrusionesTiempos,
-            perseveracionesTiempos,
-        };
-        console.log('Resultados:', resultados);
-        Alert.alert('Resultados', JSON.stringify(resultados));
+    const guardarResultados = async () => {
+        await guardarResultadosTest_20(route.params.idSesion, JSON.stringify(respuestasCorrectasTiempos), JSON.stringify(intrusionesTiempos), JSON.stringify(perseveracionesTiempos));
+        navigation.replace('Test_21', { idSesion: route.params.idSesion });
     };
 
     const iniciarTarea = () => {
@@ -106,12 +102,12 @@ const Test_20 = ({ navigation, route }) => {
                     visible={modalVisible}
                     onClose={iniciarTarea}
                     title="Test 20"
-                    instructions={translations.pr20ItemStart}
+                    instructions = {translations.pr20ItemStart}
                 />
                 {!modalVisible && (
                     <View style={styles.container}>
                         <View style={styles.contadorContainer}>
-                            <Text style={styles.tiempoTexto}>{tiempoRestante}s</Text>
+                            <Text style={styles.tiempoTexto}>{tiempoActual}s</Text>
                             <ProgressBar progress={progress} color="#4CAF50" style={styles.progressBar} />
                         </View>
 
@@ -177,4 +173,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Test_20;
+export default Test_19;
