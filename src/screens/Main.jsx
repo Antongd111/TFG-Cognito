@@ -20,12 +20,12 @@ import Test_9 from "./bateria_tests/Test_9";  //Revisado
 import Test_10 from "./bateria_tests/Test_10";  //Revisado sin BD
 import Test_11 from "./bateria_tests/Test_11";  //Revisado sin BD
 import Test_12 from "./bateria_tests/Test_12";  // Revisado sin BD
-import Test_13 from "./bateria_tests/Test_13";  
-import Test_14 from "./bateria_tests/Test_14";
-import Test_15 from "./bateria_tests/Test_15";
-import Test_16 from "./bateria_tests/Test_16";
-import Test_17 from "./bateria_tests/Test_17";
-import Test_18 from "./bateria_tests/Test_18";
+import Test_13 from "./bateria_tests/Test_13";  // Revisado sin BD
+import Test_14 from "./bateria_tests/Test_14";  // Revisado sin BD
+import Test_15 from "./bateria_tests/Test_15";  // Revisado
+import Test_16 from "./bateria_tests/Test_16";  // Revisado
+import Test_17 from "./bateria_tests/Test_17";  // Revisado sin BD
+import Test_18 from "./bateria_tests/Test_18";  // Revisado sin BD
 import Test_19 from "./bateria_tests/Test_19";
 import Test_20 from "./bateria_tests/Test_20";
 import Test_21 from "./bateria_tests/Test_21";
@@ -40,7 +40,7 @@ const Stack = createNativeStackNavigator();
 const Main = () => {
   return (
     <View style={{ flex: 1, backgroundColor: '#F2E8E1' }}>
-      <Stack.Navigator initialRouteName="Test_14" screenOptions={{headerShown: false }}>
+      <Stack.Navigator initialRouteName="Test_19" screenOptions={{headerShown: false }}>
         <Stack.Screen name="Pacientes" component={PantallaPacientes} options={{ title: 'Pantalla de Pacientes' }} />
         <Stack.Screen name="AgregarPaciente" component={AgregarPaciente} options={{ title: 'Pantalla de añadir paciente' }} />
         <Stack.Screen name="FichaPaciente" component={FichaPaciente} options={{ title: 'Pantalla de ficha de paciente' }} />

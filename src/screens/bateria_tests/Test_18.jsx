@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity, Alert, StyleSheet } from 'react-na
 import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
+import { guardarResultadosTest_18 } from '../../api/TestApi';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../../locales";
@@ -35,9 +36,8 @@ const Test_18 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);
     const [indiceCaraActual, setIndiceCaraActual] = useState(0);
     const [carasReconocidasCorrectamente, setCarasReconocidasCorrectamente] = useState(0);
-    const [nombresReconocidosCorrectamente, setNombresReconocidosCorrectamente] = useState(0);
-    const [asociacionesCorrectas, setAsociacionesCorrectas] = useState(0);
     const [carasIncorrectamenteReconocidas, setCarasIncorrectamenteReconocidas] = useState(0);
+    const [nombresReconocidosCorrectamente, setNombresReconocidosCorrectamente] = useState(0);
     const [mostrarNombre, setMostrarNombre] = useState(false);
     const [mostrarBotonesValidacion, setMostrarBotonesValidacion] = useState(false);
     const [mostrarBotonesSN, setMostrarBotonesSN] = useState(true);
@@ -88,6 +88,17 @@ const Test_18 = ({ navigation, route }) => {
     ];
 
     useEffect(() => {
+        const guardarResultados = async () => {
+            await guardarResultadosTest_18(route.params.idSesion, carasReconocidasCorrectamente, carasIncorrectamenteReconocidas, nombresReconocidosCorrectamente);
+            navigation.replace('Test_19', { idSesion: route.params.idSesion });
+        };
+
+        if (indiceCaraActual === todasLasCaras.length) {
+            guardarResultados();
+        }
+    }, [indiceCaraActual]);
+
+    useEffect(() => {
         // Mezcla las caras al inicio y las guarda en el estado
         const carasAleatorias = shuffleArray([...todasLasCaras]);
         setTodasLasCarasAleatorias(carasAleatorias);
@@ -103,9 +114,11 @@ const Test_18 = ({ navigation, route }) => {
 
     const handleRespuestaS = () => {
         if (esCaraConNombre) {
+            setCarasReconocidasCorrectamente(prev => prev + 1);
             setMostrarBotonesValidacion(true);
             setMostrarBotonesSN(false);
         } else {
+            setCarasIncorrectamenteReconocidas(prev => prev + 1);
             finalizarRespuesta('S');
         }
     };
@@ -123,12 +136,10 @@ const Test_18 = ({ navigation, route }) => {
 
     const handleRespuestaCorrecta = () => {
         setNombresReconocidosCorrectamente(prev => prev + 1);
-        setAsociacionesCorrectas(prev => prev + 1);
         avanzarACaraSiguiente();
     };
 
     const handleRespuestaIncorrecta = () => {
-        setCarasIncorrectamenteReconocidas(prev => prev + 1);
         avanzarACaraSiguiente();
     };
 
@@ -136,34 +147,21 @@ const Test_18 = ({ navigation, route }) => {
         setMostrarNombre(false);
         setMostrarBotonesValidacion(false);
         setMostrarBotonesSN(true);
-        if (indiceCaraActual < todasLasCarasAleatorias.length - 1) {
-            setIndiceCaraActual(indiceCaraActual + 1);
-        } else {
-            mostrarResultados();
-        }
+        setIndiceCaraActual(indiceCaraActual + 1);
     };
 
     const finalizarRespuesta = (respuestaSujeto) => {
-        if (esCaraConNombre && respuestaSujeto === 'S') {
-            setCarasReconocidasCorrectamente(prev => prev + 1);
-        }
         avanzarACaraSiguiente();
-    };
-
-    const mostrarResultados = () => {
-        const resultados = {
-            carasReconocidasCorrectamente,
-            nombresReconocidosCorrectamente,
-            asociacionesCorrectas,
-            carasIncorrectamenteReconocidas,
-        };
-        console.log('Resultados:', resultados);
-        Alert.alert('Resultados', JSON.stringify(resultados));
     };
 
     const iniciarTarea = () => {
         setModalVisible(false);
     };
+
+    // Se evita renderizar si ya se ha completado la prueba
+    if (indiceCaraActual >= todasLasCaras.length) {
+        return null;
+    }
 
     return (
         <View style={stylesComunes.borde_tests}>
@@ -178,7 +176,7 @@ const Test_18 = ({ navigation, route }) => {
                     visible={modalVisible}
                     onClose={iniciarTarea}
                     title="Test 18"
-                    instructions = {translations.pr18ItemStart}
+                    instructions={translations.pr18ItemStart}
                 />
                 {!modalVisible && (
                     <View style={styles.caraContainer}>

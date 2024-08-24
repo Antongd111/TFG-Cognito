@@ -3,6 +3,7 @@ import { View, Text, FlatList, Alert, TouchableOpacity, StyleSheet } from 'react
 import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
+import { guardarResultadosTest_17 } from '../../api/TestApi';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../../locales";
@@ -11,10 +12,14 @@ import { useIsFocused } from '@react-navigation/native';
 const Test_17 = ({ navigation, route }) => {
     const [fase, setFase] = useState(1);
     const [modalVisible, setModalVisible] = useState(true);
-    const [nombresRecordados, setNombresRecordados] = useState([]);
-    const [intrusiones, setIntrusiones] = useState(0);
-    const [perseveraciones, setPerseveraciones] = useState(0);
-    const [rechazos, setRechazos] = useState(0);
+    const [nombresRecordadosFase1, setNombresRecordadosFase1] = useState([]);
+    const [intrusionesFase1, setIntrusionesFase1] = useState(0);
+    const [perseveracionesFase1, setPerseveracionesFase1] = useState(0);
+    const [rechazosFase1, setRechazosFase1] = useState(0);
+    const [nombresRecordadosFase2, setNombresRecordadosFase2] = useState([]);
+    const [intrusionesFase2, setIntrusionesFase2] = useState(0);
+    const [perseveracionesFase2, setPerseveracionesFase2] = useState(0);
+    const [rechazosFase2, setRechazosFase2] = useState(0);
     const [nombresIdentificados, setNombresIdentificados] = useState([]);
     const [erroresIdentificados, setErroresIdentificados] = useState(0);
     const [rechazosReconocimiento, setRechazosReconocimiento] = useState(0);
@@ -41,8 +46,18 @@ const Test_17 = ({ navigation, route }) => {
     const nombresAprendidos = [translations.pr08Nombre1, translations.pr08Nombre2, translations.pr08Nombre3, translations.pr08Nombre4, translations.pr08Nombre5, translations.pr08Nombre6, translations.pr08Nombre7, translations.pr08Nombre8, translations.pr08Nombre9];
     const nombresDistractores = [translations.pr17Nombre1, translations.pr17Nombre2, translations.pr17Nombre3, translations.pr17Nombre4, translations.pr17Nombre5, translations.pr17Nombre6, translations.pr17Nombre7, translations.pr17Nombre8, translations.pr17Nombre9];
 
-    const handleRecordarNombre = (nombre) => {
-        setNombresRecordados((prev) => {
+    const handleRecordarNombreFase1 = (nombre) => {
+        setNombresRecordadosFase1((prev) => {
+            if (prev.includes(nombre)) {
+                return prev.filter((n) => n !== nombre); // Deseleccionar
+            } else {
+                return [...prev, nombre]; // Seleccionar
+            }
+        });
+    };
+
+    const handleRecordarNombreFase2 = (nombre) => {
+        setNombresRecordadosFase2((prev) => {
             if (prev.includes(nombre)) {
                 return prev.filter((n) => n !== nombre); // Deseleccionar
             } else {
@@ -62,15 +77,27 @@ const Test_17 = ({ navigation, route }) => {
     };
 
     const handlePerseveracion = () => {
-        setPerseveraciones(perseveraciones + 1);
+        if (fase === 1) {
+            setPerseveracionesFase1(prev => prev + 1);
+        } else if (fase === 2) {
+            setPerseveracionesFase2(prev => prev + 1);
+        }
     };
 
     const handleIntrusion = () => {
-        setIntrusiones(intrusiones + 1);
+        if (fase === 1) {
+            setIntrusionesFase1(prev => prev + 1);
+        } else if (fase === 2) {
+            setIntrusionesFase2(prev => prev + 1);
+        }
     };
 
     const handleRechazo = () => {
-        setRechazos(rechazos + 1);
+        if (fase === 1) {
+            setRechazosFase1(prev => prev + 1);
+        } else if (fase === 2) {
+            setRechazosFase2(prev => prev + 1);
+        }
     };
 
     const handleRechazoReconocimiento = () => {
@@ -79,40 +106,50 @@ const Test_17 = ({ navigation, route }) => {
 
     const validarFase = () => {
         if (fase === 1) {
-            setNombresRecordados([]); // Resetear la selección
             setModalVisible(true);
             setFase(2);
         } else if (fase === 2) {
-            setNombresIdentificados([]); // Resetear la selección
             setModalVisible(true);
             setFase(3);
         } else if (fase === 3) {
-            mostrarResultados();
+            guardarResultados();
         }
     };
 
-    const mostrarResultados = () => {
-        const resultados = {
-            nombresRecordados,
-            intrusiones,
-            perseveraciones,
-            rechazos,
-            nombresIdentificados,
-            erroresIdentificados,
-            rechazosReconocimiento,
-        };
-        console.log('Resultados:', resultados);
-        Alert.alert('Resultados', JSON.stringify(resultados));
+    const guardarResultados = async () => {
+        await guardarResultadosTest_17(route.params.idSesion, route.params.idSesion,
+            nombresRecordadosFase1.filter((nombre) => nombresAprendidos.includes(nombre)).length,
+            intrusionesFase1,
+            perseveracionesFase1,
+            rechazosFase1,
+            nombresRecordadosFase2.filter((nombre) => nombresAprendidos.includes(nombre)).length,
+            intrusionesFase2,
+            perseveracionesFase2,
+            rechazosFase2,
+            nombresIdentificados.filter((nombre) => nombresAprendidos.includes(nombre)).length,
+            nombresIdentificados.filter((nombre) => nombresDistractores.includes(nombre)).length,
+            rechazosReconocimiento);
+
+        navigation.replace('Test_18', { idSesion: route.params.idSesion });
     };
 
     const iniciarTarea = () => {
         setModalVisible(false);
     };
 
-    const renderNombreItem = ({ item }) => (
+    const renderNombreItemFase1 = ({ item }) => (
         <TouchableOpacity
-            style={[styles.nombreItem, nombresRecordados.includes(item) && styles.nombreItemSeleccionado]}
-            onPress={() => handleRecordarNombre(item)}
+            style={[styles.nombreItem, nombresRecordadosFase1.includes(item) && styles.nombreItemSeleccionado]}
+            onPress={() => handleRecordarNombreFase1(item)}
+        >
+            <Text style={styles.nombreTexto}>{item}</Text>
+        </TouchableOpacity>
+    );
+
+    const renderNombreItemFase2 = ({ item }) => (
+        <TouchableOpacity
+            style={[styles.nombreItem, nombresRecordadosFase2.includes(item) && styles.nombreItemSeleccionado]}
+            onPress={() => handleRecordarNombreFase2(item)}
         >
             <Text style={styles.nombreTexto}>{item}</Text>
         </TouchableOpacity>
@@ -158,7 +195,7 @@ const Test_17 = ({ navigation, route }) => {
                     <View>
                         <FlatList
                             data={nombresAprendidos}
-                            renderItem={renderNombreItem}
+                            renderItem={renderNombreItemFase1}
                             keyExtractor={(item) => item}
                             style={styles.nombreLista}
                         />
@@ -187,7 +224,7 @@ const Test_17 = ({ navigation, route }) => {
                                 <Text style={styles.sectionHeader}>M</Text>
                                 <FlatList
                                     data={nombresAprendidos.filter((nombre) => nombre.startsWith('M'))}
-                                    renderItem={renderNombreItem}
+                                    renderItem={renderNombreItemFase2}
                                     keyExtractor={(item) => item}
                                     style={styles.nombreLista}
                                 />
@@ -196,7 +233,7 @@ const Test_17 = ({ navigation, route }) => {
                                 <Text style={styles.sectionHeader}>J</Text>
                                 <FlatList
                                     data={nombresAprendidos.filter((nombre) => nombre.startsWith('J'))}
-                                    renderItem={renderNombreItem}
+                                    renderItem={renderNombreItemFase2}
                                     keyExtractor={(item) => item}
                                     style={styles.nombreLista}
                                 />
@@ -205,7 +242,7 @@ const Test_17 = ({ navigation, route }) => {
                                 <Text style={styles.sectionHeader}>C</Text>
                                 <FlatList
                                     data={nombresAprendidos.filter((nombre) => nombre.startsWith('C'))}
-                                    renderItem={renderNombreItem}
+                                    renderItem={renderNombreItemFase2}
                                     keyExtractor={(item) => item}
                                     style={styles.nombreLista}
                                 />

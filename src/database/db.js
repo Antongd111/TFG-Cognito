@@ -145,6 +145,32 @@ const initDB = async () => {
       FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
     );
 
+    CREATE TABLE IF NOT EXISTS Test_17 (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_sesion INTEGER NOT NULL UNIQUE,
+    nombres_recordados_fase1 INTEGER NOT NULL,
+    intrusiones_fase1 INTEGER NOT NULL,
+    perseveraciones_fase1 INTEGER NOT NULL,
+    rechazos_fase1 INTEGER NOT NULL,
+    nombres_recordados_fase2 INTEGER NOT NULL,
+    intrusiones_fase2 INTEGER NOT NULL,
+    perseveraciones_fase2 INTEGER NOT NULL,
+    rechazos_fase2 INTEGER NOT NULL,
+    nombres_identificados_fase3 INTEGER NOT NULL,
+    errores_identificados_fase3 INTEGER NOT NULL,
+    rechazos_reconocimiento_fase3 INTEGER NOT NULL,
+    FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
+  );
+
+  CREATE TABLE IF NOT EXISTS Test_18 (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_sesion INTEGER NOT NULL UNIQUE,
+      correctas INTEGER NOT NULL,
+      errores INTEGER NOT NULL,
+      tiempo_total INTEGER NOT NULL,
+      FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
+  );
+
   `);
 
   console.log("Tabla Paciente creada o ya existente");
@@ -157,7 +183,7 @@ export const agregarPaciente = async (identificacion, nombre, apellidos, fecha_n
     'INSERT INTO Paciente (identificacion, nombre, apellidos, fecha_nacimiento, sexo, observaciones) VALUES ($identificacion, $nombre, $apellidos, $fecha_nacimiento, $sexo, $observaciones)'
   );
   try {
-    const result = await statement.executeAsync({$identificacion: identificacion, $nombre: nombre, $apellidos: apellidos, $fecha_nacimiento: fecha_nacimiento, $sexo: sexo, $observaciones: observaciones });
+    const result = await statement.executeAsync({ $identificacion: identificacion, $nombre: nombre, $apellidos: apellidos, $fecha_nacimiento: fecha_nacimiento, $sexo: sexo, $observaciones: observaciones });
     console.log("Paciente añadido con ID:", result.lastInsertRowId);
     if (callback) callback(true, result.lastInsertRowId);
   } catch (error) {
@@ -247,13 +273,14 @@ export const guardarResultadosTest_1 = async (id_sesion, numero_ensayos, reaccio
     const tiempos_reaccion = JSON.stringify(reaccion);
     console.log("Tiempos de reacción:", tiempos_reaccion);
 
-    const result = await statement.executeAsync({ 
-      $id_sesion: id_sesion, 
-      $numero_ensayos: numero_ensayos, 
-      $tiempos_reaccion: tiempos_reaccion, 
-      $errores_anticipacion: errores_anticipacion, 
-      $errores_retrasos: errores_retrasos, 
-      $errores_tiempo: errores_tiempo });
+    const result = await statement.executeAsync({
+      $id_sesion: id_sesion,
+      $numero_ensayos: numero_ensayos,
+      $tiempos_reaccion: tiempos_reaccion,
+      $errores_anticipacion: errores_anticipacion,
+      $errores_retrasos: errores_retrasos,
+      $errores_tiempo: errores_tiempo
+    });
     await statement.finalizeAsync();
     console.log("Resultados del Test 1 guardados:", result.lastInsertRowId);
     return result.lastInsertRowId;
@@ -429,6 +456,94 @@ export const guardarResultadosTest_14 = async (idSesion, correctas, errores, tie
     return result.lastInsertRowId;
   } catch (error) {
     console.error("Error al guardar resultados del Test 14:", error);
+    throw error;
+  }
+};
+
+export const guardarResultadosTest_17 = async (
+  idSesion,
+  nombresRecordadosFase1,
+  intrusionesFase1,
+  perseveracionesFase1,
+  rechazosFase1,
+  nombresRecordadosFase2,
+  intrusionesFase2,
+  perseveracionesFase2,
+  rechazosFase2,
+  nombresIdentificadosFase3,
+  erroresIdentificadosFase3,
+  rechazosReconocimientoFase3
+) => {
+  const db = await dbPromise;
+  console.log("Guardando resultados del Test 17:", idSesion, nombresRecordadosFase1, intrusionesFase1, perseveracionesFase1, rechazosFase1, nombresRecordadosFase2, intrusionesFase2, perseveracionesFase2, rechazosFase2, nombresIdentificadosFase3, erroresIdentificadosFase3, rechazosReconocimientoFase3);
+  try {
+    const statement = await db.prepareAsync(
+      `INSERT OR REPLACE INTO Test_17 (
+              id_sesion,
+              nombres_recordados_fase1,
+              intrusiones_fase1,
+              perseveraciones_fase1,
+              rechazos_fase1,
+              nombres_recordados_fase2,
+              intrusiones_fase2,
+              perseveraciones_fase2,
+              rechazos_fase2,
+              nombres_identificados_fase3,
+              errores_identificados_fase3,
+              rechazos_reconocimiento_fase3
+          ) VALUES (
+              $id_sesion,
+              $nombres_recordados_fase1,
+              $intrusiones_fase1,
+              $perseveraciones_fase1,
+              $rechazos_fase1,
+              $nombres_recordados_fase2,
+              $intrusiones_fase2,
+              $perseveraciones_fase2,
+              $rechazos_fase2,
+              $nombres_identificados_fase3,
+              $errores_identificados_fase3,
+              $rechazos_reconocimiento_fase3
+          )`
+    );
+
+    const result = await statement.executeAsync({
+      $id_sesion: idSesion,
+      $nombres_recordados_fase1: nombresRecordadosFase1,
+      $intrusiones_fase1: intrusionesFase1,
+      $perseveraciones_fase1: perseveracionesFase1,
+      $rechazos_fase1: rechazosFase1,
+      $nombres_recordados_fase2: nombresRecordadosFase2,
+      $intrusiones_fase2: intrusionesFase2,
+      $perseveraciones_fase2: perseveracionesFase2,
+      $rechazos_fase2: rechazosFase2,
+      $nombres_identificados_fase3: nombresIdentificadosFase3,
+      $errores_identificados_fase3: erroresIdentificadosFase3,
+      $rechazos_reconocimiento_fase3: rechazosReconocimientoFase3
+    });
+
+    await statement.finalizeAsync();
+    console.log("Resultados del Test 17 guardados:", result.lastInsertRowId);
+    return result.lastInsertRowId;
+  } catch (error) {
+    console.error("Error al guardar resultados del Test 17:", error);
+    throw error;
+  }
+};
+
+export const guardarResultadosTest_18 = async (idSesion, carasReconocidasCorrectamente, carasIncorrectamenteReconocidas, nombresReconocidosCorrectamente) => {
+  const db = await dbPromise;
+  console.log("Guardando resultados del Test 18:", idSesion, carasReconocidasCorrectamente, carasIncorrectamenteReconocidas, nombresReconocidosCorrectamente);
+  try {
+    const statement = await db.prepareAsync(
+      'INSERT OR REPLACE INTO Test_18 (id_sesion, caras_reconocidas_correctamente, caras_incorrectamente_reconocidas, nombres_reconocidos_correctamente) VALUES ($id_sesion, $caras_reconocidas_correctamente, $caras_incorrectamente_reconocidas, $nombres_reconocidos_correctamente)'
+    );
+    const result = await statement.executeAsync({ $id_sesion: idSesion, $caras_reconocidas_correctamente: carasReconocidasCorrectamente, $caras_incorrectamente_reconocidas: carasIncorrectamenteReconocidas, $nombres_reconocidos_correctamente: nombresReconocidosCorrectamente });
+    await statement.finalizeAsync();
+    console.log("Resultados del Test 18 guardados:", result.lastInsertRowId);
+    return result.lastInsertRowId;
+  } catch (error) {
+    console.error("Error al guardar resultados del Test 18:", error);
     throw error;
   }
 };
