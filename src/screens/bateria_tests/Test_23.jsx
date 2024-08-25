@@ -1,3 +1,5 @@
+//TODO: mezclar respuestas para que la correcta no sea siempre la primera
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
@@ -6,6 +8,7 @@ import stylesComunes from '../../styles/ComunStyles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../../locales";
 import { useIsFocused } from '@react-navigation/native';
+import { guardarResultadosTest_23 } from '../../api/TestApi';
 
 const TOTAL_ENSAYOS = 35;
 
@@ -13,7 +16,8 @@ const Test_23 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);
     const [ensayoActual, setEnsayoActual] = useState(0);
     const [opcionesEnsayo, setOpcionesEnsayo] = useState([]);
-    const [resultados, setResultados] = useState([]);
+    const [respuestas, setRespuestas] = useState([]); // Nuevo array para guardar las respuestas
+    const [tiempos, setTiempos] = useState([]); // Nuevo array para guardar los tiempos
     const [correctas, setCorrectas] = useState(0);
     const [errores, setErrores] = useState(0);
     const [excesosDeTiempo, setExcesosDeTiempo] = useState(0);
@@ -39,6 +43,21 @@ const Test_23 = ({ navigation, route }) => {
     }, [isFocused]);
 
     /***************** FIN DE CARGA DE TRADUCCIONES ****************/
+
+    useEffect(() => {
+        const guardarResultados = async () => {
+            try {
+                await guardarResultadosTest_23(route.params.idSesion, correctas, errores, excesosDeTiempo, respuestas, tiempos);
+                navigation.replace('Test_24', { idSesion: route.params.idSesion });
+            } catch (e) {
+                console.error('No se pudo guardar los resultados en el almacenamiento interno.');
+            }
+        };
+
+        if (ensayoActual === TOTAL_ENSAYOS) {
+            guardarResultados();
+        }
+    }, [ensayoActual]);
 
     useEffect(() => {
         if (translations && Object.keys(translations).length > 0) {
@@ -107,26 +126,25 @@ const Test_23 = ({ navigation, route }) => {
     };
 
     const guardarResultado = (indiceOpcion, excesoDeTiempo, tiempoRespuesta = 10001) => {
-        const resultado = {
-            ensayo: ensayoActual + 1,
-            respuesta: indiceOpcion !== null ? indiceOpcion + 1 : null,
-            tiempo: excesoDeTiempo ? 10001 : tiempoRespuesta,
-        };
+        // Añade la respuesta y el tiempo a los arrays correspondientes
+        setRespuestas((prevRespuestas) => [
+            ...prevRespuestas,
+            indiceOpcion !== null ? indiceOpcion + 1 : null,
+        ]);
 
-        setResultados([...resultados, resultado]);
+        setTiempos((prevTiempos) => [
+            ...prevTiempos,
+            excesoDeTiempo ? 10001 : tiempoRespuesta,
+        ]);
 
         siguienteEnsayo();
     };
 
     const siguienteEnsayo = () => {
-        if (ensayoActual < TOTAL_ENSAYOS - 1) {
-            if (ensayoActual === 1) {
-                setModalPruebaVisible(true);
-            } else {
-                setEnsayoActual(ensayoActual + 1);
-            }
+        if (ensayoActual === 1) {
+            setModalPruebaVisible(true);
         } else {
-            mostrarResultados();
+            setEnsayoActual(ensayoActual + 1);
         }
     };
 
@@ -135,7 +153,8 @@ const Test_23 = ({ navigation, route }) => {
             correctas,
             errores,
             excesosDeTiempo,
-            detalles: resultados,
+            respuestas, // Array de respuestas
+            tiempos, // Array de tiempos
         };
 
         console.log('Resultados Finales:', resultadosFinales);
@@ -151,14 +170,19 @@ const Test_23 = ({ navigation, route }) => {
         setModalVisible(false);
     };
 
+    // Se evita renderizar si ya se ha completado la prueba
+    if (ensayoActual >= TOTAL_ENSAYOS) {
+        return null;
+    }
+
     return (
         <View style={stylesComunes.borde_tests}>
             <View style={[stylesComunes.contenedor_test, styles.contenedor_test23]}>
                 <MenuComponent
                     onToggleVoice={() => { }}
-                    onNavigateHome={() => navigation.navigate('Pacientes')}
-                    onNavigateNext={() => navigation.navigate('Test_24', { idSesion: route.params.idSesion })}
-                    onNavigatePrevious={() => navigation.navigate('Test_22', { idSesion: route.params.idSesion })}
+                    onNavigateHome={() => navigation.replace('Pacientes')}
+                    onNavigateNext={() => navigation.replace('Test_24', { idSesion: route.params.idSesion })}
+                    onNavigatePrevious={() => navigation.replace('Test_22', { idSesion: route.params.idSesion })}
                 />
                 <InstruccionesModal
                     visible={modalVisible}

@@ -8,6 +8,7 @@ import {
     guardarResultadosTest_17 as BD_GuardarResultadosTest_17, guardarResultadosTest_18 as BD_GuardarResultadosTest_18,
     guardarResultadosTest_19 as BD_GuardarResultadosTest_19, guardarResultadosTest_20 as BD_GuardarResultadosTest_20,
     guardarResultadosTest_21 as BD_GuardarResultadosTest_21, guardarResultadosTest_22 as BD_GuardarResultadosTest_22,
+    guardarResultadosTest_23 as BD_GuardarResultadosTest_23,
     crearSesionTest as BD_CrearSesionTest
 } from '../database/db';
 
@@ -189,6 +190,15 @@ export const guardarResultadosTest_21 = async (idSesion, intrusiones, rechazos, 
 export const guardarResultadosTest_22 = async (idSesion, intrusiones, rechazos, indicesSeleccionados) => {
     try {
         const result = await BD_GuardarResultadosTest_22(idSesion, intrusiones, rechazos, indicesSeleccionados);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const guardarResultadosTest_23 = async (idSesion, correctas, errores, excesosDeTiempo, respuestas, tiempos) => {
+    try {
+        const result = await BD_GuardarResultadosTest_23(idSesion, correctas, errores, excesosDeTiempo, respuestas, tiempos);
         return result;
     } catch (error) {
         throw error;

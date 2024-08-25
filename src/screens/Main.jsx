@@ -12,7 +12,7 @@ import Test_1 from "./bateria_tests/Test_1";
 import Test_2 from "./bateria_tests/Test_2";  //Revisado
 import Test_3 from "./bateria_tests/Test_3";  //Revisado
 import Test_4 from "./bateria_tests/Test_4";  //Revisado
-import Test_5 from "./bateria_tests/Test_5";
+import Test_5 from "./bateria_tests/Test_5";  
 import Test_6 from "./bateria_tests/Test_6";
 import Test_7 from "./bateria_tests/Test_7";
 import Test_8 from "./bateria_tests/Test_8";  //Revisado
@@ -28,9 +28,9 @@ import Test_17 from "./bateria_tests/Test_17";  // Revisado sin BD
 import Test_18 from "./bateria_tests/Test_18";  // Revisado sin BD
 import Test_19 from "./bateria_tests/Test_19";  // Revisado sin BD
 import Test_20 from "./bateria_tests/Test_20";  // Revisado sin BD
-import Test_21 from "./bateria_tests/Test_21";
-import Test_22 from "./bateria_tests/Test_22";
-import Test_23 from "./bateria_tests/Test_23";
+import Test_21 from "./bateria_tests/Test_21";  // Revisado sin BD
+import Test_22 from "./bateria_tests/Test_22";  // Revisado sin BD
+import Test_23 from "./bateria_tests/Test_23";  // Revisado sin BD
 // import Test_24 from "./bateria_tests/Test_24";
 // import Test_25 from "./bateria_tests/Test_25";
 
@@ -40,7 +40,7 @@ const Stack = createNativeStackNavigator();
 const Main = () => {
   return (
     <View style={{ flex: 1, backgroundColor: '#F2E8E1' }}>
-      <Stack.Navigator initialRouteName="Test_22" screenOptions={{headerShown: false }}>
+      <Stack.Navigator initialRouteName="Pacientes" screenOptions={{headerShown: false }}>
         <Stack.Screen name="Pacientes" component={PantallaPacientes} options={{ title: 'Pantalla de Pacientes' }} />
         <Stack.Screen name="AgregarPaciente" component={AgregarPaciente} options={{ title: 'Pantalla de añadir paciente' }} />
         <Stack.Screen name="FichaPaciente" component={FichaPaciente} options={{ title: 'Pantalla de ficha de paciente' }} />
