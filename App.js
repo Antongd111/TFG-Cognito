@@ -7,6 +7,7 @@ import { Text } from 'react-native';
 import initDB from './src/database/db';
 import { NavigationContainer } from '@react-navigation/native';
 import 'react-native-reanimated';
+import * as ScreenOrientation from 'expo-screen-orientation';
 
 const customFonts = {
   'K2D-Bold': require('./assets/fonts/K2D-Bold.ttf'),
@@ -14,6 +15,10 @@ const customFonts = {
 
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  useEffect(() => {
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+  }, []);
 
   async function loadFonts() {
     await Font.loadAsync(customFonts);
