@@ -7,6 +7,8 @@ import { getTranslation } from "../locales";
 import { obtenerResultadosSesion } from '../api/TestApi';
 
 import BotonToPDF from '../components/botonToPDF';
+import { obtenerPaciente } from '../database/db';
+import { id } from 'date-fns/locale';
 
 const InfoSesion = ({ navigation, route }) => {
   const { idSesion, idPaciente } = route.params;
@@ -28,6 +30,7 @@ const InfoSesion = ({ navigation, route }) => {
     const cargarResultados = async () => {
       try {
         const resultadosSesion = await obtenerResultadosSesion(idSesion);
+        const datosPaciente = await obtenerPaciente(idPaciente);
         if (resultadosSesion === null) {
           console.log("No hay resultados para esta sesión.");
           setResultados([]); // Establece un array vacío si no hay resultados
@@ -186,7 +189,7 @@ const InfoSesion = ({ navigation, route }) => {
       />
       </View>
       <View>
-        <BotonToPDF datosTests={testsData} />
+        <BotonToPDF datosTests={resultados} />
       </View>
     </View>
   );

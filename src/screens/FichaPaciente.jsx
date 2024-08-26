@@ -128,7 +128,7 @@ const FichaPaciente = ({ route, navigation }) => {
           <ScrollView style={FichaPacientesStyles.lista_tests}>
             {tests.map((test, index) => (
               <View key={index} style={FichaPacientesStyles.test}>
-                <TouchableOpacity onPress={() => navigation.navigate('InfoSesion', { idSesion: test.id })}>
+                <TouchableOpacity onPress={() => navigation.navigate('InfoSesion', { idPaciente: idPaciente, idSesion: test.id })}>
                   <Text style={FichaPacientesStyles.testFecha}>
                     <Text style={{ fontWeight: 'bold' }}>{index + 1}</Text> - {test.fecha_sesion}
                   </Text>

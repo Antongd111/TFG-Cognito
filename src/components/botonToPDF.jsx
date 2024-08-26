@@ -1,796 +1,438 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, Alert } from 'react-native';
 import * as Print from 'expo-print';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
-const BotonToPDF = ({ datosTests }) => {
+const BotonToPDF = ({ datosPaciente, datosTests }) => {
   const createAndDownloadPDF = async () => {
     try {
+      // Desestructurando los datos del paciente
+      const {
+        identificacion = '',
+        nombre = '',
+        apellidos = '',
+        fecha_nacimiento = '',
+        genero = '',
+        observaciones = '',
+      } = datosPaciente || {};
+
+      // Organizando los datos para ser insertados en el HTML
+      const test1 = datosTests.test_1[0] || {};
+      const test3 = datosTests.test_3[0] || {};
+      const test4 = datosTests.test_4[0] || {};
+      const test5 = datosTests.test_5[0] || {};
+      const test6 = datosTests.test_6[0] || {};
+      const test7 = datosTests.test_7[0] || {};
+      const test8 = datosTests.test_8[0] || {};
+      const test10 = datosTests.test_10[0] || {};
+      const test11 = datosTests.test_11[0] || {};
+      const test12 = datosTests.test_12[0] || {};
+      const test13 = datosTests.test_13[0] || {};
+      const test14 = datosTests.test_14[0] || {};
+      const test17 = datosTests.test_17[0] || {};
+      const test18 = datosTests.test_18[0] || {};
+      const test19 = datosTests.test_19[0] || {};
+      const test20 = datosTests.test_20[0] || {};
+      const test21 = datosTests.test_21[0] || {};
+      const test22 = datosTests.test_22[0] || {};
+      const test23 = datosTests.test_23[0] || {};
+
       const { uri } = await Print.printToFileAsync({
         html: `
-<html>
+          <html>
+            <head>
+              <style>
+                h1 { font-family: verdana; font-size: 30px; }
+                h2 { font-family: verdana; font-size: 20px; }
+                body { font-family: verdana; font-size: 20px; margin: 15px; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+                th { background-color: #4e5bf0; font-weight: bold; }
+                .prueba th { text-align: center; }
+                .prueba td { text-align: center; }
+              </style>
+            </head>
+            <body>
+              <h1>Batería de tests Cognito</h1>
+              <h2>Resultados de la sesión - ${new Date().toLocaleDateString()}</h2>
+              <table>
+                <tr><th colspan="2">Datos del paciente</th></tr>
+                <tr><td><b>Identificación:</b></td><td>${identificacion}</td></tr>
+                <tr><td><b>Nombre:</b></td><td>${nombre} ${apellidos}</td></tr>
+                <tr><td><b>Fecha de nacimiento:</b></td><td>${fecha_nacimiento}</td></tr>
+                <tr><td><b>Género:</b></td><td>${genero}</td></tr>
+                <tr><td><b>Observaciones:</b></td><td>${observaciones}</td></tr>
+              </table>
 
-<head>
-  <style>
-    h1 {
-      font-family: verdana;
-      font-size: 30px;
-    }
+              <h3>Test 1 - Tiempo de reacción</h3>
+              <table class="prueba">
+                <tr>
+                  <th>Nº de ensayos</th>
+                  <th>Tiempo medio (ms)</th>
+                  <th>Errores de anticipación</th>
+                  <th>Retrasos</th>
+                  <th>Errores de tiempo</th>
+                </tr>
+                <tr>
+                  <td>${test1.numero_ensayos || ''}</td>
+                  <td>${test1.tiempo_medio || ''}</td>
+                  <td>${test1.errores_anticipacion || ''}</td>
+                  <td>${test1.errores_retrasos || ''}</td>
+                  <td>${test1.errores_tiempo || ''}</td>
+                </tr>
+                <tr><th colspan="5">Tiempos de reacción (ms)</th></tr>
+                <tr><td colspan="5">${(test1.tiempos_reaccion && JSON.parse(test1.tiempos_reaccion).join(' - ')) || ''}</td></tr>
+              </table>
 
-    h2 {
-      font-family: verdana;
-      font-size: 20px;
-    }
+              <h3>Test 3 - Lectura y compresión de frases</h3>
+              <table class="prueba">
+                <tr>
+                  <th>Lecturas correctas</th>
+                  <th>Lecturas incorrectas</th>
+                  <th>Aciertos</th>
+                  <th>Fallos</th>
+                  <th>Errores de tiempo</th>
+                </tr>
+                <tr>
+                  <td>${test3.numero_aciertos || ''}</td>
+                  <td>${test3.lectura_correcta || ''}</td>
+                  <td>${test3.numero_aciertos || ''}</td>
+                  <td>${test3.fallos || ''}</td>
+                  <td>${test3.errores_tiempo || ''}</td>
+                </tr>
+              </table>
 
-    body {
-      font-family: verdana;
-      font-size: 20px;
-      margin: 15px;
-    }
+              <h3>Test 4 - Estimaciones</h3>
+              <table class="prueba">
+                <tr>
+                  <th>Respuestas correctas</th>
+                  <th>Respuestas incorrectas</th>
+                  <th>Sobreestimaciones</th>
+                  <th>Subestimaciones</th>
+                </tr>
+                <tr>
+                  <td>${test4.numero_aciertos || ''}</td>
+                  <td>${test4.numero_sobreestimaciones || ''}</td>
+                  <td>${test4.numero_sobreestimaciones || ''}</td>
+                  <td>${test4.numero_subestimaciones || ''}</td>
+                </tr>
+              </table>
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
+              <h3>Test 5 - Errores de tiempo</h3>
+              <table class="prueba">
+                <tr>
+                  <th>Ensayos correctos</th>
+                  <th>Errores</th>
+                  <th>Errores de tiempo</th>
+                </tr>
+                <tr>
+                  <td>${test5.ensayos_correctos || ''}</td>
+                  <td>${test5.numero_errores || ''}</td>
+                  <td>${test5.errores_tiempo || ''}</td>
+                </tr>
+              </table>
 
-    th,
-    td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
+              <h3>Test 6 - Acertijos auditivos</h3>
+              <table class="prueba">
+                <tr>
+                  <th>Ensayos correctos</th>
+                  <th>Errores</th>
+                  <th>Errores de tiempo</th>
+                  <th>Sonidos correctos</th>
+                </tr>
+                <tr>
+                  <td>${test6.numero_aciertos || ''}</td>
+                  <td>${test6.numero_errores || ''}</td>
+                  <td>${test6.errores_tiempo || ''}</td>
+                  <td>${test6.sonidos_correctos || ''}</td>
+                </tr>
+              </table>
 
-    th {
-      background-color: #4e5bf0;
-      font-weight: bold;
-    }
+              <h3>Test 7 - Tiempo de acierto</h3>
+              <table class="prueba">
+                <tr>
+                  <th>Respuestas correctas</th>
+                  <th>Errores</th>
+                  <th>Tiempo medio de acierto (ms)</th>
+                </tr>
+                <tr>
+                  <td>${test7.numero_aciertos || ''}</td>
+                  <td>${test7.numero_errores || ''}</td>
+                  <td>${test7.tiempo_medio || ''}</td>
+                </tr>
+              </table>
 
-    .prueba th {
-      text-align: center;
-    }
+              <h3>Test 8 - Pronunciaciones</h3>
+              <table class="prueba">
+                <tr>
+                  <th>Pronunciaciones correctas</th>
+                  <th>Pronunciaciones incorrectas</th>
+                  <th>Nombres recordados</th>
+                  <th>Intrusiones</th>
+                  <th>Perseveraciones</th>
+                  <th>Rechazos</th>
+                </tr>
+                <tr>
+                  <td>${test8.pronunciaciones_correctas || ''}</td>
+                  <td>${test8.pronunciaciones_incorrectas || ''}</td>
+                  <td>${test8.recordados || ''}</td>
+                  <td>${test8.intrusiones || ''}</td>
+                  <td>${test8.perseveraciones || ''}</td>
+                  <td>${test8.rechazos || ''}</td>
+                </tr>
+              </table>
 
-    .prueba td {
-      text-align: center;
-    }
-  </style>
-</head>
+              <h3>Test 10 - Validez</h3>
+              <table class="prueba">
+                <tr>
+                  <th>Número de ensayo</th>
+                  <th>Validez</th>
+                  <th>Tiempo empleado (ms)</th>
+                </tr>
+                ${(test10.resultados && JSON.parse(test10.resultados).map((resultado, index) => `
+                  <tr>
+                    <td>${index + 1}</td>
+                    <td>${resultado.validez}</td>
+                    <td>${resultado.tiempo || ''}</td>
+                  </tr>
+                `).join('')) || ''}
+              </table>
 
-<body>
-  <h1>Batería de tests Cognito</h1>
-  <h2>Resultados de la sesión - 25/08/2024</h2>
-  <table>
-    <tr>
-      <th colspan="2">Datos del paciente</th>
-    </tr>
-    <tr>
-      <td><b>Identificación:</b></td>
-      <td>11665836</td>
-    </tr>
-    <tr>
-      <td><b>Nombre:</b></td>
-      <td>Antonio Gálvez Delgado</td>
-    </tr>
-    <tr>
-      <td><b>Fecha de nacimiento:</b></td>
-      <td>12/12/1990</td>
-    </tr>
+              <h3>Test 11 - Figuras seleccionadas</h3>
+              <table class="prueba">
+                <tr>
+                  <th>Ensayos correctos</th>
+                  <th>Número de inversiones</th>
+                  <th>Errores de tiempo</th>
+                </tr>
+                <tr>
+                  <td>${test11.correctas || ''}</td>
+                  <td>${test11.inversiones || ''}</td>
+                  <td>${test11.rectificaciones || ''}</td>
+                </tr>
+                <tr>
+                  <th>Número de ensayo</th>
+                  <th>Figura seleccionada</th>
+                  <th>Tiempo empleado (ms)</th>
+                </tr>
+                ${(test11.figuras_seleccionadas && JSON.parse(test11.figuras_seleccionadas).map((figura, index) => `
+                  <tr>
+                    <td>${index + 1}</td>
+                    <td>${figura.figura}</td>
+                    <td>${figura.tiempo || ''}</td>
+                  </tr>
+                `).join('')) || ''}
+              </table>
 
-    <tr>
-      <td><b>Género:</b></td>
-      <td>Hombre</td>
-    </tr>
-    <tr>
-      <td><b>Observaciones:</b></td>
-      <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum aliquid minus veniam fugit voluptate
-        reiciendis perferendis atque omnis? Explicabo cum dolor minima fugit hic. Ratione qui possimus sit temporibus
-        odio?</td>
-    </tr>
-  </table>
+              <h3>Test 12 - Errores morfológicos, fonéticos y semánticos</h3>
+              <table class="prueba">
+                <tr>
+                  <th>Ensayos correctos</th>
+                  <th>Errores morfológicos</th>
+                  <th>Errores fonéticos</th>
+                  <th>Errores semánticos</th>
+                  <th>Errores de tiempo</th>
+                </tr>
+                <tr>
+                  <td>${test12.correctas || ''}</td>
+                  <td>${test12.errores_morfológicos || ''}</td>
+                  <td>${test12.errores_fonéticos || ''}</td>
+                  <td>${test12.errores_semánticos || ''}</td>
+                  <td>${test12.excedido_tiempo || ''}</td>
+                </tr>
+              </table>
 
-  <h3>Test 1 - Tiempo de reacción</h3>
-  <table class="prueba">
-    <tr>
-      <th>Nº de ensayos</th>
-      <th>Tiempo medio (ms)</th>
-      <th>Errores de anticipación</th>
-      <th>Retrasos</th>
-      <th>Errores de tiempo</th>
-    </tr>
-    <tr>
-      <td>10</td>
-      <td>250</td>
-      <td>2</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th colspan="5">Tiempos de reacción (ms)</th>
-    </tr>
-    <tr>
-      <td colspan="5">250 - 180 - 123 - 123 - 4545 - 123</td>
-    </tr>
-  </table>
+              <h3>Test 13 - Asociaciones y errores</h3>
+              <table class="prueba">
+                <tr>
+                  <th>Respuestas correctas (RC)</th>
+                  <th>Error de asociación</th>
+                  <th>Generalizaciones</th>
+                  <th>Respuestas parciales</th>
+                  <th>Excesos de tiempo reconocimiento</th>
+                  <th>Excesos de tiempo asociación</th>
+                </tr>
+                <tr>
+                  <td>${test13.correctas || ''}</td>
+                  <td>${test13.error_asociacion || ''}</td>
+                  <td>${test13.generalizaciones || ''}</td>
+                  <td>${test13.parciales || ''}</td>
+                  <td>${test13.exceso_tiempo_obj || ''}</td>
+                  <td>${test13.exceso_tiempo_asoc || ''}</td>
+                </tr>
+              </table>
 
-  <h3>Test 3 - Lectura y compresión de frases</h3>
+              <h3>Test 14 - Tiempo total y errores</h3>
+              <table class="prueba">
+                <tr>
+                  <th>Ensayos correctos</th>
+                  <th>Ensayos incorrectos</th>
+                  <th>Tiempo total empleado (ms)</th>
+                </tr>
+                <tr>
+                  <td>${test14.correctas || ''}</td>
+                  <td>${test14.errores || ''}</td>
+                  <td>${test14.tiempo_total || ''}</td>
+                </tr>
+              </table>
 
-  <table class="prueba">
-    <tr>
-      <th>
-        Lecturas correctas
-      </th>
-      <th>
-        Lecturas incorrectas
-      </th>
-      <th>
-        Aciertos
-      </th>
-      <th>
-        Fallos
-      </th>
-      <th>
-        Errores de tiempo
-      </th>
+              <h3>Test 17 - Fases de reconocimiento</h3>
+              <table class="prueba">
+                <tr><th colspan="4">FASE 1</th></tr>
+                <tr>
+                  <th>Nombres recordados</th>
+                  <th>Intrusiones</th>
+                  <th>Perseveraciones</th>
+                  <th>Rechazos</th>
+                </tr>
+                <tr>
+                  <td>${test17.nombres_recordados_fase1 || ''}</td>
+                  <td>${test17.intrusiones_fase1 || ''}</td>
+                  <td>${test17.perseveraciones_fase1 || ''}</td>
+                  <td>${test17.rechazos_fase1 || ''}</td>
+                </tr>
+                <tr><th colspan="4">FASE 2</th></tr>
+                <tr>
+                  <th>Nombres recordados</th>
+                  <th>Intrusiones</th>
+                  <th>Perseveraciones</th>
+                  <th>Rechazos</th>
+                </tr>
+                <tr>
+                  <td>${test17.nombres_recordados_fase2 || ''}</td>
+                  <td>${test17.intrusiones_fase2 || ''}</td>
+                  <td>${test17.perseveraciones_fase2 || ''}</td>
+                  <td>${test17.rechazos_fase2 || ''}</td>
+                </tr>
+                <tr><th colspan="3">FASE 3</th></tr>
+                <tr>
+                  <th>Nombres identificados</th>
+                  <th>Errores de identificación</th>
+                  <th>Rechazos</th>
+                </tr>
+                <tr>
+                  <td>${test17.nombres_identificados_fase3 || ''}</td>
+                  <td>${test17.errores_identificados_fase3 || ''}</td>
+                  <td>${test17.rechazos_reconocimiento_fase3 || ''}</td>
+                </tr>
+              </table>
 
-    <tr>
-      <td>10</td>
-      <td>2</td>
-      <td>8</td>
-      <td>2</td>
-      <td>0</td>
-    </tr>
+              <h3>Test 18 - Reconocimiento de caras</h3>
+              <table class="prueba">
+                <tr>
+                  <th>Caras reconocidas correctamente</th>
+                  <th>Caras incorrectamente reconocidas</th>
+                  <th>Nombres recordados</th>
+                </tr>
+                <tr>
+                  <td>${test18.caras_reconocidas_correctamente || ''}</td>
+                  <td>${test18.caras_incorrectamente_reconocidas || ''}</td>
+                  <td>${test18.nombres_reconocidos_correctamente || ''}</td>
+                </tr>
+              </table>
 
-    </tr>
+              <h3>Test 19 - Respuestas por intervalo de tiempo</h3>
+              <table class="prueba">
+                <tr>
+                  <th></th>
+                  <th>15 s</th>
+                  <th>30 s</th>
+                  <th>45 s</th>
+                  <th>60 s</th>
+                </tr>
+                <tr><th>Respuestas correctas</th></tr>
+                <tr>${(test19.respuestas_correctas_tiempo && JSON.parse(test19.respuestas_correctas_tiempo).map((res, index) => `<td>${res}</td>`).join('')) || ''}</tr>
+                <tr><th>Intrusiones</th></tr>
+                <tr>${(test19.intrusiones_tiempo && JSON.parse(test19.intrusiones_tiempo).map((res, index) => `<td>${res}</td>`).join('')) || ''}</tr>
+                <tr><th>Perseveraciones</th></tr>
+                <tr>${(test19.perseveraciones_tiempo && JSON.parse(test19.perseveraciones_tiempo).map((res, index) => `<td>${res}</td>`).join('')) || ''}</tr>
+              </table>
 
-  </table>
+              <h3>Test 20 - Respuestas por intervalo de tiempo</h3>
+              <table class="prueba">
+                <tr>
+                  <th></th>
+                  <th>15 s</th>
+                  <th>30 s</th>
+                  <th>45 s</th>
+                  <th>60 s</th>
+                </tr>
+                <tr><th>Respuestas correctas</th></tr>
+                <tr>${(test20.respuestas_correctas_tiempo && JSON.parse(test20.respuestas_correctas_tiempo).map((res, index) => `<td>${res}</td>`).join('')) || ''}</tr>
+                <tr><th>Intrusiones</th></tr>
+                <tr>${(test20.intrusiones_tiempo && JSON.parse(test20.intrusiones_tiempo).map((res, index) => `<td>${res}</td>`).join('')) || ''}</tr>
+                <tr><th>Perseveraciones</th></tr>
+                <tr>${(test20.perseveraciones_tiempo && JSON.parse(test20.perseveraciones_tiempo).map((res, index) => `<td>${res}</td>`).join('')) || ''}</tr>
+              </table>
 
-  <h3>Test 4 - titulo</h3>
-  <table class="prueba">
-    <tr>
-      <th>
-        Respuestas correctas
-      </th>
-      <th>
-        Respuestas incorrectas
-      </th>
-      <th>
-        Sobreestimaciones
-      </th>
-      <th>
-        Subestimaciones
-      </th>
-    <tr>
-      <td>10</td>
-      <td>2</td>
-      <td>8</td>
-      <td>2</td>
-    </tr>
+              <h3>Test 21 - Secuencias recordadas</h3>
+              <table class="prueba">
+                <tr>
+                  <th>Recordados</th>
+                  <th>Intrusiones</th>
+                  <th>Rechazos</th>
+                </tr>
+                <tr>
+                  <td>${test21.recordados || ''}</td>
+                  <td>${test21.intrusiones || ''}</td>
+                  <td>${test21.rechazos || ''}</td>
+                </tr>
+                <tr>
+                  <th colspan="3">Secuencia recordada</th>
+                </tr>
+                <tr>
+                  <td colspan="3">${(test21.indices_seleccionados && JSON.parse(test21.indices_seleccionados).join(', ')) || ''}</td>
+                </tr>
+              </table>
 
-    </tr>
-  </table>
+              <h3>Test 22 - Secuencias recordadas</h3>
+              <table class="prueba">
+                <tr>
+                  <th>Recordados</th>
+                  <th>Intrusiones</th>
+                  <th>Rechazos</th>
+                </tr>
+                <tr>
+                  <td>${test22.recordados || ''}</td>
+                  <td>${test22.intrusiones || ''}</td>
+                  <td>${test22.rechazos || ''}</td>
+                </tr>
+                <tr>
+                  <th colspan="3">Secuencia recordada</th>
+                </tr>
+                <tr>
+                  <td colspan="3">${(test22.indices_seleccionados && JSON.parse(test22.indices_seleccionados).join(', ')) || ''}</td>
+                </tr>
+              </table>
 
-  <h3>Test 5 - titulo</h3>
-  <table class="prueba">
-    <tr>
-      <th>
-        Ensayos correctos
-      </th>
-      <th>
-        Errores
-      </th>
-      <th>
-        Errores de tiempo
-      </th>
-    <tr>
-      <td>10</td>
-      <td>2</td>
-      <td>8</td>
-    </tr>
-    <tr>
-      <th colspan="3">Tiempos por ensayo</th>
-    </tr>
-    <tr>
-      <td colspan="3">250 - 180 - 123 - 123 - 4545 - 123</td>
-    </tr>
-    </tr>
-
-  </table>
-
-  <h3>Test 6 - titulo</h3>
-  <table class="prueba">
-    <tr>
-      <th>
-        Ensayos correctos
-      </th>
-      <th>
-        Errores
-      </th>
-      <th>
-        Errores de tiempo
-      </th>
-      <th>
-        Sonidos correctos
-      </th>
-    <tr>
-      <td>10</td>
-      <td>2</td>
-      <td>8</td>
-      <td>8</td>
-    </tr>
-    <tr>
-      <th colspan="4">Tiempos por ensayo</th>
-    </tr>
-    <tr>
-      <td colspan="4">250 - 180 - 123 - 123 - 4545 - 123</td>
-    </tr>
-    </tr>
-  </table>
-
-  <h3>Test 7 - titulo</h3>
-  <table class="prueba">
-    <tr>
-      <th>
-        Respuestas correctas
-      </th>
-      <th>
-        Errores
-      </th>
-      <th>
-        Tiempo medio de acierto (ms)
-      </th>
-    <tr>
-      <td>10</td>
-      <td>2</td>
-      <td>800</td>
-    </tr>
-    </tr>
-  </table>
-
-  <h3>Test 8 - titulo</h3>
-  <table class="prueba">
-    <tr>
-      <th>
-        Pronunciaciones correctas
-      </th>
-      <th>
-        Pronunciaciones incorrectas
-      </th>
-      <th>
-        Nombres recordados
-      </th>
-      <th>
-        Intrusiones
-      </th>
-      <th>
-        Perseveraciones
-      </th>
-      <th>
-        Rechazos
-      </th>
-    <tr>
-      <td>10</td>
-      <td>2</td>
-      <td>8</td>
-      <td>8</td>
-      <td>8</td>
-      <td>8</td>
-    </tr>
-    </tr>
-  </table>
-
-  <h3>Test 10 - titulo</h3>
-  <table class="prueba">
-    <tr>
-      <th>
-        Número de ensayo
-      </th>
-      <th>
-        Validez
-      </th>
-      <th>
-        Tiempo empleado (ms)
-      </th>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>Correcto</td>
-      <td>800</td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>Incorrecto</td>
-      <td>800</td>
-    </tr>
-    <tr>
-      <td>3</td>
-      <td>Correcto</td>
-      <td>800</td>
-    </tr>
-    <tr>
-      <td>4</td>
-      <td>Incorrecto</td>
-      <td>800</td>
-    </tr>
-  </table>
-
-  <h3>Test 11 - titulo</h3>
-  <table class="prueba">
-    <tr>
-      <th>
-        Ensayos correctos
-      </th>
-      <th>
-        Número de inversiones
-      </th>
-      <th>
-        Errores de tiempo
-      </th>
-    </tr>
-    <tr>
-      <td>10</td>
-      <td>2</td>
-      <td>8</td>
-    </tr>
-    <tr>
-      <th>
-        Número de ensayo
-      </th>
-      <th>
-        Figura seleccionada
-      </th>
-      <th>
-        Tiempo empleado (ms)
-      </th>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>2</td>
-      <td>800</td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>3</td>
-      <td>800</td>
-    </tr>
-    <tr>
-      <td>3</td>
-      <td>4</td>
-      <td>800</td>
-    </tr>
-  </table>
-
-  <h3>Test 12 - titulo</h3>
-  <table class="prueba">
-    <tr>
-      <th>
-        Ensayos correctos
-      </th>
-      <th>
-        Errores
-      </th>
-      <th>
-        Errores morfológicos
-      </th>
-      <th>
-        Errores semánticos
-      </th>
-      <th>
-        Errores fonéticos
-      </th>
-      <th>
-        Errores de tiempo
-      </th>
-    </tr>
-    <tr>
-      <td>10</td>
-      <td>2</td>
-      <td>8</td>
-    </tr>
-    <tr>
-      <th>
-        Número de ensayo
-      </th>
-      <th>
-        Tiempo empleado (ms)
-      </th>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>800</td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>800</td>
-    </tr>
-    <tr>
-      <td>3</td>
-      <td>800</td>
-    </tr>
-  </table>
-
-  <h3>Test 13 - titulo</h3>
-  <table class="prueba">
-    <tr>
-      <th>
-        Respuestas correctas (RC)
-      </th>
-      <th>
-        Generalizaciones (G)
-      </th>
-      <th>
-        Respuestas parciales (P)
-      </th>
-      <th>
-        Excesos de tiempo reconocimiento
-      </th>
-      <th>
-        Excesos de tiempo asociación
-      </th>
-    </tr>
-  </table>
-
-  <h3>Test 14 - titulo</h3>
-  <table class="prueba">
-    <tr>
-      <th>
-        Ensayos correctos
-      </th>
-      <th>
-        Ensayos incorrectos
-      </th>
-      <th>
-        Tiempo total empleado (ms)
-      </th>
-    </tr>
-    <tr>
-      <td>10</td>
-      <td>2</td>
-      <td>8000</td>
-    </tr>
-    <tr>
-      <th>
-        Número de ensayo
-      </th>
-      <th>
-        Opción elegida
-      </th>
-      <th>
-        Correcta / Incorrecta
-      </th>
-      <th>
-        Tiempo empleado (ms)
-      </th>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>2</td>
-      <td>Correcta</td>
-      <td>800</td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>3</td>
-      <td>Incorrecta</td>
-      <td>800</td>
-    </tr>
-  </table>
-
-  <h3>Test 15 - titulo</h3>
-  <table class="prueba">
-    <tr>
-      <th>
-        Imposibilidad para realizar la tarea
-      </th>
-      <th>
-        Rechazo
-      </th>
-      <th>
-        Perspectiva
-      </th>
-    </tr>
-    <tr>
-      <td>10</td>
-      <td>2</td>
-      <td>8000</td>
-    </tr>
-    <tr>
-      <th>
-        Número de elemento
-      </th>
-      <th>
-        Puntuación
-      </th>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>3</td>
-    </tr>
-  </table>
-
-  <h3>Test 16 - titulo</h3>
-  <table class="prueba">
-    <tr>
-      <th>
-        Imposibilidad para realizar la tarea
-      </th>
-      <th>
-        Rechazo
-      </th>
-      <th>
-        Perspectiva
-      </th>
-    </tr>
-    <tr>
-      <td>10</td>
-      <td>2</td>
-      <td>8000</td>
-    </tr>
-    <tr>
-      <th>
-        Número de elemento
-      </th>
-      <th>
-        Puntuación
-      </th>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>3</td>
-    </tr>
-  </table>
-
-  <h3>Test 17 - titulo</h3>
-  <table class="prueba">
-    <tr>
-      <th colspan="4">
-        FASE 1
-      </th>
-    </tr>
-    <th>
-      Nombres recordados
-    </th>
-    <th>
-      Intrusiones
-    </th>
-    <th>
-      Perseveraciones
-    </th>
-    <th>
-      Rechazos
-    </th>
-    </tr>
-    <tr>
-      <td>5</td>
-      <td>2</td>
-      <td>2</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th colspan="4">
-        FASE 2
-      </th>
-    </tr>
-    <th>
-      Nombres recordados
-    </th>
-    <th>
-      Intrusiones
-    </th>
-    <th>
-      Perseveraciones
-    </th>
-    <th>
-      Rechazos
-    </th>
-    </tr>
-    <tr>
-      <td>5</td>
-      <td>2</td>
-      <td>2</td>
-      <td>1</td>
-    </tr>
-    <tr>
-    <tr>
-      <th colspan="3">
-        FASE 3
-      </th>
-    </tr>
-    <th>
-      Nombres identificados
-    </th>
-    <th>
-      Nombres incorrectamente identificados
-    </th>
-    <th>
-      Rechazos
-    </th>
-    </tr>
-    <tr>
-      <td>5</td>
-      <td>2</td>
-      <td>1</td>
-    </tr>
-  </table>
-
-  <h3>Test 18 - titulo</h3>
-
-  <table class="prueba">
-    <tr>
-      <th>
-        Caras reconocidas
-      </th>
-      <th>
-        Caras incorrectamente reconocidas
-      </th>
-      <th>
-        Nombres recordados
-      </th>
-    </tr>
-    <tr>
-      <td>10</td>
-      <td>2</td>
-      <td>8</td>
-    </tr>
-  </table>
-
-  <h3>Test 19 - titulo</h3>
-
-  <table class="prueba">
-    <tr>
-      <th></th>
-      <th>15 s</th>
-      <th>30 s</th>
-      <th>45 s</th>
-      <th>60 s</th>
-    </tr>
-    <tr>
-      <th>
-        Correctas
-      </th>
-    </tr>
-    <tr>
-      <th>
-        Intrusiones
-      </th>
-    </tr>
-    <tr>
-      <th>
-        Perseveraciones
-      </th>
-    </tr>
-  </table>
-
-  <h3>Test 20 - titulo</h3>
-  <table class="prueba">
-    <tr>
-      <th></th>
-      <th>15 s</th>
-      <th>30 s</th>
-      <th>45 s</th>
-      <th>60 s</th>
-    </tr>
-    <tr>
-      <th>
-        Correctas
-      </th>
-    </tr>
-    <tr>
-      <th>
-        Intrusiones
-      </th>
-    </tr>
-    <tr>
-      <th>
-        Perseveraciones
-      </th>
-    </tr>
-  </table>  
-
-  <h3>Test 21 - titulo</h3>
-  <table class="prueba">
-    <tr>
-      <th>
-        Recordados
-      </th>
-      <th>
-        Intrusiones
-      </th>
-      <th>
-        Rechazos
-      </th>
-    </tr>
-    <tr>
-      <td>10</td>
-      <td>2</td>
-      <td>8</td>
-    </tr>
-    <tr>
-      <th colspan="3">Secuencia recordada</th>
-    </tr>
-    <tr>
-      <td colspan="3"> 3, 5, 17, 19</td>
-    </tr>
-
-  </table>
-
-  <h3>Test 22 - titulo</h3>
-  <table class="prueba">
-    <tr>
-      <th>
-        Recordados
-      </th>
-      <th>
-        Intrusiones
-      </th>
-      <th>
-        Rechazos
-      </th>
-    </tr>
-    <tr>
-      <td>10</td>
-      <td>2</td>
-      <td>8</td>
-    </tr>
-    <tr>
-      <th colspan="3">Secuencia recordada</th>
-    </tr>
-    <tr>
-      <td colspan="3"> 3, 5, 17, 19</td>
-    </tr>
-
-  </table>
-
-  <h3>Test 23 - titulo</h3>
-  <table class="prueba">
-    <tr>
-      <th>
-        Respuestas correctas
-      </th>
-      <th>
-        Respuestas incorrectas
-      </th>
-      <th>
-        Excesos de tiempo
-      </th>
-    </tr>
-    <tr>
-      <td>10</td>
-      <td>2</td>
-      <td>8</td>
-    </tr>
-    <tr>
-      <th>
-        Número de ensayo
-      </th>
-      <th>
-        Respuesta escogida
-      </th>
-      <th>
-        Tiempo empleado (ms)
-      </th>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>2</td>
-      <td>100</td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>3</td>
-      <td>100</td>
-    </tr>
-</body>
-
-</html>
+              <h3>Test 23 - Respuestas y tiempos</h3>
+              <table class="prueba">
+                <tr>
+                  <th>Respuestas correctas</th>
+                  <th>Respuestas incorrectas</th>
+                  <th>Excesos de tiempo</th>
+                </tr>
+                <tr>
+                  <td>${test23.correctas || ''}</td>
+                  <td>${test23.errores || ''}</td>
+                  <td>${test23.excesos_tiempo || ''}</td>
+                </tr>
+                <tr>
+                  <th>Número de ensayo</th>
+                  <th>Respuesta escogida</th>
+                  <th>Tiempo empleado (ms)</th>
+                </tr>
+                ${(test23.respuestas && JSON.parse(test23.respuestas).map((respuesta, index) => `
+                  <tr>
+                    <td>${index + 1}</td>
+                    <td>${respuesta.respuesta}</td>
+                    <td>${respuesta.tiempo || ''}</td>
+                  </tr>
+                `).join('')) || ''}
+              </table>
+            </body>
+          </html>
         `,
       });
 
