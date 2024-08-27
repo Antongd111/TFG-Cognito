@@ -13,6 +13,7 @@ import { id } from 'date-fns/locale';
 const InfoSesion = ({ navigation, route }) => {
   const { idSesion, idPaciente } = route.params;
   const [resultados, setResultados] = useState(null);
+  const [datosPaciente, setDatosPaciente] = useState({});
   const [translations, setTranslations] = useState({});
   const [loading, setLoading] = useState(true); // Para manejar el estado de carga
 
@@ -30,13 +31,16 @@ const InfoSesion = ({ navigation, route }) => {
     const cargarResultados = async () => {
       try {
         const resultadosSesion = await obtenerResultadosSesion(idSesion);
-        const datosPaciente = await obtenerPaciente(idPaciente);
+        const paciente = await obtenerPaciente(idPaciente);
+        setDatosPaciente(paciente);
+
         if (resultadosSesion === null) {
           console.log("No hay resultados para esta sesión.");
           setResultados([]); // Establece un array vacío si no hay resultados
         } else {
           setResultados(resultadosSesion);
         }
+
       } catch (error) {
         console.error("Error al cargar los resultados:", error);
       } finally {
@@ -189,7 +193,7 @@ const InfoSesion = ({ navigation, route }) => {
       />
       </View>
       <View>
-        <BotonToPDF datosTests={resultados} />
+        <BotonToPDF datosPaciente={datosPaciente} datosTests={resultados} />
       </View>
     </View>
   );

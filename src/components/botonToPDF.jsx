@@ -6,6 +6,7 @@ import * as Sharing from 'expo-sharing';
 
 const BotonToPDF = ({ datosPaciente, datosTests }) => {
   const createAndDownloadPDF = async () => {
+
     try {
       // Desestructurando los datos del paciente
       const {
