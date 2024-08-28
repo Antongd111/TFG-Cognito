@@ -14,17 +14,7 @@ const customFonts = {
 };
 
 export default function App() {
-  const [fontsLoaded, setFontsLoaded] = useState(false);
 
-  useEffect(() => {
-    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
-  }, []);
-
-  async function loadFonts() {
-    await Font.loadAsync(customFonts);
-    setFontsLoaded(true);
-  }
-  
   useEffect(() => {
     initDB();
   }, []);
@@ -36,3 +26,5 @@ export default function App() {
     
   );
 }
+
+

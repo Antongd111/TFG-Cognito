@@ -1,13 +1,12 @@
 import * as SQLite from 'expo-sqlite';
 
-// Abre la base de datos de forma asincrónica
 const dbPromise = SQLite.openDatabaseAsync("CognitoDB.db");
 
 const initDB = async () => {
   const db = await dbPromise;
+
   await db.execAsync(`
 
-    PRAGMA foreign_keys = ON;
     CREATE TABLE IF NOT EXISTS Paciente (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       identificacion VARCHAR(255) NOT NULL,
@@ -318,7 +317,6 @@ export const guardarResultadosTest_1 = async (id_sesion, numero_ensayos, reaccio
     );
 
     const tiempos_reaccion = JSON.stringify(reaccion);
-    console.log("Tiempos de reacción:", tiempos_reaccion);
 
     const result = await statement.executeAsync({
       $id_sesion: id_sesion,

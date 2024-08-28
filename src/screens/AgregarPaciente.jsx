@@ -1,3 +1,5 @@
+//TODO: traducir
+
 import React, { useState } from "react";
 import Header from "../components/header";
 import { Text, View, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, Alert } from "react-native";
