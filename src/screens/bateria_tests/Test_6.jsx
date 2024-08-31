@@ -1,11 +1,13 @@
-//TODO: COMPROBAR ESTE TEST
 
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+
+import React, { useState, useEffect, useRef } from 'react';
+import { Text, View, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
 import { guardarResultadosTest_6 } from '../../api/TestApi';
+import { Alert } from 'react-native';
+import pitidoLargo from '../../../assets/sounds/pitido_largo.mp3';
 import { Audio } from 'expo-av';
 
 import figura_1 from '../../../assets/images/Test_5/figura_1.png';
@@ -17,7 +19,6 @@ import figura_6 from '../../../assets/images/Test_5/figura_6.png';
 import figura_7 from '../../../assets/images/Test_5/figura_7.png';
 import figura_8 from '../../../assets/images/Test_5/figura_8.png';
 
-import pitidoLargo from '../../../assets/sounds/pitido_largo.mp3';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../../locales";
 import { useIsFocused } from '@react-navigation/native';
@@ -25,11 +26,8 @@ import { useIsFocused } from '@react-navigation/native';
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 const figuraSize = 50;
-const maxTime = 10; // 10 segundos para introducir el número de sonidos
-
-const imagenesFiguras = {
-  figura_1, figura_2, figura_3, figura_4, figura_5, figura_6, figura_7, figura_8
-};
+const margenLateral = 100;
+const margenVertical = 50;
 
 const Test_6 = ({ navigation, route }) => {
   const [modalVisible, setModalVisible] = useState(true);
@@ -38,18 +36,24 @@ const Test_6 = ({ navigation, route }) => {
   const [mostrarFiguraCorrecta, setMostrarFiguraCorrecta] = useState(true);
   const [figuraCorrecta, setFiguraCorrecta] = useState(null);
   const [ensayoActual, setEnsayoActual] = useState(0);
-  const [tiempoRestante, setTiempoRestante] = useState(maxTime);
-  const [correctos, setCorrectos] = useState(0);
-  const [incorrectos, setIncorrectos] = useState(0);
-  const [erroresTiempo, setErroresTiempo] = useState(0);
-  const [sonidosContados, setSonidosContados] = useState(0);
-  const [contadorSonidos, setContadorSonidos] = useState(0);
-  const [inputSonidos, setInputSonidos] = useState('');
-  const [faseContarSonidos, setFaseContarSonidos] = useState(false);
+  const [figurasSeleccionadas, setFigurasSeleccionadas] = useState([]);
+  const [tiempoRestante, setTiempoRestante] = useState(30);
   const [translations, setTranslations] = useState({});
   const isFocused = useIsFocused();
-  const numeroEnsayos = 12; // 2 de entrenamiento y 10 reales
-  let sonidoInterval = null;
+  const imagenesFiguras = { figura_1, figura_2, figura_3, figura_4, figura_5, figura_6, figura_7, figura_8 };
+
+  const [contadorSonidos, setContadorSonidos] = useState(0);
+  const [faseEscucha, setFaseEscucha] = useState(true);
+  const [inputValue, setInputValue] = useState('');
+  const [ultimoContadorSonidos, setultimoContadorSonidos] = useState(0);
+  const faseEscuchaRef = useRef(faseEscucha);
+  const contadorSonidosRef = useRef(contadorSonidos);
+
+  const [correctos, setCorrectos] = useState(0);
+  const [incorrectos, setIncorrectos] = useState(0);
+  const [aciertosSonidos, setAciertosSonidos] = useState(0);
+  const [erroresSonidos, setErroresSonidos] = useState(0);
+  const [erroresTiempo, setErroresTiempo] = useState(0);
 
   useEffect(() => {
     const loadLanguage = async () => {
@@ -58,125 +62,213 @@ const Test_6 = ({ navigation, route }) => {
       setTranslations(getTranslation(lang));
     };
 
-    if (isFocused) loadLanguage();
+    if (isFocused) {
+      loadLanguage();
+    }
   }, [isFocused]);
 
   useEffect(() => {
-    if (!modalVisible) iniciarEnsayo();
+    if (!modalVisible) {
+      iniciarEnsayo();
+    }
   }, [modalVisible]);
 
   useEffect(() => {
-    if (faseContarSonidos && tiempoRestante > 0) {
-      const timer = setInterval(() => setTiempoRestante(prev => prev - 1), 1000);
+    if (!mostrarFiguraCorrecta && tiempoRestante > 0) {
+      const timer = setInterval(() => {
+        setTiempoRestante(prev => prev - 1);
+      }, 1000);
+
       return () => clearInterval(timer);
-    } else if (tiempoRestante === 0) manejarErrorDeTiempo();
-  }, [tiempoRestante, faseContarSonidos]);
+    } else if (tiempoRestante === 0) {
+      manejarErrorDeTiempo();
+    }
+  }, [tiempoRestante, mostrarFiguraCorrecta]);
 
   useEffect(() => {
     const guardarResultados = async () => {
-      await guardarResultadosTest_6(route.params.idSesion, correctos, incorrectos, erroresTiempo, sonidosContados);
-      navigation.replace('Test_7', { idSesion: route.params.idSesion });
+      await guardarResultadosTest_6(route.params.idSesion, correctos, incorrectos, erroresTiempo, aciertosSonidos, erroresSonidos);
+      navigation.navigate('Test_7', { idSesion: route.params.idSesion });
     };
 
-    if (ensayoActual > numeroEnsayos) guardarResultados();
+    if (ensayoActual === 13) {
+      guardarResultados();
+    }
   }, [ensayoActual]);
 
   const generarPosicionAleatoria = (figurasExistentes) => {
     let newX, newY, overlap;
     do {
       overlap = false;
-      newX = Math.floor(Math.random() * (screenWidth - figuraSize * 2));
-      newY = Math.floor(Math.random() * (screenHeight - figuraSize * 2));
+      newX = Math.floor(Math.random() * (screenWidth - figuraSize - margenLateral * 2)) + margenLateral;
+      newY = Math.floor(Math.random() * (screenHeight - figuraSize - margenVertical * 2)) + margenVertical;
+
       overlap = figurasExistentes.some(fig => Math.abs(newX - fig.x) < figuraSize && Math.abs(newY - fig.y) < figuraSize);
     } while (overlap);
     return { x: newX, y: newY };
   };
 
-  const generarFiguras = () => {
-    const nuevasFiguras = [];
-    const tipos = Object.keys(imagenesFiguras);
-    const tipoCorrecto = tipos[Math.floor(Math.random() * tipos.length)];
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
-    for (let i = 0; i < 2; i++) {
-      nuevasFiguras.push({ tipo: tipoCorrecto, ...generarPosicionAleatoria(nuevasFiguras), esCorrecta: true });
-    }
+  useEffect(() => {
+    faseEscuchaRef.current = faseEscucha;
+  }, [faseEscucha]);
 
-    for (let i = 0; i < 18; i++) {
-      const tipoIncorrecto = tipos[Math.floor(Math.random() * tipos.length)];
-      if (tipoIncorrecto !== tipoCorrecto) {
-        nuevasFiguras.push({ tipo: tipoIncorrecto, ...generarPosicionAleatoria(nuevasFiguras), esCorrecta: false });
+  useEffect(() => {
+    contadorSonidosRef.current = contadorSonidos;
+  }, [contadorSonidos]);
+
+  const ejecutarSonidos = async () => {
+
+    console.log("Fase de escucha: ", faseEscuchaRef.current);
+    do {
+      console.log("Ejecutando sonidos");
+
+      setContadorSonidos(contadorSonidosRef.current + 1);
+
+      const { sound } = await Audio.Sound.createAsync(pitidoLargo);
+
+      await sound.playAsync();
+      const espera = Math.floor(Math.random() * (5000 - 3000 + 1)) + 3000;
+      await sleep(espera);
+    } while (faseEscuchaRef.current);
+
+    console.log("Fin de ejecutar sonidos");
+    setultimoContadorSonidos(contadorSonidosRef.current);
+    setContadorSonidos(0);
+  };
+
+  const handleNumberPress = (number) => {
+    setInputValue(inputValue + number);
+  }
+
+  const handleSubmit = () => {
+
+    if (ensayoActual >= 3) {
+      if (inputValue == ultimoContadorSonidos) {
+        setAciertosSonidos(aciertosSonidos + 1);
+      } else {
+        setErroresSonidos(erroresSonidos + 1);
       }
     }
 
-    setFiguras(nuevasFiguras);
-    setFiguraCorrecta(imagenesFiguras[tipoCorrecto]); // Almacena la figura correcta para mostrarla como modelo
+      setFaseEscucha(true);
+
+      setInputValue('');
+      siguienteEnsayo();
+    
   };
 
-  const reproducirSonido = async () => {
-    const { sound } = await Audio.Sound.createAsync(pitidoLargo);
-    await sound.playAsync();
-    setContadorSonidos(prev => prev + 1);
-    setTimeout(() => sound.unloadAsync(), 1000);
+  const generarFiguras = () => {
+    const nuevasFiguras = [];
+    const tipos = ["figura_1", "figura_2", "figura_3", "figura_4", "figura_5", "figura_6", "figura_7", "figura_8"];
+    const indiceCorrecto = Math.floor(Math.random() * tipos.length);
+
+    // Asegurarse de tener exactamente 2 figuras correctas
+    for (let i = 0; i < 2; i++) {
+      const { x, y } = generarPosicionAleatoria(nuevasFiguras);
+      nuevasFiguras.push({
+        tipo: tipos[indiceCorrecto],
+        x,
+        y,
+        esCorrecta: true,
+        seleccionada: false
+      });
+    }
+
+    // Generar figuras incorrectas
+    for (let i = 0; i < 18; i++) {
+      const { x, y } = generarPosicionAleatoria(nuevasFiguras);
+      let tipoIncorrecto;
+      do {
+        tipoIncorrecto = tipos[Math.floor(Math.random() * tipos.length)];
+      } while (tipoIncorrecto === tipos[indiceCorrecto]);
+
+      nuevasFiguras.push({
+        tipo: tipoIncorrecto,
+        x,
+        y,
+        esCorrecta: false,
+        seleccionada: false
+      });
+    }
+
+    setFiguras(nuevasFiguras);
+    setFiguraCorrecta(imagenesFiguras[tipos[indiceCorrecto]]);
   };
 
   const iniciarEnsayo = () => {
     if (ensayoActual < 2) {
       // Fase de entrenamiento
-      if (ensayoActual === 1) setModalEnsayoReal(true);
-      else prepararEnsayo();
-    } else if (ensayoActual < numeroEnsayos) prepararEnsayo();
-  };
-
-  const prepararEnsayo = () => {
-    generarFiguras();
-    setMostrarFiguraCorrecta(true);
-    setTiempoRestante(maxTime);
-    setContadorSonidos(0);
-    setFaseContarSonidos(false);
-    setInputSonidos('');
-
-    sonidoInterval = setInterval(() => {
-      if (!faseContarSonidos) reproducirSonido();
-    }, 2000);
-
-    setTimeout(() => setMostrarFiguraCorrecta(false), 2000);
+      if (ensayoActual === 1) {
+        setModalEnsayoReal(true);
+      } else {
+        console.log("Iniciando ensayo");
+        generarFiguras();
+        setFaseEscucha(true);
+        setMostrarFiguraCorrecta(true);
+        setFigurasSeleccionadas([]);
+        ejecutarSonidos();
+        setTiempoRestante(30);
+        setTimeout(() => {
+          setMostrarFiguraCorrecta(false);
+        }, 2000);
+      }
+    } else if (ensayoActual < 12) {
+      // Ensayos reales
+      generarFiguras();
+      setFaseEscucha(true);
+      setMostrarFiguraCorrecta(true);
+      setFigurasSeleccionadas([]);
+      ejecutarSonidos();
+      setTiempoRestante(30);
+      setTimeout(() => {
+        setMostrarFiguraCorrecta(false);
+      }, 2000);
+    }
   };
 
   const manejarSeleccionFigura = (index) => {
     const figura = figuras[index];
     if (figura.seleccionada) return;
 
-    const nuevasFiguras = figuras.map((fig, i) => i === index ? { ...fig, seleccionada: true } : fig);
+    const nuevasFiguras = [...figuras];
+    nuevasFiguras[index].seleccionada = true;
     setFiguras(nuevasFiguras);
 
-    if (figura.esCorrecta && nuevasFiguras.filter(fig => fig.esCorrecta && fig.seleccionada).length === 2) {
-      clearInterval(sonidoInterval);
-      setFaseContarSonidos(true);
-      setTiempoRestante(maxTime);
-    } else if (!figura.esCorrecta) setIncorrectos(prev => prev + 1);
-  };
+    const nuevasSeleccionadas = [...figurasSeleccionadas, figura];
+    setFigurasSeleccionadas(nuevasSeleccionadas);
 
-  const manejarErrorDeTiempo = () => {
-    setErroresTiempo(prev => prev + 1);
-    siguienteEnsayo();
-  };
-
-  const handleNumberPress = (number) => {
-    setInputSonidos(inputSonidos + number);
-  };
-
-  const manejarConfirmarSonidos = () => {
-    const numeroSonidos = parseInt(inputSonidos, 10);
-    if (!isNaN(numeroSonidos)) {
-      setSonidosContados(prev => prev + numeroSonidos);
-      setCorrectos(prev => prev + 1);
-      siguienteEnsayo();
+    if (figura.esCorrecta) {
+      if (nuevasSeleccionadas.filter(fig => fig.esCorrecta).length === 2) {
+        manejarRespuestaCorrecta();
+      }
+    } else {
+      manejarRespuestaIncorrecta();
     }
   };
 
+  const manejarRespuestaCorrecta = () => {
+    setFaseEscucha(false);
+
+    let nuevoCorrectos = correctos + 1;
+
+    if (ensayoActual >= 3) setCorrectos(nuevoCorrectos)
+  };
+
+  const manejarRespuestaIncorrecta = () => {
+    if (ensayoActual >= 3) setIncorrectos(incorrectos + 1);
+  };
+
+  const manejarErrorDeTiempo = () => {
+    if (ensayoActual >= 3) setErroresTiempo(erroresTiempo + 1);
+    siguienteEnsayo();
+  };
+
   const siguienteEnsayo = () => {
-    setEnsayoActual(prev => prev + 1);
-    setFaseContarSonidos(false);
+    setEnsayoActual(ensayoActual + 1);
     iniciarEnsayo();
   };
 
@@ -185,33 +277,35 @@ const Test_6 = ({ navigation, route }) => {
       <View style={stylesComunes.contenedor_test}>
         <MenuComponent
           onToggleVoice={() => { }}
-          onNavigateHome={() => navigation.replace('Pacientes')}
-          onNavigateNext={() => navigation.replace('Test_7', { idSesion: route.params.idSesion })}
-          onNavigatePrevious={() => navigation.replace('Test_5', { idSesion: route.params.idSesion })}
+          onNavigateHome={() => navigation.navigate('Pacientes')}
+          onNavigateNext={() => navigation.navigate('Test_7', { idSesion: route.params.idSesion })}
+          onNavigatePrevious={() => navigation.navigate('Test_5', { idSesion: route.params.idSesion })}
         />
         <InstruccionesModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           title="Test 6"
-          instructions={translations?.pr06ItemStart + "\n \n" + translations?.ItemStartBasico}
+          instructions={translations.pr06ItemStart + "\n \n" + translations.ItemStartBasico}
         />
         <InstruccionesModal
           visible={modalEnsayoReal}
           onClose={() => {
             setModalEnsayoReal(false);
-            setEnsayoActual(2);
+            setEnsayoActual(3); // Iniciar los ensayos reales
             iniciarEnsayo();
           }}
           title="Test 6"
-          instructions={translations?.ItemStartBasico}
+          instructions={translations.ItemStartPrueba}
         />
-        {/* Mostrar la figura modelo */}
         {!modalVisible && mostrarFiguraCorrecta && figuraCorrecta && (
-          <View style={styles.figuraModeloContainer}>
-            <Image source={figuraCorrecta} style={styles.figuraModelo} />
+          <View style={styles.figuraCorrecta}>
+            <Image
+              source={figuraCorrecta}
+              style={{ height: figuraSize * 2, width: figuraSize * 2 }}
+            />
           </View>
         )}
-        {!modalVisible && !faseContarSonidos && !mostrarFiguraCorrecta && (
+        {!modalVisible && !mostrarFiguraCorrecta && faseEscucha && (
           <View>
             {figuras.map((fig, index) => (
               <TouchableOpacity
@@ -224,16 +318,16 @@ const Test_6 = ({ navigation, route }) => {
                   style={{
                     height: figuraSize,
                     width: figuraSize,
-                    tintColor: fig.seleccionada ? (fig.esCorrecta ? 'blue' : 'red') : undefined
+                    tintColor: fig.seleccionada ? (fig.esCorrecta ? 'blue' : 'red') : 'red'
                   }}
                 />
               </TouchableOpacity>
             ))}
           </View>
         )}
-        {faseContarSonidos && (
+        {!modalVisible && !mostrarFiguraCorrecta && !faseEscucha && (
           <View style={styles.numberPad}>
-            <Text style={styles.inputDisplay}>{inputSonidos}</Text>
+            <Text style={styles.inputDisplay}>{inputValue}</Text>
             <View style={styles.row}>
               {['1', '2', '3'].map(number => (
                 <TouchableOpacity key={number} style={styles.numberButton} onPress={() => handleNumberPress(number)}>
@@ -262,7 +356,7 @@ const Test_6 = ({ navigation, route }) => {
               <TouchableOpacity style={styles.numberButton} onPress={() => handleNumberPress('0')}>
                 <Text style={styles.numberText}>0</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.numberButton} onPress={manejarConfirmarSonidos}>
+              <TouchableOpacity style={styles.numberButton} onPress={handleSubmit}>
                 <Text style={styles.numberText}>OK</Text>
               </TouchableOpacity>
             </View>
@@ -274,19 +368,12 @@ const Test_6 = ({ navigation, route }) => {
 };
 
 const styles = StyleSheet.create({
-  figuraModeloContainer: {
-    alignItems: 'center',
-    marginBottom: 20,
-    marginTop: '30%'
-  },
-  figuraModeloLabel: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5
-  },
-  figuraModelo: {
-    height: figuraSize * 2,
-    width: figuraSize * 2
+  figuraCorrecta: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: [{ translateX: -50 }, { translateY: -50 }],
+    zIndex: 1
   },
   numberPad: {
     alignItems: 'center',
@@ -327,4 +414,7 @@ const styles = StyleSheet.create({
   },
 });
 
+
 export default Test_6;
+
+

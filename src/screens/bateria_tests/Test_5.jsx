@@ -6,6 +6,7 @@ import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
 import { guardarResultadosTest_5 } from '../../api/TestApi';
+import { Alert } from 'react-native';
 
 import figura_1 from '../../../assets/images/Test_5/figura_1.png';
 import figura_2 from '../../../assets/images/Test_5/figura_2.png';
@@ -222,7 +223,7 @@ const Test_5 = ({ navigation, route }) => {
                         iniciarEnsayo();
                     }}
                     title= "Test 5"
-                    instructions = {translations.ItemStartBasico}
+                    instructions = {translations.ItemStartPrueba}
                 />
                 {!modalVisible && mostrarFiguraCorrecta && figuraCorrecta && (
                     <View style={styles.figuraCorrecta}>

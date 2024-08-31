@@ -8,7 +8,6 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
   const createAndDownloadPDF = async () => {
 
     try {
-      // Desestructurando los datos del paciente
       const {
         identificacion = '',
         nombre = '',
@@ -18,7 +17,6 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
         observaciones = '',
       } = datosPaciente || {};
 
-      // Organizando los datos para ser insertados en el HTML
       const test1 = datosTests.test_1[0] || {};
       const test3 = datosTests.test_3[0] || {};
       const test4 = datosTests.test_4[0] || {};
@@ -39,6 +37,7 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
       const test22 = datosTests.test_22[0] || {};
       const test23 = datosTests.test_23[0] || {};
 
+      //TODO: traducir html
       const { uri } = await Print.printToFileAsync({
         html: `
           <html>
@@ -55,7 +54,7 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
               </style>
             </head>
             <body>
-              <h1>Batería de tests Cognito</h1>
+              <h1>Batería de tests para detección de desarrollo cognitivo</h1>
               <h2>Resultados de la sesión - ${new Date().toLocaleDateString()}</h2>
               <table>
                 <tr><th colspan="2">Datos del paciente</th></tr>
