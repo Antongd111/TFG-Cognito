@@ -1,14 +1,14 @@
 import {
     guardarResultadosTest_1 as BD_GuardarResultadosTest_1, guardarResultadosTest_3 as BD_GuardarResultadosTest_3,
     guardarResultadosTest_4 as BD_GuardarResultadosTest_4, guardarResultadosTest_5 as BD_GuardarResultadosTest_5,
-    obtenerResultadosSesion as BD_ObtenerResultadosSesion, guardarResultadosTest_7 as BD_GuardarResultadosTest_7,
+    guardarResultadosTest_6 as BD_GuardarResultadosTest_6, guardarResultadosTest_7 as BD_GuardarResultadosTest_7, 
     guardarResultadosTest_8 as BD_GuardarResultadosTest_8, guardarResultadosTest_10 as BD_GuardarResultadosTest_10,
     guardarResultadosTest_11 as BD_GuardarResultadosTest_11, guardarResultadosTest_12 as BD_GuardarResultadosTest_12,
     guardarResultadosTest_13 as BD_GuardarResultadosTest_13, guardarResultadosTest_14 as BD_GuardarResultadosTest_14,
     guardarResultadosTest_17 as BD_GuardarResultadosTest_17, guardarResultadosTest_18 as BD_GuardarResultadosTest_18,
     guardarResultadosTest_19 as BD_GuardarResultadosTest_19, guardarResultadosTest_20 as BD_GuardarResultadosTest_20,
     guardarResultadosTest_21 as BD_GuardarResultadosTest_21, guardarResultadosTest_22 as BD_GuardarResultadosTest_22,
-    guardarResultadosTest_23 as BD_GuardarResultadosTest_23,
+    guardarResultadosTest_23 as BD_GuardarResultadosTest_23,  obtenerResultadosSesion as BD_ObtenerResultadosSesion,
     crearSesionTest as BD_CrearSesionTest
 } from '../database/db';
 
@@ -51,6 +51,15 @@ export const guardarResultadosTest_4 = async (id_sesion, numeroAciertos, numeroS
 export const guardarResultadosTest_5 = async (id_sesion, ensayosCorrectos, numeroErrores, erroresTiempo) => {
     try {
         const result = await BD_GuardarResultadosTest_5(id_sesion, ensayosCorrectos, numeroErrores, erroresTiempo);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const guardarResultadosTest_6 = async (id_sesion, ensayosCorrectos, numeroErrores, erroresTiempo, sonidosCorrectos, sonidosIncorrectos) => {
+    try {
+        const result = await BD_GuardarResultadosTest_6(id_sesion, ensayosCorrectos, numeroErrores, erroresTiempo, sonidosCorrectos, sonidosIncorrectos);
         return result;
     } catch (error) {
         throw error;
