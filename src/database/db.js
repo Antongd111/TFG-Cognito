@@ -218,7 +218,18 @@ const initDB = async () => {
       respuestas TEXT NOT NULL,
       tiempos TEXT NOT NULL,
       FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
-  );    
+  );  
+  
+  CREATE TABLE IF NOT EXISTS Test_24 (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_sesion INTEGER NOT NULL UNIQUE,
+      validez_ensayo TEXT NOT NULL,
+      etapas_ensayo TEXT NOT NULL,
+      media_conocidos REAL NOT NULL,
+      media_desconocidos REAL NOT NULL,
+      diferencia REAL NOT NULL,
+      FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
+  );
 
   `);
 
@@ -681,7 +692,7 @@ export const guardarResultadosTest_22 = async (idSesion, intrusiones, rechazos, 
   }
 };
 
-export const guardarResultados_Test_23 = async (idSesion, correctas, errores, excesosDeTiempo, respuestas, tiempos) => {
+export const guardarResultadosTest_23 = async (idSesion, correctas, errores, excesosDeTiempo, respuestas, tiempos) => {
   const db = await dbPromise;
   console.log("Guardando resultados del Test 23:", idSesion, correctas, errores, excesosDeTiempo, respuestas, tiempos);
   try {
@@ -694,6 +705,23 @@ export const guardarResultados_Test_23 = async (idSesion, correctas, errores, ex
     return result.lastInsertRowId;
   } catch (error) {
     console.error("Error al guardar resultados del Test 23:", error);
+    throw error;
+  }
+};
+
+export const guardarResultadosTest_24 = async (idSesion, validezEnsayo, etapasEnsayo, mediaConocidos, mediaDesconocidos, diferencia) => {
+  const db = await dbPromise;
+  console.log("Guardando resultados del Test 24:", idSesion, validezEnsayo, etapasEnsayo, mediaConocidos, mediaDesconocidos, diferencia);
+  try {
+    const statement = await db.prepareAsync(
+      'INSERT OR REPLACE INTO Test_24 (id_sesion, validez_ensayo, etapas_ensayo, media_conocidos, media_desconocidos, diferencia) VALUES ($id_sesion, $validez_ensayo, $etapas_ensayo, $media_conocidos, $media_desconocidos, $diferencia)'
+    );
+    const result = await statement.executeAsync({ $id_sesion: idSesion, $validez_ensayo: validezEnsayo, $etapas_ensayo: etapasEnsayo, $media_conocidos: mediaConocidos, $media_desconocidos: mediaDesconocidos, $diferencia: diferencia });
+    await statement.finalizeAsync();
+    console.log("Resultados del Test 24 guardados:", result.lastInsertRowId);
+    return result.lastInsertRowId;
+  } catch (error) {
+    console.error("Error al guardar resultados del Test 24:", error);
     throw error;
   }
 };

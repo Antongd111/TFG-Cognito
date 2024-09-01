@@ -63,12 +63,17 @@ const Test_1 = ({ navigation, route }) => {
     }
   }, [payasoVisible]);
 
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   const mostrarPayaso = () => {
-    const delay = Math.floor(Math.random() * (10000 - 4000 + 1)) + 4000;
-    setTimeout(() => {
-      console.log("Mostrando payaso...");
+    const delay = Math.floor(Math.random() * (5000 - 3000 + 1)) + 3000;
+    sleep(delay).then(() => {
       setPayasoVisible(true);
-    }, delay);
+    }
+    );
+
   };
 
   const iniciarEnsayo = () => {
@@ -129,12 +134,12 @@ const Test_1 = ({ navigation, route }) => {
   const comenzarTestReal = () => {
     setPrueba(false);
     setPayasoVisible(false);
-    setTimeout(iniciarTestReal, 5000);
+    setTimeout(iniciarTestReal, 2000);
   };
 
   const repetirPruebas = () => {
     setPayasoVisible(false);
-    setTimeout(iniciarEnsayo, 5000);
+    setTimeout(iniciarEnsayo, 2000);
   };
 
   return (

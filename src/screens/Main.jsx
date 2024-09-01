@@ -13,8 +13,8 @@ import Test_2 from "./bateria_tests/Test_2";  //Revisado
 import Test_3 from "./bateria_tests/Test_3";  //Revisado
 import Test_4 from "./bateria_tests/Test_4";  //Revisado
 import Test_5 from "./bateria_tests/Test_5";  //Revisado
-import Test_6 from "./bateria_tests/Test_6";
-import Test_7 from "./bateria_tests/Test_7";
+import Test_6 from "./bateria_tests/Test_6";  //Revisado
+import Test_7 from "./bateria_tests/Test_7";  //Revisado
 import Test_8 from "./bateria_tests/Test_8";  //Revisado
 import Test_9 from "./bateria_tests/Test_9";  //Revisado
 import Test_10 from "./bateria_tests/Test_10";  //Revisado sin BD
@@ -31,7 +31,7 @@ import Test_20 from "./bateria_tests/Test_20";  // Revisado sin BD
 import Test_21 from "./bateria_tests/Test_21";  // Revisado sin BD
 import Test_22 from "./bateria_tests/Test_22";  // Revisado sin BD
 import Test_23 from "./bateria_tests/Test_23";  // Revisado sin BD
-// import Test_24 from "./bateria_tests/Test_24";
+import Test_24 from "./bateria_tests/Test_24";
 // import Test_25 from "./bateria_tests/Test_25";
 
 const Stack = createNativeStackNavigator();
@@ -40,7 +40,7 @@ const Stack = createNativeStackNavigator();
 const Main = () => {
   return (
     <View style={{ flex: 1, backgroundColor: '#F2E8E1' }}>
-      <Stack.Navigator initialRouteName="Test_6" screenOptions={{headerShown: false }}>
+      <Stack.Navigator initialRouteName="Test_24" screenOptions={{headerShown: false }}>
         <Stack.Screen name="Pacientes" component={PantallaPacientes} options={{ title: 'Pantalla de Pacientes' }} />
         <Stack.Screen name="AgregarPaciente" component={AgregarPaciente} options={{ title: 'Pantalla de añadir paciente' }} />
         <Stack.Screen name="FichaPaciente" component={FichaPaciente} options={{ title: 'Pantalla de ficha de paciente' }} />
@@ -70,7 +70,7 @@ const Main = () => {
         <Stack.Screen name="Test_21" component={Test_21} options={{ title: 'Test 21' }} />
         <Stack.Screen name="Test_22" component={Test_22} options={{ title: 'Test 22' }} />
         <Stack.Screen name="Test_23" component={Test_23} options={{ title: 'Test 23' }} />
-        {/* <Stack.Screen name="Test_24" component={Test_24} options={{ title: 'Test 24' }} /> */}
+        <Stack.Screen name="Test_24" component={Test_24} options={{ title: 'Test 24' }} />
         {/* <Stack.Screen name="Test_25" component={Test_25} options={{ title: 'Test 25' }} /> */}
       </Stack.Navigator>
     </View>
