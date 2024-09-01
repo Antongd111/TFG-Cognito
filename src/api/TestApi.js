@@ -5,6 +5,7 @@ import {
     guardarResultadosTest_8 as BD_GuardarResultadosTest_8, guardarResultadosTest_10 as BD_GuardarResultadosTest_10,
     guardarResultadosTest_11 as BD_GuardarResultadosTest_11, guardarResultadosTest_12 as BD_GuardarResultadosTest_12,
     guardarResultadosTest_13 as BD_GuardarResultadosTest_13, guardarResultadosTest_14 as BD_GuardarResultadosTest_14,
+    guardarResultadosTest_15 as BD_GuardarResultadosTest_15, guardarResultadosTest_16 as BD_GuardarResultadosTest_16,
     guardarResultadosTest_17 as BD_GuardarResultadosTest_17, guardarResultadosTest_18 as BD_GuardarResultadosTest_18,
     guardarResultadosTest_19 as BD_GuardarResultadosTest_19, guardarResultadosTest_20 as BD_GuardarResultadosTest_20,
     guardarResultadosTest_21 as BD_GuardarResultadosTest_21, guardarResultadosTest_22 as BD_GuardarResultadosTest_22,
@@ -124,6 +125,24 @@ export const guardarResultadosTest_13 = async (id_sesion, correctas, errorAsocia
 export const guardarResultadosTest_14 = async (id_sesion, correctas, errores, tiempoTotal) => {
     try {
         const result = await BD_GuardarResultadosTest_14(id_sesion, correctas, errores, tiempoTotal);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const guardarResultadosTest_15 = async (idSesion, elementos, imposibilidad, rechazo, perspectiva) => {
+    try {
+        const result = await BD_GuardarResultadosTest_15(idSesion, elementos, imposibilidad, rechazo, perspectiva);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const guardarResultadosTest_16 = async (idSesion, elementos, imposibilidad, rechazo, perspectiva) => {
+    try {
+        const result = await BD_GuardarResultadosTest_16(idSesion, elementos, imposibilidad, rechazo, perspectiva);
         return result;
     } catch (error) {
         throw error;

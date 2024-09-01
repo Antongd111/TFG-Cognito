@@ -1,3 +1,4 @@
+import { ar } from 'date-fns/locale';
 import * as SQLite from 'expo-sqlite';
 
 const dbPromise = SQLite.openDatabaseAsync("CognitoDB.db");
@@ -146,6 +147,26 @@ const initDB = async () => {
       tiempo_total INTEGER NOT NULL,
       FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
     );
+
+    CREATE TABLE IF NOT EXISTS Test_15 (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_sesion INTEGER NOT NULL UNIQUE,
+      imposibilidad BIT NOT NULL,
+      rechazo BIT NOT NULL,
+      perspectiva BIT NOT NULL,
+      elementos TEXT NOT NULL,
+      FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
+    );
+    
+    CREATE TABLE IF NOT EXISTS Test_16 (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_sesion INTEGER NOT NULL UNIQUE,
+      imposibilidad BIT NOT NULL,
+      rechazo BIT NOT NULL,
+      perspectiva BIT NOT NULL,
+      elementos TEXT NOT NULL,
+      FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
+    );    
 
     CREATE TABLE IF NOT EXISTS Test_17 (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -536,6 +557,40 @@ export const guardarResultadosTest_14 = async (idSesion, correctas, errores, tie
   }
 };
 
+export const guardarResultadosTest_15 = async (idSesion, elementos, imposibilidad, rechazo, perspectiva) => {
+  const db = await dbPromise;
+  console.log("Guardando resultados del Test 15:", idSesion, elementos, imposibilidad, rechazo, perspectiva);
+  try {
+    const statement = await db.prepareAsync(
+      'INSERT OR REPLACE INTO Test_15 (id_sesion, elementos, imposibilidad, rechazo, perspectiva) VALUES ($id_sesion, $elementos, $imposibilidad, $rechazo, $perspectiva)'
+    );
+    const result = await statement.executeAsync({ $id_sesion: idSesion, $elementos: elementos, $imposibilidad: imposibilidad, $rechazo: rechazo, $perspectiva: perspectiva });
+    await statement.finalizeAsync();
+    console.log("Resultados del Test 15 guardados:", result.lastInsertRowId);
+    return result.lastInsertRowId;
+  } catch (error) {
+    console.error("Error al guardar resultados del Test 15:", error);
+    throw error;
+  }
+};
+
+export const guardarResultadosTest_16 = async (idSesion, elementos, imposibilidad, rechazo, perspectiva) => {
+  const db = await dbPromise;
+  console.log("Guardando resultados del Test 16:", idSesion, elementos, imposibilidad, rechazo, perspectiva);
+  try {
+    const statement = await db.prepareAsync(
+      'INSERT OR REPLACE INTO Test_16 (id_sesion, elementos, imposibilidad, rechazo, perspectiva) VALUES ($id_sesion, $elementos, $imposibilidad, $rechazo, $perspectiva)'
+    );
+    const result = await statement.executeAsync({ $id_sesion: idSesion, $elementos: elementos, $imposibilidad: imposibilidad, $rechazo: rechazo, $perspectiva: perspectiva });
+    await statement.finalizeAsync();
+    console.log("Resultados del Test 16 guardados:", result.lastInsertRowId);
+    return result.lastInsertRowId;
+  } catch (error) {
+    console.error("Error al guardar resultados del Test 16:", error);
+    throw error;
+  }
+};
+
 export const guardarResultadosTest_17 = async (
   idSesion,
   nombresRecordadosFase1,
@@ -726,6 +781,7 @@ export const guardarResultadosTest_24 = async (idSesion, validezEnsayo, etapasEn
   }
 };
 
+
 export const obtenerResultadosSesion = async (idSesion) => {
   const db = await dbPromise;
 
@@ -743,6 +799,8 @@ export const obtenerResultadosSesion = async (idSesion) => {
     const resultadosTest12 = await db.getAllAsync('SELECT * FROM Test_12 WHERE id_sesion = ?', [idSesion]);
     const resultadosTest13 = await db.getAllAsync('SELECT * FROM Test_13 WHERE id_sesion = ?', [idSesion]);
     const resultadosTest14 = await db.getAllAsync('SELECT * FROM Test_14 WHERE id_sesion = ?', [idSesion]);
+    const resultadosTest15 = await db.getAllAsync('SELECT * FROM Test_15 WHERE id_sesion = ?', [idSesion]);
+    const resultadosTest16 = await db.getAllAsync('SELECT * FROM Test_16 WHERE id_sesion = ?', [idSesion]);
     const resultadosTest17 = await db.getAllAsync('SELECT * FROM Test_17 WHERE id_sesion = ?', [idSesion]);
     const resultadosTest18 = await db.getAllAsync('SELECT * FROM Test_18 WHERE id_sesion = ?', [idSesion]);
     const resultadosTest19 = await db.getAllAsync('SELECT * FROM Test_19 WHERE id_sesion = ?', [idSesion]);
@@ -750,6 +808,7 @@ export const obtenerResultadosSesion = async (idSesion) => {
     const resultadosTest21 = await db.getAllAsync('SELECT * FROM Test_21 WHERE id_sesion = ?', [idSesion]);
     const resultadosTest22 = await db.getAllAsync('SELECT * FROM Test_22 WHERE id_sesion = ?', [idSesion]);
     const resultadosTest23 = await db.getAllAsync('SELECT * FROM Test_23 WHERE id_sesion = ?', [idSesion]);
+    const resultadosTest24 = await db.getAllAsync('SELECT * FROM Test_24 WHERE id_sesion = ?', [idSesion]);
 
     // Organizar todos los resultados en un objeto para retornarlo
     const resultados = {
@@ -765,6 +824,8 @@ export const obtenerResultadosSesion = async (idSesion) => {
       test_12: resultadosTest12,
       test_13: resultadosTest13,
       test_14: resultadosTest14,
+      test_15: resultadosTest15,
+      test_16: resultadosTest16,
       test_17: resultadosTest17,
       test_18: resultadosTest18,
       test_19: resultadosTest19,
@@ -772,6 +833,7 @@ export const obtenerResultadosSesion = async (idSesion) => {
       test_21: resultadosTest21,
       test_22: resultadosTest22,
       test_23: resultadosTest23,
+      test_24: resultadosTest24,
     };
 
     console.log("Resultados de la sesión obtenidos:", resultados);

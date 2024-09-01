@@ -124,13 +124,7 @@ const Test_24 = ({ navigation, route }) => {
         
             const diferencia = Math.abs(mediaConocidos - mediaDesconocidos);
         
-            //await guardarResultadosTest_24(route.params.idSesion, etapasEnsayo, mediaConocidos, mediaDesconocidos, diferencia);
-        
-            Alert.alert(
-                "Resultados",
-                `Validez de los ensayos: ${validezEnsayo.map(validez => validez ? '✅' : '❌').join('')}\nEtapas de los ensayos: ${etapasEnsayo.join(', ')}\n
-                Media Conocidos: ${mediaConocidos.toFixed(2)}\nMedia Desconocidos: ${mediaDesconocidos.toFixed(2)}\nDiferencia: ${diferencia.toFixed(2)}`
-            );
+            await guardarResultadosTest_24(route.params.idSesion, etapasEnsayo, mediaConocidos, mediaDesconocidos, diferencia);
         
             navigation.navigate('Test_25', { idSesion: route.params.idSesion });
         };
@@ -175,16 +169,6 @@ const Test_24 = ({ navigation, route }) => {
                                         <TouchableOpacity style={styles.botonOK} onPress={manejarExito}>
                         <Image source={correct} style={{ width: 60, height: 60 }} />
                     </TouchableOpacity>
-                    <View style={styles.nombreContainer}>
-                        <Text style={styles.nombreTexto}>Resultados actuales:
-                            {validezEnsayo.map((validez, i) => (
-                                <Text key={i}>{validez ? '✅' : '❌'}</Text>
-                            ))}
-                            {etapasEnsayo.map((etapa, i) => (
-                                <Text key={i}>{etapa}</Text>
-                            ))}
-                        </Text>
-                    </View>
                     <View style={[styles.nombreContainer, { opacity: transparencia }]}>
                         <Text style={styles.nombreTexto}>{nombreActual}</Text>
                     </View>
