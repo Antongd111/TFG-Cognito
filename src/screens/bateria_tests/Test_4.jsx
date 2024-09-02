@@ -1,5 +1,5 @@
 //TODO: ensayos entrernamiento  
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Audio } from 'expo-av';
 import MenuComponent from '../../components/menu';
