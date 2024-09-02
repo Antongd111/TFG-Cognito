@@ -6,7 +6,10 @@ import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
 import { guardarResultadosTest_5 } from '../../api/TestApi';
-import { Alert } from 'react-native';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from "../../locales";
+import { useIsFocused } from '@react-navigation/native';
 
 import figura_1 from '../../../assets/images/Test_5/figura_1.png';
 import figura_2 from '../../../assets/images/Test_5/figura_2.png';
@@ -17,9 +20,7 @@ import figura_6 from '../../../assets/images/Test_5/figura_6.png';
 import figura_7 from '../../../assets/images/Test_5/figura_7.png';
 import figura_8 from '../../../assets/images/Test_5/figura_8.png';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getTranslation } from "../../locales";
-import { useIsFocused } from '@react-navigation/native';
+
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -36,12 +37,16 @@ const Test_5 = ({ navigation, route }) => {
     const [ensayoActual, setEnsayoActual] = useState(0);
     const [figurasSeleccionadas, setFigurasSeleccionadas] = useState([]);
     const [tiempoRestante, setTiempoRestante] = useState(30);
+    const imagenesFiguras = { figura_1, figura_2, figura_3, figura_4, figura_5, figura_6, figura_7, figura_8 };
+
     const [correctos, setCorrectos] = useState(0);
     const [incorrectos, setIncorrectos] = useState(0);
     const [erroresTiempo, setErroresTiempo] = useState(0);
+
+    /** CARGA DE TRADUCCIONES **************************************/
+
     const [translations, setTranslations] = useState({});
     const isFocused = useIsFocused();
-    const imagenesFiguras = { figura_1, figura_2, figura_3, figura_4, figura_5, figura_6, figura_7, figura_8 };
 
     useEffect(() => {
         const loadLanguage = async () => {
@@ -55,12 +60,21 @@ const Test_5 = ({ navigation, route }) => {
         }
     }, [isFocused]);
 
+    /** FIN CARGA DE TRADUCCIONES **************************************/
+
+    /**
+     * Cuando se cierre el modal, inicia el primer ensayo
+     */
     useEffect(() => {
         if (!modalVisible) {
             iniciarEnsayo();
         }
     }, [modalVisible]);
 
+    /**
+     * Actualiza el contador cada segundo. Cuando llega a 0, llama a la función que añade error de tiempo
+     * y pasa al siguiente ensayo.
+     */
     useEffect(() => {
         if (!mostrarFiguraCorrecta && tiempoRestante > 0) {
             const timer = setInterval(() => {
@@ -73,10 +87,14 @@ const Test_5 = ({ navigation, route }) => {
         }
     }, [tiempoRestante, mostrarFiguraCorrecta]);
 
+    /**
+     * Cuando el ensayo es el 13, es decir, el que viene después del último, guarda los resultados en BD y pasa
+     * al siguiente test.
+     */
     useEffect(() => {
         const guardarResultados = async () => {
             await guardarResultadosTest_5(route.params.idSesion, correctos, incorrectos, erroresTiempo);
-            navigation.navigate('Test_6', { idSesion: route.params.idSesion });
+            navigation.replace('Test_6', { idSesion: route.params.idSesion });
         };
 
         if (ensayoActual === 13) {
@@ -84,6 +102,12 @@ const Test_5 = ({ navigation, route }) => {
         }
     }, [ensayoActual]);
 
+    /**
+     * Genera una posición aleatoria para una figura nueva a colocar. Comprueba si se sobrepone a otra, y genera posiciones
+     * hasta que una no se superponga, la cual devuelve.
+     * @param {*} figurasExistentes figuras que ya se han colocado
+     * @returns 
+     */
     const generarPosicionAleatoria = (figurasExistentes) => {
         let newX, newY, overlap;
         do {
@@ -96,6 +120,9 @@ const Test_5 = ({ navigation, route }) => {
         return { x: newX, y: newY };
     };
 
+    /**
+     * Genera las figuras, utilizando la función anterior de generar posiciones, y asignando 2 correctas y las demás incorrectas.
+     */
     const generarFiguras = () => {
         const nuevasFiguras = [];
         const tipos = ["figura_1", "figura_2", "figura_3", "figura_4", "figura_5", "figura_6", "figura_7", "figura_8"];
@@ -134,6 +161,10 @@ const Test_5 = ({ navigation, route }) => {
         setFiguraCorrecta(imagenesFiguras[tipos[indiceCorrecto]]);
     };
 
+    /**
+     * Inicializa variables para empezar el ensayo dependiendo del número de ensayo en el que nos encontremos.
+     * Si es entrenamiento, no se guardan resultados, si es ensayo real sí.
+     */
     const iniciarEnsayo = () => {
         if (ensayoActual < 2) {
             // Fase de entrenamiento
@@ -160,7 +191,12 @@ const Test_5 = ({ navigation, route }) => {
         }
     };
 
-    const manejarSeleccionFigura = (index) => {
+    /**
+     * Maneja la selección de una figura.
+     * @param {*} index índice de la figura tocada
+     * @returns 
+     */
+    const handleSeleccionFigura = (index) => {
         const figura = figuras[index];
         if (figura.seleccionada) return;
 
@@ -180,21 +216,32 @@ const Test_5 = ({ navigation, route }) => {
         }
     };
 
+    /**
+     * Añade respuesta correcta al contador
+     */
     const manejarRespuestaCorrecta = () => {
-        let nuevoCorrectos = correctos + 1;
-        if (ensayoActual >= 3) setCorrectos(nuevoCorrectos) // Solo contar en ensayos reales
+        if (ensayoActual >= 3) setCorrectos(correctos + 1)
         siguienteEnsayo();
     };
 
+    /**
+     * Añade respuesta incorrecta al contador
+     */
     const manejarRespuestaIncorrecta = () => {
-        if (ensayoActual >= 3) setIncorrectos(incorrectos + 1); // Solo contar en ensayos reales
+        if (ensayoActual >= 3) setIncorrectos(incorrectos + 1);
     };
 
+    /**
+     * Añade error de tiempo al contador
+     */
     const manejarErrorDeTiempo = () => {
-        if (ensayoActual >= 3) setErroresTiempo(erroresTiempo + 1); // Solo contar en ensayos reales
+        if (ensayoActual >= 3) setErroresTiempo(erroresTiempo + 1);
         siguienteEnsayo();
     };
 
+    /**
+     * Aumenta el número de ensayo y llama a la función que inicializa variables.
+     */
     const siguienteEnsayo = () => {
         setEnsayoActual(ensayoActual + 1);
         iniciarEnsayo();
@@ -205,9 +252,9 @@ const Test_5 = ({ navigation, route }) => {
             <View style={stylesComunes.contenedor_test}>
                 <MenuComponent
                     onToggleVoice={() => { }}
-                    onNavigateHome={() => navigation.navigate('Pacientes')}
-                    onNavigateNext={() => navigation.navigate('Test_6', { idSesion: route.params.idSesion })}
-                    onNavigatePrevious={() => navigation.navigate('Test_4', { idSesion: route.params.idSesion })}
+                    onNavigateHome={() => navigation.replace('Pacientes')}
+                    onNavigateNext={() => navigation.replace('Test_6', { idSesion: route.params.idSesion })}
+                    onNavigatePrevious={() => navigation.replace('Test_4', { idSesion: route.params.idSesion })}
                 />
                 <InstruccionesModal
                     visible={modalVisible}
@@ -222,8 +269,8 @@ const Test_5 = ({ navigation, route }) => {
                         setEnsayoActual(3); // Iniciar los ensayos reales
                         iniciarEnsayo();
                     }}
-                    title= "Test 5"
-                    instructions = {translations.ItemStartPrueba}
+                    title="Test 5"
+                    instructions={translations.ItemStartPrueba}
                 />
                 {!modalVisible && mostrarFiguraCorrecta && figuraCorrecta && (
                     <View style={styles.figuraCorrecta}>
@@ -239,7 +286,7 @@ const Test_5 = ({ navigation, route }) => {
                             <TouchableOpacity
                                 key={index}
                                 style={{ position: 'absolute', left: fig.x, top: fig.y }}
-                                onPress={() => manejarSeleccionFigura(index)}
+                                onPress={() => handleSeleccionFigura(index)}
                             >
                                 <Image
                                     source={imagenesFiguras[fig.tipo]}

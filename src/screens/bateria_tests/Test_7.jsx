@@ -26,10 +26,13 @@ const Test_7 = ({ navigation, route }) => {
     const [tiempoFaseTerminado, setTiempoFaseTerminado] = useState(false);
     const [faseCompletada, setFaseCompletada] = useState(false);
 
+    // Referencia para el color anterior, para evitar repetición
     const colorAnteriorRef = useRef('');
+    
+    /** CARGA DE TRADUCCIONES **************************************/
+    const [translations, setTranslations] = useState({});
     const isFocused = useIsFocused();
 
-    const [translations, setTranslations] = useState({});
     useEffect(() => {
         const loadLanguage = async () => {
             const savedLanguage = await AsyncStorage.getItem('language');
@@ -40,6 +43,9 @@ const Test_7 = ({ navigation, route }) => {
         if (isFocused) loadLanguage();
     }, [isFocused]);
 
+    /** FIN CARGA DE TRADUCCIONES **************************************/
+
+    // Respuestas posibles y mapeo de colores para la fase Stroop
     const respuestas = [translations.pr07Rojo, translations.pr07Verde, translations.pr07Azul, translations.pr07Amarillo];
     const colores = [translations.pr07Rojo, translations.pr07Verde, translations.pr07Azul, translations.pr07Amarillo];
     const colorMap = {
@@ -49,12 +55,18 @@ const Test_7 = ({ navigation, route }) => {
         [translations.pr07Amarillo]: 'yellow'
     };
 
+    /**
+     * Inicia el ensayo cuando se cierra el modal de instrucciones y el test real no está visible.
+     */
     useEffect(() => {
         if (!modalVisible && !testRealVisible) {
             iniciarEnsayo();
         }
     }, [modalVisible, testRealVisible]);
 
+    /**
+     * Activa un cronómetro que incrementa el tiempo de la fase cada segundo.
+     */
     useEffect(() => {
         if (cronometroActivo) {
             const intervalo = setInterval(() => {
@@ -64,6 +76,9 @@ const Test_7 = ({ navigation, route }) => {
         }
     }, [cronometroActivo]);
 
+    /**
+     * Termina la fase si el tiempo límite de 45 segundos se alcanza.
+     */
     useEffect(() => {
         if (tiempoParte >= 45000) {
             setCronometroActivo(false);
@@ -71,11 +86,16 @@ const Test_7 = ({ navigation, route }) => {
         }
     }, [tiempoParte]);
 
+    /**
+     * Guarda los resultados y navega al siguiente test cuando todas las fases se han completado.
+     */
     useEffect(() => {
-        if (fase > 3)
-            guardarResultados();
+        if (fase > 3) guardarResultados();
     }, [fase]);
 
+    /**
+     * Guarda los resultados del test en la base de datos y navega al siguiente test.
+     */
     const guardarResultados = async () => {
         console.log('Guardando resultados del test 7...');
         const tiempoMedio = tiemposCorrectos.length > 0 ? tiemposCorrectos.reduce((a, b) => a + b, 0) / tiemposCorrectos.length : 0;
@@ -83,6 +103,10 @@ const Test_7 = ({ navigation, route }) => {
         navigation.navigate('Test_8', { idSesion: route.params.idSesion });
     };
 
+    /**
+     * Inicia un nuevo ensayo generando colores aleatorios para los textos y sus fuentes. 
+     * Asegura que no se repitan colores consecutivos y ajusta según la fase del test.
+     */
     const iniciarEnsayo = () => {
         let colorAleatorio;
         let colorFuenteAleatorio;
@@ -101,6 +125,11 @@ const Test_7 = ({ navigation, route }) => {
         setTiempoInicioFase(Date.now());
     };
 
+    /**
+     * Maneja la respuesta del usuario. Verifica si es correcta o incorrecta y actualiza los contadores en consecuencia.
+     * Si es correcta, agrega el tiempo de respuesta a la lista de tiempos correctos.
+     * @param {string} respuesta Respuesta seleccionada por el usuario
+     */
     const handleRespuesta = (respuesta) => {
         const tiempoRespuesta = Date.now() - tiempoInicioFase;
         const esCorrecta = fase === 3 ? colorMap[respuesta] === colorFuente : respuesta === colorNombre;
@@ -131,11 +160,14 @@ const Test_7 = ({ navigation, route }) => {
                 setEnsayoActual(prev => prev + 1);
                 iniciarEnsayo();
             } else {
-                 avanzarFase();
+                avanzarFase();
             }
         }
     };
 
+    /**
+     * Inicia el test real después de completar la fase de práctica.
+     */
     const iniciarTestReal = () => {
         setTestRealVisible(false);
         setTiempoParte(0);
@@ -144,6 +176,9 @@ const Test_7 = ({ navigation, route }) => {
         iniciarEnsayo();
     };
 
+    /**
+     * Avanza a la siguiente fase del test, reiniciando la práctica y configuraciones para la nueva fase.
+     */
     const avanzarFase = () => {
         setFase(prevFase => prevFase + 1);
         if (fase < 3) {
@@ -157,6 +192,7 @@ const Test_7 = ({ navigation, route }) => {
         }
     };
 
+    // No renderiza nada si la prueba ha terminado.
     if (fase > 3) {
         return null; // Evita renderizar si ya se ha completado la prueba
     }

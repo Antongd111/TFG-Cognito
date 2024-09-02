@@ -14,11 +14,17 @@ const images = {
 };
 
 const Test_15 = ({ navigation, route }) => {
+    // Estado para controlar la visibilidad del modal de instrucciones
     const [modalVisible, setModalVisible] = useState(true);
+
+    // Estado para almacenar las traducciones cargadas según el idioma seleccionado
     const [translations, setTranslations] = useState({});
+
+    // Hook para detectar si la pantalla está en foco
     const isFocused = useIsFocused();
 
     useEffect(() => {
+        // Función para cargar el idioma guardado en AsyncStorage
         const loadLanguage = async () => {
             const savedLanguage = await AsyncStorage.getItem('language');
             const lang = savedLanguage || 'es';
@@ -30,10 +36,12 @@ const Test_15 = ({ navigation, route }) => {
         }
     }, [isFocused]);
 
+    // Función para iniciar la prueba ocultando el modal de instrucciones
     const iniciarPrueba = () => {
         setModalVisible(false);
     };
 
+    // Función para avanzar a la siguiente prueba (Test 16)
     const avanzarPrueba = () => {
         navigation.replace('Test_16', { idSesion: route.params.idSesion });
     };
@@ -44,7 +52,7 @@ const Test_15 = ({ navigation, route }) => {
                 <MenuComponent
                     onToggleVoice={() => {}}
                     onNavigateHome={() => navigation.replace('Pacientes')}
-                    onNavigateNext={avanzarPrueba}
+                    onNavigateNext={() => navigation.replace('Test_16', { idSesion: route.params.idSesion })}
                     onNavigatePrevious={() => navigation.replace('Test_14', { idSesion: route.params.idSesion })}
                 />
                 <InstruccionesModal

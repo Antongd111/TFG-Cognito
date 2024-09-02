@@ -8,13 +8,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../../locales";
 import { useIsFocused } from '@react-navigation/native';
 
-// Importar la imagen de la casa
+// Importar la imagen abstracta
 const images = {
     abstracta: require('../../../assets/images/Test_16/abstracta.png')
 };
 
-const Test_15 = ({ navigation, route }) => {
+const Test_16 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);
+
     const [translations, setTranslations] = useState({});
     const isFocused = useIsFocused();
 
@@ -44,7 +45,7 @@ const Test_15 = ({ navigation, route }) => {
                 <MenuComponent
                     onToggleVoice={() => {}}
                     onNavigateHome={() => navigation.replace('Pacientes')}
-                    onNavigateNext={avanzarPrueba}
+                    onNavigateNext={() => navigation.replace('Test_17', { idSesion: route.params.idSesion })}
                     onNavigatePrevious={() => navigation.replace('Test_15', { idSesion: route.params.idSesion })}
                 />
                 <InstruccionesModal
@@ -94,4 +95,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Test_15;
+export default Test_16;

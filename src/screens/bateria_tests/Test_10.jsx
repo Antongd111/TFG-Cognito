@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import { Audio } from 'expo-av';
@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../../locales";
 import { useIsFocused } from '@react-navigation/native';
 
+// Definición de las secuencias de entrenamiento y de prueba
 const secuenciasEntrenamiento = [
     [0, 1],
     [0, 1, 2]
@@ -40,11 +41,14 @@ const Test_10 = ({ navigation, route }) => {
     const [payasoPosicion, setPayasoPosicion] = useState(null);
     const [mostrarModalInicioPruebas, setMostrarModalInicioPruebas] = useState(false);
 
+    // Definición de los cuadrados en el grid
     const cuadrados = Array.from({ length: 9 }, (_, i) => i);
 
+    // Carga de las traducciones y enfoque de la pantalla
     const [translations, setTranslations] = useState({});
     const isFocused = useIsFocused();
 
+    // Carga las traducciones cuando la pantalla está enfocada
     useEffect(() => {
         const loadLanguage = async () => {
             const savedLanguage = await AsyncStorage.getItem('language');
@@ -57,12 +61,17 @@ const Test_10 = ({ navigation, route }) => {
         }
     }, [isFocused]);
 
+    // Función para reproducir el sonido
     const playSound = async () => {
         const { sound } = await Audio.Sound.createAsync(pitido);
         await sound.playAsync();
         sound.unloadAsync();
     };
 
+    /**
+     * Controla la lógica para mostrar el trayecto de las secuencias
+     * cuando se cierra el modal o se inicia una nueva prueba.
+     */
     useEffect(() => {
         if (!modalVisible && !mostrarModalInicioPruebas && trayectoMostrado) {
             const secuencia = fase === 1 ? secuenciasEntrenamiento[ensayoActual] : secuenciasPrueba[ensayoActual];
@@ -71,7 +80,10 @@ const Test_10 = ({ navigation, route }) => {
         }
     }, [modalVisible, mostrarModalInicioPruebas, trayectoMostrado]);
 
-    // Guardar resultados en la base de datos cuando se completa la fase 2
+    /**
+     * Guarda los resultados en la base de datos cuando se completa la fase 2
+     * y navega al siguiente test.
+     */
     useEffect(() => {
         const guardarResultadosBD = async () => {
             await guardarResultadosTest_10(route.params.idSesion, resultados);
@@ -83,6 +95,10 @@ const Test_10 = ({ navigation, route }) => {
         }
     }, [fase, ensayoActual]);
 
+    /**
+     * Muestra el trayecto de la secuencia actual, mostrando el payaso
+     * en las posiciones correspondientes y reproduciendo un sonido al finalizar.
+     */
     const mostrarTrayecto = async (secuencia) => {
         for (let i = 0; i < secuencia.length; i++) {
             setPayasoPosicion(secuencia[i]);
@@ -96,6 +112,11 @@ const Test_10 = ({ navigation, route }) => {
         setTrayectoMostrado(false);
     };
 
+    /**
+     * Maneja el toque en un cuadrado, agregando el índice del cuadrado tocado
+     * a la lista de cuadrados tocados. Si se completa la secuencia, guarda los
+     * resultados y pasa al siguiente ensayo.
+     */
     const manejarCuadradoTocado = (indice) => {
         setCuadradosTocados(prev => {
             const nuevosCuadrados = [...prev, indice];
@@ -110,6 +131,10 @@ const Test_10 = ({ navigation, route }) => {
         });
     };
 
+    /**
+     * Guarda los resultados de la secuencia actual, incluyendo si fue correcta
+     * y el tiempo que tomó completar la secuencia.
+     */
     const guardarResultados = async (nuevosCuadrados) => {
         const finEnsayo = Date.now();
         const tiempoEnsayo = finEnsayo - inicioEnsayo;
@@ -129,6 +154,10 @@ const Test_10 = ({ navigation, route }) => {
         }
     };
 
+    /**
+     * Pasa al siguiente ensayo, actualizando el ensayo actual y la fase si es necesario.
+     * Controla también el paso de la fase de entrenamiento a la fase de pruebas.
+     */
     const siguienteEnsayo = () => {
         setCuadradosTocados([]);
 
@@ -147,11 +176,17 @@ const Test_10 = ({ navigation, route }) => {
         }
     };
 
+    /**
+     * Inicia el primer ensayo de la fase de entrenamiento.
+     */
     const iniciarEnsayo = () => {
         setTrayectoMostrado(true);
         setModalVisible(false);
     };
 
+    /**
+     * Inicia la fase de pruebas reales.
+     */
     const iniciarPruebasReales = () => {
         setMostrarModalInicioPruebas(false);
         setTrayectoMostrado(true);
