@@ -95,17 +95,21 @@ const Test_11 = ({ navigation, route }) => {
     const [ensayoActual, setEnsayoActual] = useState(0);
     const [seleccion, setSeleccion] = useState(null);
     const [tiempoInicio, setTiempoInicio] = useState(null);
+    const [tiempoRestante, setTiempoRestante] = useState(20); // Tiempo máximo por ensayo
+
+    // RESULTADOS
     const [tiemposRespuesta, setTiemposRespuesta] = useState([]);  // Tiempos de respuesta
     const [seleccionesFiguras, setSeleccionesFiguras] = useState([]);  // Figuras seleccionadas
     const [rectificaciones, setRectificaciones] = useState(0);
     const [correctas, setCorrectas] = useState(0);
     const [inversiones, setInversiones] = useState(0);
     const [campoNegligencia, setCampoNegligencia] = useState(false);
-    const [tiempoRestante, setTiempoRestante] = useState(20); // Tiempo máximo por ensayo
 
+    // Carga de las traducciones y control de enfoque
     const [translations, setTranslations] = useState({});
     const isFocused = useIsFocused();
 
+    // Carga las traducciones cuando la pantalla está enfocada
     useEffect(() => {
         const loadLanguage = async () => {
             const savedLanguage = await AsyncStorage.getItem('language');
@@ -128,11 +132,10 @@ const Test_11 = ({ navigation, route }) => {
         }
     }, [tiempoRestante, modalVisible]);
 
+    // Guarda los resultados al finalizar todos los ensayos
     useEffect(() => {
         const guardarResultados = async () => {
-
-            await guardarResultadosTest_11(route.params.idSesion, correctas, inversiones, rectificaciones,  JSON.stringify(tiemposRespuesta), JSON.stringify(seleccionesFiguras));
-
+            await guardarResultadosTest_11(route.params.idSesion, correctas, inversiones, rectificaciones, JSON.stringify(tiemposRespuesta), JSON.stringify(seleccionesFiguras));
             navigation.replace('Test_12', { idSesion: route.params.idSesion });
         };
 
@@ -141,18 +144,25 @@ const Test_11 = ({ navigation, route }) => {
         }
     }, [ensayoActual]);
 
+    /**
+     * Inicia la prueba después de cerrar el modal.
+     */
     const iniciarPrueba = () => {
         setModalVisible(false);
         setTiempoInicio(Date.now());
         setTiempoRestante(20); // Reinicia el tiempo para cada ensayo
     };
 
+    /**
+     * Maneja la selección de una opción por parte del usuario.
+     * @param {number} indice - El índice de la opción seleccionada.
+     */
     const manejarSeleccion = (indice) => {
         const tiempoRespuesta = Date.now() - tiempoInicio;
         const esCorrecta = indice === secuencias[ensayoActual]?.correcta;
         const esInversion = indice === secuencias[ensayoActual]?.inversion;
 
-        // Almacenamos el tiempo de respuesta y la figura seleccionada
+        // Almacena el tiempo de respuesta y la figura seleccionada
         setTiemposRespuesta([...tiemposRespuesta, tiempoRespuesta]);
         setSeleccionesFiguras([...seleccionesFiguras, indice !== null ? indice + 1 : "0"]);
 
@@ -239,7 +249,6 @@ const styles = StyleSheet.create({
         margin: 10,
         marginLeft: 100,
         resizeMode: 'contain'
-
     },
     opcionesContainer: {
         flexDirection: 'row',

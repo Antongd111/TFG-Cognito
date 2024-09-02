@@ -15,6 +15,12 @@ const Test_8 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);
     const [ensayoActual, setEnsayoActual] = useState(0);
     const [fase, setFase] = useState(1); // 1 para la primera parte, 2 para la segunda parte
+    const [nombreActual, setNombreActual] = useState('');
+    const [mostrarNombres, setMostrarNombres] = useState(false);
+    const [memorizarNombres, setMemorizarNombres] = useState(false);
+    const [faseCompletada, setFaseCompletada] = useState(false);
+
+    // RESULTADOS
     const [pronunciacionesCorrectas, setPronunciacionesCorrectas] = useState(0);
     const [pronunciacionesIncorrectas, setPronunciacionesIncorrectas] = useState(0);
     const [recordadasCorrectas, setRecordadasCorrectas] = useState(0);
@@ -22,16 +28,13 @@ const Test_8 = ({ navigation, route }) => {
     const [perseveraciones, setPerseveraciones] = useState(0);
     const [rechazos, setRechazos] = useState(0);
     const [nombresMemorizados, setNombresMemorizados] = useState([]);
-    const [nombreActual, setNombreActual] = useState('');
-    const [mostrarNombres, setMostrarNombres] = useState(false);
-    const [memorizarNombres, setMemorizarNombres] = useState(false);
-    const [faseCompletada, setFaseCompletada] = useState(false); // Nuevo estado para controlar la finalización de la fase
 
     /******************** CARGA DE TRADUCCIONES ********************/
 
     const [translations, setTranslations] = useState({});
     const isFocused = useIsFocused();
 
+    // Carga de las traducciones desde el almacenamiento y configuración del idioma
     useEffect(() => {
         const loadLanguage = async () => {
             const savedLanguage = await AsyncStorage.getItem('language');
@@ -46,31 +49,17 @@ const Test_8 = ({ navigation, route }) => {
 
     /***************** FIN DE CARGA DE TRADUCCIONES ****************/
 
-    /******************** MENÚ DE EVALUACIÓN ********************/
-    const handleToggleVoice = () => {
-        console.log("Toggle voice feature");
-    };
-
-    const handleNavigateHome = () => {
-        navigation.replace('Pacientes');
-    };
-
-    const handleNavigateNext = () => {
-        navigation.replace('Test_9', { idSesion: route.params.idSesion });
-    };
-
-    const handleNavigatePrevious = () => {
-        navigation.replace('Test_7', { idSesion: route.params.idSesion });
-    };
-
-    /***************** FIN MENÚ DE EVALUACIÓN *****************/
-
+    // Nombres que se van a mostrar en las fases del test, traducidos según el idioma seleccionado
     const nombres = [
         translations.pr08Nombre1, translations.pr08Nombre2, translations.pr08Nombre3,
         translations.pr08Nombre4, translations.pr08Nombre5, translations.pr08Nombre6,
         translations.pr08Nombre7, translations.pr08Nombre8, translations.pr08Nombre9
     ];
 
+    /**
+     * Controla la lógica de la fase 2, mostrando los nombres a memorizar uno por uno con un retraso de 3 segundos.
+     * Cuando todos los nombres se han mostrado, la fase se marca como completada y se muestra un modal para la siguiente parte.
+     */
     useEffect(() => {
         if (fase === 2 && memorizarNombres && !faseCompletada) {
             if (ensayoActual < nombres.length) {
@@ -82,12 +71,17 @@ const Test_8 = ({ navigation, route }) => {
             } else {
                 // Fase 2 completada
                 setMemorizarNombres(false);
-                setFaseCompletada(true); // Indicamos que la fase ha terminado
-                setModalVisible(true); // Mostramos el modal de la siguiente parte
+                setFaseCompletada(true);
+                setModalVisible(true);
             }
         }
     }, [fase, memorizarNombres, ensayoActual]);
 
+    /**
+     * Maneja la respuesta del usuario (correcto o incorrecto) durante la primera fase del test.
+     * Incrementa los contadores correspondientes y llama a la función para avanzar al siguiente nombre.
+     * @param {string} respuesta - 'correcto' o 'incorrecto'
+     */
     const manejarRespuesta = (respuesta) => {
         if (respuesta === 'correcto') {
             setPronunciacionesCorrectas(pronunciacionesCorrectas + 1);
@@ -97,6 +91,10 @@ const Test_8 = ({ navigation, route }) => {
         siguienteNombre();
     };
 
+    /**
+     * Avanza al siguiente nombre en la lista. Si se completan todos los nombres de la fase 1,
+     * muestra un modal y avanza a la fase 2.
+     */
     const siguienteNombre = () => {
         if (ensayoActual < nombres.length - 1) {
             setEnsayoActual(ensayoActual + 1);
@@ -109,6 +107,9 @@ const Test_8 = ({ navigation, route }) => {
         }
     };
 
+    /**
+     * Inicia la fase 2 del test, donde el usuario debe memorizar los nombres que se le presentan.
+     */
     const iniciarFase2 = () => {
         setMemorizarNombres(true);
         setEnsayoActual(0);
@@ -116,11 +117,19 @@ const Test_8 = ({ navigation, route }) => {
         setModalVisible(false);
     };
 
+    /**
+     * Inicia la evaluación de la fase 2, donde el usuario selecciona los nombres que recuerda.
+     */
     const iniciarEvaluacion = () => {
         setModalVisible(false);
         setMostrarNombres(true);
     };
 
+    /**
+     * Maneja la selección de nombres en la fase 2. Si el nombre ya está seleccionado, se deselecciona; 
+     * si no, se agrega a la lista de nombres memorizados.
+     * @param {string} nombre - Nombre seleccionado por el usuario
+     */
     const manejarSeleccionNombre = (nombre) => {
         if (nombresMemorizados.includes(nombre)) {
             setNombresMemorizados(nombresMemorizados.filter(item => item !== nombre));
@@ -131,6 +140,9 @@ const Test_8 = ({ navigation, route }) => {
         }
     };
 
+    /**
+     * Guarda los resultados de la fase 2 en la base de datos y navega al siguiente test.
+     */
     const validarFase2 = async () => { 
         await guardarResultadosTest_8(route.params.idSesion, pronunciacionesCorrectas, pronunciacionesIncorrectas, recordadasCorrectas, intrusiones, perseveraciones, rechazos);
         navigation.replace('Test_9', { idSesion: route.params.idSesion });
@@ -140,10 +152,10 @@ const Test_8 = ({ navigation, route }) => {
         <View style={stylesComunes.borde_tests}>
             <View style={stylesComunes.contenedor_test}>
                 <MenuComponent
-                    onToggleVoice={handleToggleVoice}
-                    onNavigateHome={handleNavigateHome}
-                    onNavigateNext={handleNavigateNext}
-                    onNavigatePrevious={handleNavigatePrevious}
+                    onToggleVoice={() => { }}
+                    onNavigateHome={() => navigation.navigate('Pacientes')}
+                    onNavigateNext={() => navigation.navigate('Test_9', { idSesion: route.params.idSesion })}
+                    onNavigatePrevious={() => navigation.navigate('Test_7', { idSesion: route.params.idSesion })}
                 />
                 {fase === 1 && (
                     <InstruccionesModal

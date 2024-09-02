@@ -83,15 +83,18 @@ const Test_12 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);
     const [entrenamiento, setEntrenamiento] = useState(true);
     const [ensayoActual, setEnsayoActual] = useState(0);
+    const [inicioEnsayo, setInicioEnsayo] = useState(null);
+    const [seleccion, setSeleccion] = useState(null);
+
+    // RESULTADOS
     const [correctas, setCorrectas] = useState(0);
     const [erroresMorfológicos, setErroresMorfológicos] = useState(0);
     const [erroresFonéticos, setErroresFonéticos] = useState(0);
     const [erroresSemánticos, setErroresSemánticos] = useState(0);
     const [excedidoTiempo, setExcedidoTiempo] = useState(0);
     const [respuestaIncorrecta, setRespuestaIncorrecta] = useState(0);
-    const [inicioEnsayo, setInicioEnsayo] = useState(null);
-    const [seleccion, setSeleccion] = useState(null);
 
+    // Carga de traducciones y enfoque de la pantalla
     const [translations, setTranslations] = useState({});
     const isFocused = useIsFocused();
 
@@ -297,37 +300,57 @@ const Test_12 = ({ navigation, route }) => {
         }
     ];
 
+    // Guarda los resultados al finalizar todos los ensayos
     useEffect(() => {
         const guardarResultados = async () => {
-            await guardarResultadosTest_12(route.params.idSesion, correctas, erroresMorfológicos, erroresFonéticos, erroresSemánticos, excedidoTiempo, respuestaIncorrecta);
+            await guardarResultadosTest_12(
+                route.params.idSesion,
+                correctas,
+                erroresMorfológicos,
+                erroresFonéticos,
+                erroresSemánticos,
+                excedidoTiempo,
+                respuestaIncorrecta
+            );
             navigation.replace('Test_13', { idSesion: route.params.idSesion });
         };
 
         if (ensayoActual === secuencias.length) {
             guardarResultados();
         }
+    }, [ensayoActual]);
 
-    } , [ensayoActual]);
-
+    // Lógica para analizar la respuesta seleccionada
     useEffect(() => {
         if (seleccion !== null) {
             analizarRespuesta();
         }
     }, [seleccion]);
 
+    /**
+     * Inicia la prueba después de cerrar el modal.
+     */
     const iniciarPrueba = () => {
         setModalVisible(false);
         setInicioEnsayo(Date.now());
     };
 
+    /**
+     * Maneja la selección de una opción por parte del usuario.
+     * @param {number} index - El índice de la opción seleccionada.
+     */
     const manejarSeleccion = (index) => {
         setSeleccion(index);
     };
 
+    /**
+     * Analiza la respuesta seleccionada, verifica si es correcta
+     * o si corresponde a algún tipo de error (morfológico, fonético o semántico).
+     */
     const analizarRespuesta = () => {
         const tiempoRespuesta = Date.now() - inicioEnsayo;
         const secuenciaActual = secuencias[ensayoActual];
-        
+
         if (!entrenamiento) {
             if (tiempoRespuesta > 10000) {
                 setExcedidoTiempo(prev => prev + 1);
@@ -348,6 +371,9 @@ const Test_12 = ({ navigation, route }) => {
         avanzarEnsayo();
     };
 
+    /**
+     * Avanza al siguiente ensayo o termina la fase de entrenamiento.
+     */
     const avanzarEnsayo = () => {
         if (entrenamiento) {
             setEntrenamiento(false);
@@ -362,6 +388,9 @@ const Test_12 = ({ navigation, route }) => {
         setSeleccion(null); // Reiniciar la selección para el siguiente ensayo
     };
 
+    /**
+     * Muestra una alerta con los resultados al finalizar el test.
+     */
     const mostrarResultados = () => {
         Alert.alert('Resultados', `Total respuestas correctas: ${correctas}\nErrores morfológicos: ${erroresMorfológicos}\nErrores fonéticos: ${erroresFonéticos}\nErrores semánticos: ${erroresSemánticos}\nExcediendo el tiempo: ${excedidoTiempo}\nRespuestas incorrectas: ${respuestaIncorrecta}`);
     };
@@ -376,9 +405,9 @@ const Test_12 = ({ navigation, route }) => {
             <View style={stylesComunes.contenedor_test}>
                 <MenuComponent
                     onToggleVoice={() => {}}
-                    onNavigateHome={() => navigation.navigate('Pacientes')}
-                    onNavigateNext={() => navigation.navigate('Test_13', { idSesion: route.params.idSesion })}
-                    onNavigatePrevious={() => navigation.navigate('Test_11', { idSesion: route.params.idSesion })}
+                    onNavigateHome={() => navigation.replace('Pacientes')}
+                    onNavigateNext={() => navigation.replace('Test_13', { idSesion: route.params.idSesion })}
+                    onNavigatePrevious={() => navigation.replace('Test_11', { idSesion: route.params.idSesion })}
                 />
                 <InstruccionesModal
                     visible={modalVisible}

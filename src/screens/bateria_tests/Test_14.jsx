@@ -378,13 +378,14 @@ const Test_14 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);
     const [entrenamiento, setEntrenamiento] = useState(true);
     const [ensayoActual, setEnsayoActual] = useState(0);
+    const [inicioEnsayo, setInicioEnsayo] = useState(null);
+
+    // RESULTADOS
     const [correctas, setCorrectas] = useState(0);
     const [errores, setErrores] = useState(0);
     const [tiempoTotal, setTiempoTotal] = useState(0);
-    const [inicioEnsayo, setInicioEnsayo] = useState(null);
 
     /******************** CARGA DE TRADUCCIONES ********************/
-
     const [translations, setTranslations] = useState({});
     const isFocused = useIsFocused();
 
@@ -402,6 +403,7 @@ const Test_14 = ({ navigation, route }) => {
 
     /***************** FIN DE CARGA DE TRADUCCIONES ****************/
 
+    // Guarda los resultados al finalizar todos los ensayos
     useEffect(() => {
         const guardarResultados = async () => {
             await guardarResultadosTest_14(route.params.idSesion, correctas, errores, tiempoTotal);
@@ -410,17 +412,25 @@ const Test_14 = ({ navigation, route }) => {
 
         if (ensayoActual >= secuencias.length) {
             guardarResultados();
-        };
+        }
     }, [ensayoActual]);
 
+    // Establece el tiempo de inicio del ensayo
     useEffect(() => {
         setInicioEnsayo(Date.now());
     }, [ensayoActual]);
 
+    /**
+     * Inicia la prueba después de cerrar el modal.
+     */
     const iniciarPrueba = () => {
         setModalVisible(false);
     };
 
+    /**
+     * Maneja la selección del usuario y evalúa si es correcta o incorrecta.
+     * @param {number} index - El índice de la opción seleccionada.
+     */
     const manejarSeleccion = (index) => {
         const tiempoRespuesta = Date.now() - inicioEnsayo;
         if (!entrenamiento) {
@@ -446,6 +456,9 @@ const Test_14 = ({ navigation, route }) => {
         }
     };
 
+    /**
+     * Muestra una alerta con los resultados al finalizar el test.
+     */
     const mostrarResultados = () => {
         Alert.alert('Resultados', `Total respuestas correctas: ${correctas}\nTotal errores: ${errores}\nTiempo total empleado: ${tiempoTotal / 1000} segundos`);
     };
