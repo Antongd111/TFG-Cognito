@@ -17,9 +17,9 @@ const Test_2 = ({ navigation, route }) => {
     const [mostrarOpciones, setMostrarOpciones] = useState(false);
     const [mostrarError, setMostrarError] = useState(false);
 
-    const { idPaciente, idSesion } = route.params;
+    const { idSesion } = route.params;
 
-    /** CARGA DE TRADUCCIONES **************************************/
+    /** CARGA DE TRADUCCIONES *******************************************/
 
     const [translations, setTranslations] = useState({});
     const isFocused = useIsFocused();
@@ -38,25 +38,11 @@ const Test_2 = ({ navigation, route }) => {
 
     /** FIN CARGA DE TRADUCCIONES **************************************/
 
-    /******************** MENÚ DE EVALUACIÓN ********************/
-    const handleToggleVoice = () => {
-        console.log("Toggle voice feature");
-    };
 
-    const handleNavigateHome = () => {
-        navigation.navigate('Pacientes');
-    };
-
-    const handleNavigateNext = () => {
-        navigation.navigate('Test_3', { idSesion: route.params.idSesion });
-    };
-
-    const handleNavigatePrevious = () => {
-        navigation.navigate('Test_1', { idSesion: route.params.idSesion });
-    };
-
-    /***************** FIN MENÚ DE EVALUACIÓN *****************/
-
+    /**
+     * Calcula una posición {x, y} aleatoria dentro de la pantalla y la devuelve.
+     * @returns 
+     */
     function obtenerPosicionAleatoria() {
         const screenWidth = Dimensions.get('window').width;
         const screenHeight = Dimensions.get('window').height;
@@ -69,21 +55,27 @@ const Test_2 = ({ navigation, route }) => {
         return { top: y, left: x };
     }
 
+    /**
+     * Maneja el toque del payaso. Si es el tercer ensayo se pasa a la siguiente fase, si no,
+     * se pasa a generar el payaso en otra posición aleatoria.
+     */
     const manejarToquePayaso = () => {
         setToques(toques + 1);
         if (toques >= 2) {
             setMostrarOpciones(true);
         } else {
-            setPosicion(obtenerPosicionAleatoria()); // Actualiza la posición para el siguiente toque
+            setPosicion(obtenerPosicionAleatoria());
         }
     };
 
+    /**
+     * Para la última fase, si el sujeto toca el payaso se acaba el test y se pasa al siguiente. Si no, se muestra error.
+     * @param {*} opcion Elemento que ha tocado el usuario
+     */
     const seleccionarOpcion = (opcion) => {
         if (opcion === 'payaso') {
-            // Respuesta correcta
-            navigation.navigate('Test_3', {idSesion: idSesion });
+            navigation.replace('Test_3', { idSesion: idSesion });
         } else {
-            // Respuesta incorrecta
             setMostrarError(true);
         }
     }
@@ -92,10 +84,10 @@ const Test_2 = ({ navigation, route }) => {
         <View style={stylesComunes.borde_tests}>
             <View style={stylesComunes.contenedor_test}>
                 <MenuComponent
-                    onToggleVoice={handleToggleVoice}
-                    onNavigateHome={handleNavigateHome}
-                    onNavigateNext={handleNavigateNext}
-                    onNavigatePrevious={handleNavigatePrevious}
+                    onToggleVoice={() => { }}
+                    onNavigateHome={() => navigation.replace('Pacientes')}
+                    onNavigateNext={() => navigation.replace('Test_3', { idSesion: idSesion })}
+                    onNavigatePrevious={() => navigation.replace('Test_1', { idSesion: idSesion })}
                 />
                 <InstruccionesModal
                     visible={modalVisible}

@@ -47,25 +47,6 @@ const Test_4 = ({ navigation, route }) => {
 
     /** FIN CARGA DE TRADUCCIONES **************************************/
 
-    /******************** MENÚ DE EVALUACIÓN ********************/
-    const handleToggleVoice = () => {
-        console.log("Toggle voice feature");
-    };
-
-    const handleNavigateHome = () => {
-        navigation.replace('Pacientes');
-    };
-
-    const handleNavigateNext = () => {
-        navigation.replace('Test_5', { idSesion: route.params.idSesion });
-    };
-
-    const handleNavigatePrevious = () => {
-        navigation.replace('Test_3', { idSesion: route.params.idSesion });
-    };
-
-    /***************** FIN MENÚ DE EVALUACIÓN *****************/
-
     // Efecto para limpiar el sonido
     useEffect(() => {
         return sound
@@ -155,10 +136,10 @@ const Test_4 = ({ navigation, route }) => {
         <View style={stylesComunes.borde_tests}>
             <View style={stylesComunes.contenedor_test}>
                 <MenuComponent
-                    onToggleVoice={handleToggleVoice}
-                    onNavigateHome={handleNavigateHome}
-                    onNavigateNext={handleNavigateNext}
-                    onNavigatePrevious={handleNavigatePrevious}
+                    onToggleVoice={() => { }}
+                    onNavigateHome={() => navigation.replace('Pacientes')}
+                    onNavigateNext={() => navigation.replace('Test_5', { idSesion: idSesion })}
+                    onNavigatePrevious={() => navigation.replace('Test_3', { idSesion: idSesion })}
                 />
                 <InstruccionesModal
                     visible={modalVisible}
@@ -167,47 +148,44 @@ const Test_4 = ({ navigation, route }) => {
                     instructions={translations.pr04ItemStart + "\n \n" + translations.ItemStartBasico}
                 />
                 {!modalVisible && !faseEscucha && (
-                    <>
-                        <View style={{ height: '100%', alignItems: 'center', justifyContent: 'center', }}>
-                            <View style={styles.numberPad}>
-                                <Text style={styles.inputDisplay}>{inputValue}</Text>
-                                <View style={styles.row}>
-                                    {['1', '2', '3'].map(number => (
-                                        <TouchableOpacity key={number} style={styles.numberButton} onPress={() => handleNumberPress(number)}>
-                                            <Text style={styles.numberText}>{number}</Text>
-                                        </TouchableOpacity>
-                                    ))}
-                                </View>
-                                <View style={styles.row}>
-                                    {['4', '5', '6'].map(number => (
-                                        <TouchableOpacity key={number} style={styles.numberButton} onPress={() => handleNumberPress(number)}>
-                                            <Text style={styles.numberText}>{number}</Text>
-                                        </TouchableOpacity>
-                                    ))}
-                                </View>
-                                <View style={styles.row}>
-                                    {['7', '8', '9'].map(number => (
-                                        <TouchableOpacity key={number} style={styles.numberButton} onPress={() => handleNumberPress(number)}>
-                                            <Text style={styles.numberText}>{number}</Text>
-                                        </TouchableOpacity>
-                                    ))}
-                                </View>
-                                <View style={styles.row}>
-                                    <TouchableOpacity style={styles.numberButton} onPress={() => setInputValue(inputValue.slice(0, -1))}>
-                                        <Text style={styles.numberText}>Del</Text>
+                    <View style={{ height: '100%', alignItems: 'center', justifyContent: 'center', }}>
+                        <View style={styles.numberPad}>
+                            <Text style={styles.inputDisplay}>{inputValue}</Text>
+                            <View style={styles.row}>
+                                {['1', '2', '3'].map(number => (
+                                    <TouchableOpacity key={number} style={styles.numberButton} onPress={() => handleNumberPress(number)}>
+                                        <Text style={styles.numberText}>{number}</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={styles.numberButton} onPress={() => handleNumberPress('0')}>
-                                        <Text style={styles.numberText}>0</Text>
+                                ))}
+                            </View>
+                            <View style={styles.row}>
+                                {['4', '5', '6'].map(number => (
+                                    <TouchableOpacity key={number} style={styles.numberButton} onPress={() => handleNumberPress(number)}>
+                                        <Text style={styles.numberText}>{number}</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={styles.numberButton} onPress={handleSubmit}>
-                                        <Text style={styles.numberText}>OK</Text>
+                                ))}
+                            </View>
+                            <View style={styles.row}>
+                                {['7', '8', '9'].map(number => (
+                                    <TouchableOpacity key={number} style={styles.numberButton} onPress={() => handleNumberPress(number)}>
+                                        <Text style={styles.numberText}>{number}</Text>
                                     </TouchableOpacity>
-                                </View>
+                                ))}
+                            </View>
+                            <View style={styles.row}>
+                                <TouchableOpacity style={styles.numberButton} onPress={() => setInputValue(inputValue.slice(0, -1))}>
+                                    <Text style={styles.numberText}>Del</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.numberButton} onPress={() => handleNumberPress('0')}>
+                                    <Text style={styles.numberText}>0</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.numberButton} onPress={handleSubmit}>
+                                    <Text style={styles.numberText}>OK</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
-                    </>
+                    </View>
                 )}
-
             </View>
         </View>
     );

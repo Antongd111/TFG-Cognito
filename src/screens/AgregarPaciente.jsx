@@ -16,11 +16,29 @@ const AgregarPaciente = ({ navigation }) => {
     const [fechaNacimiento, setFechaNacimiento] = useState(new Date());
     const [genero, setGenero] = useState('');
     const [observaciones, setObservaciones] = useState('');
-
     const generos = [
-        { label: 'Hombre', value: 'M' },
-        { label: 'Mujer', value: 'F' },
+        { label: translations.Hombre, value: 'M' },
+        { label: translations.Mujer, value: 'F' },
     ];
+
+    /******************** CARGA DE TRADUCCIONES ********************/
+
+    const [translations, setTranslations] = useState({});
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        const loadLanguage = async () => {
+            const savedLanguage = await AsyncStorage.getItem('language');
+            const lang = savedLanguage || 'es';
+            setTranslations(getTranslation(lang));
+        };
+
+        if (isFocused) {
+            loadLanguage();
+        }
+    }, [isFocused]);
+
+    /***************** FIN DE CARGA DE TRADUCCIONES ****************/
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || fechaNacimiento;
@@ -38,12 +56,12 @@ const AgregarPaciente = ({ navigation }) => {
 
         try {
             // Llamar a la función de añadir paciente y esperar el resultado
-            const result = await agregarPaciente(identificacion, nombre, apellidos, formattedDate, genero, observaciones);
-            Alert.alert("Éxito", "Paciente añadido correctamente.");
+            agregarPaciente(identificacion, nombre, apellidos, formattedDate, genero, observaciones);
+            Alert.alert(translations.RegistroExitoso);
             navigation.navigate('Pacientes');
         } catch (error) {
             console.error(error);
-            Alert.alert("Error", "Ha ocurrido un error al añadir el paciente.");
+            Alert.alert("Error", translations.ErrorBD);
         }
     };
 
@@ -56,25 +74,25 @@ const AgregarPaciente = ({ navigation }) => {
             <Header navigation={navigation} />
             <View style={AgregarPacienteStyles.contenedor}>
                 <View>
-                    <Text style={AgregarPacienteStyles.titulo}>Registro de paciente</Text>
+                    <Text style={AgregarPacienteStyles.titulo}>{translations.RegistroPaciente}</Text>
                     <View style={AgregarPacienteStyles.formulario}>
                         <View style={AgregarPacienteStyles.row}>
                             <View style={AgregarPacienteStyles.inputGroup}>
-                                <Text style={AgregarPacienteStyles.label}>Identificación:</Text>
+                                <Text style={AgregarPacienteStyles.label}>{translations.Identificacion}:</Text>
                                 <TextInput style={AgregarPacienteStyles.input} value={identificacion} onChangeText={setIdentificacion} />
                             </View>
                             <View style={AgregarPacienteStyles.inputGroup}>
-                                <Text style={AgregarPacienteStyles.label}>Nombre:</Text>
+                                <Text style={AgregarPacienteStyles.label}>{translations.Nombre}:</Text>
                                 <TextInput style={AgregarPacienteStyles.input} value={nombre} onChangeText={setNombre} />
                             </View>
                             <View style={AgregarPacienteStyles.inputGroup}>
-                                <Text style={AgregarPacienteStyles.label}>Apellidos:</Text>
+                                <Text style={AgregarPacienteStyles.label}>{translations.Apellidos}:</Text>
                                 <TextInput style={AgregarPacienteStyles.input} value={apellidos} onChangeText={setApellidos} />
                             </View>
                         </View>
                         <View style={AgregarPacienteStyles.row}>
                             <View style={AgregarPacienteStyles.inputGroupRow}>
-                                <Text style={AgregarPacienteStyles.label}>Género:</Text>
+                                <Text style={AgregarPacienteStyles.label}>{translations.Sexo}:</Text>
                                 <View style={AgregarPacienteStyles.radioGroup}>
                                     {generos.map((item, index) => (
                                         <TouchableOpacity
@@ -88,7 +106,7 @@ const AgregarPaciente = ({ navigation }) => {
                                 </View>
                             </View>
                             <View style={AgregarPacienteStyles.inputGroupRow}>
-                                <Text style={AgregarPacienteStyles.label}>Fecha de nacimiento:</Text>
+                                <Text style={AgregarPacienteStyles.label}>{translations.FechaNacimiento}:</Text>
                                 <View style={AgregarPacienteStyles.datePicker}>
                                     <DateTimePicker
                                         testID="dateTimePicker"
@@ -105,17 +123,17 @@ const AgregarPaciente = ({ navigation }) => {
                             </View>
                         </View>
                         <View style={AgregarPacienteStyles.inputGroupObservaciones}>
-                            <Text style={AgregarPacienteStyles.label}>Observaciones:</Text>
+                            <Text style={AgregarPacienteStyles.label}>{translations.Observaciones}:</Text>
                             <TextInput style={[AgregarPacienteStyles.input, AgregarPacienteStyles.observaciones]} multiline value={observaciones} onChangeText={setObservaciones} />
                         </View>
                     </View>
                 </View>
                 <View style={AgregarPacienteStyles.contenedorBotones}>
-                    <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate('Pacientes')}>
-                        <Text style={styles.textoBoton}>Cancelar</Text>
+                    <TouchableOpacity style={styles.boton} onPress={() => navigation.replace('Pacientes')}>
+                        <Text style={styles.textoBoton}>{translations.Cancelar}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.boton} onPress={handleAddPaciente}>
-                        <Text style={styles.textoBoton}>Agregar Paciente</Text>
+                        <Text style={styles.textoBoton}>{translations.AgregarPaciente}</Text>
                     </TouchableOpacity>
                 </View>
             </View>

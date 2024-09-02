@@ -16,16 +16,26 @@ import { getTranslation } from "../../locales";
 import { useIsFocused } from '@react-navigation/native';
 
 const Test_3 = ({ navigation, route }) => {
+    const { idSesion } = route.params;
     const [modalVisible, setModalVisible] = useState(true);
     const [ensayoActual, setEnsayoActual] = useState(0);
     const [faseLectura, setFaseLectura] = useState(true);
     const [secuenciaTocada, setSecuenciaTocada] = useState('');
+    const [timeoutId, setTimeoutId] = useState(null);
+    const respuestasCorrectas = [
+        ['1', '4'],
+        ['3'],
+        ['1'],
+        ['3'],
+        ['3', '1'],
+        ['1', '4']
+    ];
+
+    // RESULTADOS
     const [numeroAciertos, setNumeroAciertos] = useState(0);
     const [lecturaCorrecta, setLecturaCorrecta] = useState(0);
     const [erroresTiempo, setErroresTiempo] = useState(0);
-    const [timeoutId, setTimeoutId] = useState(null);
 
-    const { idPaciente, idSesion } = route.params;
 
     /** CARGA DE TRADUCCIONES **************************************/
 
@@ -46,26 +56,11 @@ const Test_3 = ({ navigation, route }) => {
 
     /** FIN CARGA DE TRADUCCIONES **************************************/
 
-    /******************** MENÚ DE EVALUACIÓN ********************/
-    const handleToggleVoice = () => {
-        console.log("Toggle voice feature");
-    };
-
-    const handleNavigateHome = () => {
-        navigation.navigate('Pacientes');
-    };
-
-    const handleNavigateNext = () => {
-        navigation.navigate('Test_4', { idSesion: route.params.idSesion }); // Ajusta según tu lógica
-    };
-
-    const handleNavigatePrevious = () => {
-        navigation.navigate('Test_2', { idSesion: route.params.idSesion });
-    };
-
-    /***************** FIN MENÚ DE EVALUACIÓN *****************/
-
-    // Función que retorna la frase según el ensayo actual
+    /**
+     * Devuelve la orden correspondiente al ensayo actual.
+     * @param {*} ensayo 
+     * @returns 
+     */
     const obtenerFrase = (ensayo) => {
         switch (ensayo) {
             case 0:
@@ -85,20 +80,12 @@ const Test_3 = ({ navigation, route }) => {
         }
     };
 
-    const respuestasCorrectas = [
-        ['1', '4'],
-        ['3'],
-        ['1'],
-        ['3'],
-        ['3', '1'],
-        ['1', '4']
-    ];
 
     useEffect(() => {
         if (faseLectura) {
             const id = setTimeout(() => {
                 setErroresTiempo(erroresTiempo + 1);
-                setFaseLectura(false);  // Simula el fin del tiempo de lectura
+                setFaseLectura(false);
             }, 10000);
             setTimeoutId(id);
         }
@@ -106,13 +93,17 @@ const Test_3 = ({ navigation, route }) => {
         return () => clearTimeout(timeoutId);
     }, [faseLectura, ensayoActual]);
 
+
+    /**
+     * Se ejecuta al tocar un elemento. Verifica si la secuencia tocada corresponde a la correcta y pasa al siguiente ensayo.
+     */
     useEffect(() => {
         if (!faseLectura && secuenciaTocada.length === respuestasCorrectas[ensayoActual].length) {
             let esCorrecto = false;
 
             // Verifica si el ensayo actual es el primero y si la secuencia tocada contiene los dos perros
             if (ensayoActual === 0) {
-                const perros = ["1", "4"]; // Suponiendo que "1" y "4" representan los dos perros
+                const perros = ["1", "4"];
                 esCorrecto = secuenciaTocada.split('').sort().join('') === perros.sort().join('');
             } else {
                 // Lógica para otros ensayos donde el orden importa
@@ -126,18 +117,20 @@ const Test_3 = ({ navigation, route }) => {
         }
     }, [secuenciaTocada]);
 
+    /**
+     * Pasa al siguiente ensayo. Si el ensayo ha sido correcto, se aumenta el número de aciertos.
+     * @param {*} acierto booleano que indica si el ensayo ha sido correcto o erróneo
+     */
     const siguienteCaso = (acierto) => {
         if (acierto) {
             setNumeroAciertos(numeroAciertos + 1);
         }
 
-        // Aumentar el contador de ensayo actual
         const nuevoEnsayoActual = ensayoActual + 1;
         setEnsayoActual(nuevoEnsayoActual);
 
         // Verifica si es el último ensayo
-        if (nuevoEnsayoActual > 5) { // Asumiendo que 5 es el índice del último ensayo
-            // Navegar al siguiente test
+        if (nuevoEnsayoActual > 5) {
             almacenarResultados();
         } else {
             setFaseLectura(true);
@@ -145,12 +138,13 @@ const Test_3 = ({ navigation, route }) => {
         }
     }
 
+    /**
+     * Almacena los resultados en BD.
+     */
     const almacenarResultados = async () => {
         try {
-            // Llamar a la función de añadir paciente y esperar el resultado
             await guardarResultadosTest_3(idSesion, numeroAciertos, lecturaCorrecta, erroresTiempo);
-            console.log("Éxito", "Resultados almacenados.");
-            navigation.navigate('Test_4', { idSesion: idSesion });
+            navigation.replace('Test_4', { idSesion: idSesion });
         } catch (error) {
             console.error(error);
             Alert.alert("Error", "Ha ocurrido un error al añadir los resultados a la Base de Datos.");
@@ -165,10 +159,10 @@ const Test_3 = ({ navigation, route }) => {
         <View style={stylesComunes.borde_tests}>
             <View style={stylesComunes.contenedor_test}>
                 <MenuComponent
-                    onToggleVoice={handleToggleVoice}
-                    onNavigateHome={handleNavigateHome}
-                    onNavigateNext={handleNavigateNext}
-                    onNavigatePrevious={handleNavigatePrevious}
+                    onToggleVoice={() => { }}
+                    onNavigateHome={() => navigation.replace('Pacientes')}
+                    onNavigateNext={() => navigation.replace('Test_4', { idSesion: idSesion })}
+                    onNavigatePrevious={() => navigation.replace('Test_2', { idSesion: idSesion })}
                 />
                 <InstruccionesModal
                     visible={modalVisible}
