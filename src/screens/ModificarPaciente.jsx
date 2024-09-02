@@ -72,11 +72,11 @@ const ModificarPaciente = ({ navigation, route }) => {
 
         try {
             const result = await actualizarPaciente(idPaciente, identificacion, nombre, apellidos, formattedDate, genero, observaciones);
-            Alert.alert("Éxito", "Datos del paciente actualizados correctamente.");
+            Alert.alert(translations.ModificacionExitosa);
             navigation.navigate('Pacientes');
         } catch (error) {
             console.error(error);
-            Alert.alert("Error", "Ha ocurrido un error al actualizar los datos del paciente.");
+            Alert.alert("Error", translations.ErrorBD);
         }
     };
 

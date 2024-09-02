@@ -73,6 +73,10 @@ const Test_13 = ({ navigation, route }) => {
     const [entrenamiento, setEntrenamiento] = useState(true);
     const [fase, setFase] = useState(1); // 1 para nombrar objeto, 2 para seleccionar relación
     const [ensayoActual, setEnsayoActual] = useState(0);
+    const [inicioEnsayo, setInicioEnsayo] = useState(null);
+    const [respuestaSecuencia, setRespuestaSecuencia] = useState([]);
+
+    // RESULTADOS
     const [correctas, setCorrectas] = useState(0);
     const [errorAsociacion, setErrorAsociacion] = useState(0);
     const [generalizaciones, setGeneralizaciones] = useState(0);
@@ -80,10 +84,8 @@ const Test_13 = ({ navigation, route }) => {
     const [otrosErrores, setOtrosErrores] = useState(0);
     const [excesoTiempoObj, setExcesoTiempoObj] = useState(0);
     const [excesoTiempoAsoc, setExcesoTiempoAsoc] = useState(0);
-    const [inicioEnsayo, setInicioEnsayo] = useState(null);
-    const [respuestaSecuencia, setRespuestaSecuencia] = useState([]);
 
-    /******************** CARGA DE TRADUCCIONES ********************/
+    /** CARGA DE TRADUCCIONES **************************************/
 
     const [translations, setTranslations] = useState({});
     const isFocused = useIsFocused();
@@ -100,7 +102,7 @@ const Test_13 = ({ navigation, route }) => {
         }
     }, [isFocused]);
 
-    /***************** FIN DE CARGA DE TRADUCCIONES ****************/
+    /** FIN CARGA DE TRADUCCIONES **************************************/
 
     const secuencias = [
         {
@@ -226,10 +228,20 @@ const Test_13 = ({ navigation, route }) => {
             correcta: 0,
         }
     ];
-
+    // Guarda los resultados al finalizar todos los ensayos
     useEffect(() => {
         const guardarResultados = async () => {
-            await guardarResultadosTest_13(route.params.idSesion, correctas, errorAsociacion, generalizaciones, parciales, otrosErrores, excesoTiempoObj, excesoTiempoAsoc, JSON.stringify(respuestaSecuencia));
+            await guardarResultadosTest_13(
+                route.params.idSesion,
+                correctas,
+                errorAsociacion,
+                generalizaciones,
+                parciales,
+                otrosErrores,
+                excesoTiempoObj,
+                excesoTiempoAsoc,
+                JSON.stringify(respuestaSecuencia)
+            );
             navigation.replace('Test_14', { idSesion: route.params.idSesion });
         };
 
@@ -238,16 +250,23 @@ const Test_13 = ({ navigation, route }) => {
         }
     }, [ensayoActual]);
 
+    // Maneja la fase de nombrar objeto o seleccionar relación
     useEffect(() => {
         if (fase === 1) {
             setInicioEnsayo(Date.now());
         }
     }, [fase, ensayoActual]);
 
+    /**
+     * Inicia la prueba después de cerrar el modal.
+     */
     const iniciarPrueba = () => {
         setModalVisible(false);
     };
 
+    /**
+     * Maneja la respuesta correcta y cambia la fase.
+     */
     const manejarRespuestaCorrecta = () => {
         if (fase === 1) {
             setFase(2);
@@ -257,6 +276,11 @@ const Test_13 = ({ navigation, route }) => {
         }
     };
 
+    /**
+     * Maneja la selección de una opción por parte del usuario.
+     * @param {number} index - El índice de la opción seleccionada.
+     * @param {boolean} esCorrecta - Indica si la selección es correcta.
+     */
     const manejarSeleccion = (index, esCorrecta = false) => {
         const tiempoRespuesta = Date.now() - inicioEnsayo;
         const secuenciaActual = secuencias[ensayoActual];
@@ -291,6 +315,10 @@ const Test_13 = ({ navigation, route }) => {
         }
     };
 
+    /**
+     * Maneja los errores de generalización, parcial y otros.
+     * @param {string} tipo - El tipo de error ('G' para generalización, 'P' para parcial, 'O' para otros).
+     */
     const manejarError = (tipo) => {
         const tiempoRespuesta = Date.now() - inicioEnsayo;
         if (tiempoRespuesta > 20000) {
@@ -317,6 +345,9 @@ const Test_13 = ({ navigation, route }) => {
         }
     }, [ensayoActual]);
 
+    /**
+     * Muestra una alerta con los resultados al finalizar el test.
+     */
     const mostrarResultados = () => {
         Alert.alert('Resultados', `Total respuestas correctas: ${correctas}\n Total errores asociacion: ${errorAsociacion}\n Generalizaciones: ${generalizaciones}\nRespuestas parciales: ${parciales}\nOtros errores: ${otrosErrores}\nExceso de tiempo (objeto): ${excesoTiempoObj}\nExceso de tiempo (asociaciones): ${excesoTiempoAsoc}`);
     };
@@ -376,6 +407,7 @@ const Test_13 = ({ navigation, route }) => {
         </View>
     );
 };
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,

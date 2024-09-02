@@ -3,11 +3,9 @@ import { View, Text, Image, StyleSheet } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../../locales";
 import { useIsFocused } from '@react-navigation/native';
-
 
 // Importa las imágenes de las caras
 import miguel from '../../../assets/images/Caras/cara1.png';
@@ -24,9 +22,11 @@ const Test_9 = ({ navigation, route }) => {
 
     /******************** CARGA DE TRADUCCIONES ********************/
 
+    // Estado para almacenar las traducciones y saber si la pantalla está enfocada
     const [translations, setTranslations] = useState({});
     const isFocused = useIsFocused();
 
+    // Efecto para cargar las traducciones basadas en el idioma seleccionado cuando la pantalla está enfocada
     useEffect(() => {
         const loadLanguage = async () => {
             const savedLanguage = await AsyncStorage.getItem('language');
@@ -41,25 +41,7 @@ const Test_9 = ({ navigation, route }) => {
 
     /***************** FIN DE CARGA DE TRADUCCIONES ****************/
 
-    /******************** MENÚ DE EVALUACIÓN ********************/
-    const handleToggleVoice = () => {
-        console.log("Toggle voice feature");
-    };
-
-    const handleNavigateHome = () => {
-        navigation.replace('Pacientes');
-    };
-
-    const handleNavigateNext = () => {
-        navigation.replace('Test_10', { idSesion: route.params.idSesion });
-    };
-
-    const handleNavigatePrevious = () => {
-        navigation.replace('Test_8', { idSesion: route.params.idSesion });
-    };
-
-    /***************** FIN MENÚ DE EVALUACIÓN *****************/
-
+    // Array que contiene los nombres y las imágenes de las caras que se van a mostrar
     const nombresYCaras = [
         { nombre: translations.pr08Nombre1, cara: miguel },
         { nombre: translations.pr08Nombre2, cara: mario },
@@ -72,23 +54,36 @@ const Test_9 = ({ navigation, route }) => {
         { nombre: translations.pr08Nombre9, cara: gabriela }
     ];
 
+    // Estados para controlar la visibilidad del modal, el índice actual, la visibilidad de la cara, y si la cara está cargada
     const [modalVisible, setModalVisible] = useState(true);
     const [indexActual, setIndexActual] = useState(0);
     const [mostrarCara, setMostrarCara] = useState(false);
     const [caraCargada, setCaraCargada] = useState(false);
 
+    /**
+     * Efecto que se ejecuta cuando se cierra el modal y se debe mostrar la siguiente cara.
+     * Muestra la cara actual si no se ha alcanzado el final del array.
+     */
     useEffect(() => {
         if (!modalVisible && indexActual < nombresYCaras.length) {
             setMostrarCara(true);
         }
     }, [modalVisible, indexActual]);
 
+    /**
+     * Efecto que verifica si se ha llegado al final del array de nombres y caras.
+     * Si se ha alcanzado el final, se navega al siguiente test.
+     */
     useEffect(() => {
         if (indexActual >= nombresYCaras.length) {
             navigation.replace('Test_10', { idSesion: route.params.idSesion });
         }
     }, [indexActual]);
 
+    /**
+     * Maneja el evento de carga de la imagen, mostrando la cara durante 5 segundos
+     * y luego avanzando al siguiente elemento.
+     */
     const handleImageLoad = () => {
         setCaraCargada(true);
         const timer = setTimeout(() => {
@@ -103,16 +98,16 @@ const Test_9 = ({ navigation, route }) => {
         <View style={stylesComunes.borde_tests}>
             <View style={stylesComunes.contenedor_test}>
                 <MenuComponent
-                    onToggleVoice={handleToggleVoice}
-                    onNavigateHome={handleNavigateHome}
-                    onNavigateNext={handleNavigateNext}
-                    onNavigatePrevious={handleNavigatePrevious}
+                    onToggleVoice={() => { }}
+                    onNavigateHome={() => navigation.replace('Pacientes')}
+                    onNavigateNext={() => navigation.replace('Test_10', { idSesion: route.params.idSesion })}
+                    onNavigatePrevious={() => navigation.replace('Test_8', { idSesion: route.params.idSesion })}
                 />
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={() => setModalVisible(false)}
                     title="Test 9"
-                    instructions = {translations.pr09ItemStart}
+                    instructions={translations.pr09ItemStart}
                 />
                 {!modalVisible && (
                     <View style={styles.caraContainer}>
