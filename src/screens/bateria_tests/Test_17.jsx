@@ -10,22 +10,28 @@ import { getTranslation } from "../../locales";
 import { useIsFocused } from '@react-navigation/native';
 
 const Test_17 = ({ navigation, route }) => {
+    // Estados para la lógica de fases y control del modal
     const [fase, setFase] = useState(1);
     const [modalVisible, setModalVisible] = useState(true);
+
+    // Fase 1: Recordar nombres
     const [nombresRecordadosFase1, setNombresRecordadosFase1] = useState([]);
     const [intrusionesFase1, setIntrusionesFase1] = useState(0);
     const [perseveracionesFase1, setPerseveracionesFase1] = useState(0);
     const [rechazosFase1, setRechazosFase1] = useState(0);
+
+    // Fase 2: Repetir nombres
     const [nombresRecordadosFase2, setNombresRecordadosFase2] = useState([]);
     const [intrusionesFase2, setIntrusionesFase2] = useState(0);
     const [perseveracionesFase2, setPerseveracionesFase2] = useState(0);
     const [rechazosFase2, setRechazosFase2] = useState(0);
+
+    // Fase 3: Reconocimiento
     const [nombresIdentificados, setNombresIdentificados] = useState([]);
     const [erroresIdentificados, setErroresIdentificados] = useState(0);
     const [rechazosReconocimiento, setRechazosReconocimiento] = useState(0);
 
     /******************** CARGA DE TRADUCCIONES ********************/
-
     const [translations, setTranslations] = useState({});
     const isFocused = useIsFocused();
 
@@ -40,11 +46,19 @@ const Test_17 = ({ navigation, route }) => {
             loadLanguage();
         }
     }, [isFocused]);
-
     /***************** FIN DE CARGA DE TRADUCCIONES ****************/
 
-    const nombresAprendidos = [translations.pr08Nombre1, translations.pr08Nombre2, translations.pr08Nombre3, translations.pr08Nombre4, translations.pr08Nombre5, translations.pr08Nombre6, translations.pr08Nombre7, translations.pr08Nombre8, translations.pr08Nombre9];
-    const nombresDistractores = [translations.pr17Nombre1, translations.pr17Nombre2, translations.pr17Nombre3, translations.pr17Nombre4, translations.pr17Nombre5, translations.pr17Nombre6, translations.pr17Nombre7, translations.pr17Nombre8, translations.pr17Nombre9];
+    const nombresAprendidos = [
+        translations.pr08Nombre1, translations.pr08Nombre2, translations.pr08Nombre3,
+        translations.pr08Nombre4, translations.pr08Nombre5, translations.pr08Nombre6,
+        translations.pr08Nombre7, translations.pr08Nombre8, translations.pr08Nombre9
+    ];
+    
+    const nombresDistractores = [
+        translations.pr17Nombre1, translations.pr17Nombre2, translations.pr17Nombre3,
+        translations.pr17Nombre4, translations.pr17Nombre5, translations.pr17Nombre6,
+        translations.pr17Nombre7, translations.pr17Nombre8, translations.pr17Nombre9
+    ];
 
     const handleRecordarNombreFase1 = (nombre) => {
         setNombresRecordadosFase1((prev) => {
@@ -117,7 +131,9 @@ const Test_17 = ({ navigation, route }) => {
     };
 
     const guardarResultados = async () => {
-        await guardarResultadosTest_17(route.params.idSesion, route.params.idSesion,
+        await guardarResultadosTest_17(
+            route.params.idSesion,
+            route.params.idSesion,
             nombresRecordadosFase1.filter((nombre) => nombresAprendidos.includes(nombre)).length,
             intrusionesFase1,
             perseveracionesFase1,
@@ -128,7 +144,8 @@ const Test_17 = ({ navigation, route }) => {
             rechazosFase2,
             nombresIdentificados.filter((nombre) => nombresAprendidos.includes(nombre)).length,
             nombresIdentificados.filter((nombre) => nombresDistractores.includes(nombre)).length,
-            rechazosReconocimiento);
+            rechazosReconocimiento
+        );
 
         navigation.replace('Test_18', { idSesion: route.params.idSesion });
     };
