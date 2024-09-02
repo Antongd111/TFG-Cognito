@@ -1,5 +1,3 @@
-// FIXME: poner para que las figruas se adapten al tamaño del contenedor
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
@@ -239,7 +237,9 @@ const styles = StyleSheet.create({
         width: 200,
         height: 200,
         margin: 10,
-        marginLeft: 100
+        marginLeft: 100,
+        resizeMode: 'contain'
+
     },
     opcionesContainer: {
         flexDirection: 'row',
@@ -249,7 +249,8 @@ const styles = StyleSheet.create({
     imagenOpcion: {
         width: 200,
         height: 200,
-        margin: 10
+        margin: 10,
+        resizeMode: 'contain'
     },
 });
 

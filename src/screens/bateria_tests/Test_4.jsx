@@ -1,5 +1,3 @@
-//TODO: REVISAR SI SE GFUARDA EL ULTIMO ENSAYO
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Audio } from 'expo-av';
@@ -51,7 +49,6 @@ const Test_4 = ({ navigation, route }) => {
     useEffect(() => {
         return sound
             ? () => {
-                console.log('Unloading Sound');
                 sound.unloadAsync();
             }
             : undefined;
@@ -61,10 +58,17 @@ const Test_4 = ({ navigation, route }) => {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    /**
+     * Añade a la secuencia de números tocada el número asociado al botón pulsado, simulando un campo input.
+     * @param {*} number 
+     */
     const handleNumberPress = (number) => {
         setInputValue(inputValue + number);
     };
 
+    /**
+     * Maneja la respuesta del usuario.
+     */
     const handleSubmit = () => {
 
         if (inputValue == contadorCorrecto) {
@@ -95,6 +99,10 @@ const Test_4 = ({ navigation, route }) => {
         await sound.playAsync();
     };
 
+    /**
+     * Genera un número aleatorio de sonidos. Para cada uno de ellos, se espera un tiempo entre 3 y 6 segundos y se decide aleatoriamente
+     * si el sonido será largo o corto.
+     */
     const ejecutarEnsayo = async () => {
 
         const numSonidos = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
