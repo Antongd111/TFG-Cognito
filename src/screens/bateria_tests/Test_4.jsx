@@ -1,3 +1,4 @@
+//TODO: ensayos entrernamiento  
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Audio } from 'expo-av';
@@ -25,6 +26,7 @@ const Test_4 = ({ navigation, route }) => {
     const [numeroSubestimaciones, setNumeroSubestimaciones] = useState(0);
 
     const numeroEnsayos = 10;
+    const isMountedRef = useRef(true);
 
     /** CARGA DE TRADUCCIONES **************************************/
 
@@ -57,6 +59,12 @@ const Test_4 = ({ navigation, route }) => {
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
+
+    useEffect(() => {
+        return () => {
+            isMountedRef.current = false;
+        };
+    }, []);
 
     /**
      * Añade a la secuencia de números tocada el número asociado al botón pulsado, simulando un campo input.
@@ -104,23 +112,30 @@ const Test_4 = ({ navigation, route }) => {
      * si el sonido será largo o corto.
      */
     const ejecutarEnsayo = async () => {
-
         const numSonidos = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
         setContadorCorrecto(0);
-
+    
         for (let i = 0; i < numSonidos; i++) {
+            // Verifica si el componente sigue montado
+            if (!isMountedRef.current) {
+                break;
+            }
+    
             const espera = Math.floor(Math.random() * (6000 - 3000 + 1)) + 3000;
             await sleep(espera);
+    
             const largo = Math.floor(Math.random() * 2);
-
             if (largo) {
                 await playSound(pitidoLargo);
-                setContadorCorrecto(contadorCorrecto + 1);
-            } else
+                setContadorCorrecto(prev => prev + 1);
+            } else {
                 await playSound(pitidoCorto);
+            }
         }
-
-        setFaseEscucha(false);
+    
+        if (isMountedRef.current) {
+            setFaseEscucha(false);
+        }
     }
 
     /**

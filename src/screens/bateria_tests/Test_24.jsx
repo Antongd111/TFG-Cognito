@@ -8,7 +8,7 @@ import { useIsFocused } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from '../../locales';
 import correct from '../../../assets/images/correct.png';
-import { set } from 'date-fns';
+
 
 const Test_24 = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(true);

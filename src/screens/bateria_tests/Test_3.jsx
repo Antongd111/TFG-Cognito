@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
 import correct from '../../../assets/images/correct.png';
 import incorrect from '../../../assets/images/incorrect.png';
@@ -26,9 +26,9 @@ const Test_3 = ({ navigation, route }) => {
         ['1', '4'],
         ['3'],
         ['1'],
-        ['3'],
         ['3', '1'],
-        ['1', '4']
+        ['1', '4'],
+        ['3']
     ];
 
     // RESULTADOS
@@ -36,9 +36,7 @@ const Test_3 = ({ navigation, route }) => {
     const [lecturaCorrecta, setLecturaCorrecta] = useState(0);
     const [erroresTiempo, setErroresTiempo] = useState(0);
 
-
     /** CARGA DE TRADUCCIONES **************************************/
-
     const [translations, setTranslations] = useState({});
     const isFocused = useIsFocused();
 
@@ -53,14 +51,8 @@ const Test_3 = ({ navigation, route }) => {
             loadLanguage();
         }
     }, [isFocused]);
-
     /** FIN CARGA DE TRADUCCIONES **************************************/
 
-    /**
-     * Devuelve la orden correspondiente al ensayo actual.
-     * @param {*} ensayo 
-     * @returns 
-     */
     const obtenerFrase = (ensayo) => {
         switch (ensayo) {
             case 0:
@@ -80,9 +72,8 @@ const Test_3 = ({ navigation, route }) => {
         }
     };
 
-
     useEffect(() => {
-        if (faseLectura) {
+        if (faseLectura && ensayoActual <= 5) {
             const id = setTimeout(() => {
                 setErroresTiempo(erroresTiempo + 1);
                 setFaseLectura(false);
@@ -93,21 +84,21 @@ const Test_3 = ({ navigation, route }) => {
         return () => clearTimeout(timeoutId);
     }, [faseLectura, ensayoActual]);
 
-
-    /**
-     * Se ejecuta al tocar un elemento. Verifica si la secuencia tocada corresponde a la correcta y pasa al siguiente ensayo.
-     */
     useEffect(() => {
-        if (!faseLectura && secuenciaTocada.length === respuestasCorrectas[ensayoActual].length) {
+        if (ensayoActual > 5) {
+            almacenarResultados();
+        }
+    }, [ensayoActual]);
+
+    useEffect(() => {
+        if (!faseLectura && secuenciaTocada.length === respuestasCorrectas[ensayoActual]?.length) {
             let esCorrecto = false;
 
-            // Verifica si el ensayo actual es el primero y si la secuencia tocada contiene los dos perros
             if (ensayoActual === 0) {
                 const perros = ["1", "4"];
                 esCorrecto = secuenciaTocada.split('').sort().join('') === perros.sort().join('');
             } else {
-                // Lógica para otros ensayos donde el orden importa
-                esCorrecto = respuestasCorrectas[ensayoActual].every((val, idx) => val === secuenciaTocada[idx]);
+                esCorrecto = respuestasCorrectas[ensayoActual]?.every((val, idx) => val === secuenciaTocada[idx]);
             }
 
             if (esCorrecto) {
@@ -117,10 +108,6 @@ const Test_3 = ({ navigation, route }) => {
         }
     }, [secuenciaTocada]);
 
-    /**
-     * Pasa al siguiente ensayo. Si el ensayo ha sido correcto, se aumenta el número de aciertos.
-     * @param {*} acierto booleano que indica si el ensayo ha sido correcto o erróneo
-     */
     const siguienteCaso = (acierto) => {
         if (acierto) {
             setNumeroAciertos(numeroAciertos + 1);
@@ -129,18 +116,12 @@ const Test_3 = ({ navigation, route }) => {
         const nuevoEnsayoActual = ensayoActual + 1;
         setEnsayoActual(nuevoEnsayoActual);
 
-        // Verifica si es el último ensayo
-        if (nuevoEnsayoActual > 5) {
-            almacenarResultados();
-        } else {
+        if (nuevoEnsayoActual <= 5) {
             setFaseLectura(true);
             setSecuenciaTocada('');
         }
-    }
+    };
 
-    /**
-     * Almacena los resultados en BD.
-     */
     const almacenarResultados = async () => {
         try {
             await guardarResultadosTest_3(idSesion, numeroAciertos, lecturaCorrecta, erroresTiempo);
@@ -149,11 +130,15 @@ const Test_3 = ({ navigation, route }) => {
             console.error(error);
             Alert.alert("Error", "Ha ocurrido un error al añadir los resultados a la Base de Datos.");
         }
-    }
+    };
 
     const handleImagenTocada = (numeroImagen) => {
         setSecuenciaTocada(secuenciaTocada + numeroImagen);
     };
+
+    if (ensayoActual > 5) {
+        return null;
+    }    
 
     return (
         <View style={stylesComunes.borde_tests}>

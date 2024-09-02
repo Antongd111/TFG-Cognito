@@ -6,6 +6,31 @@ const dbPromise = SQLite.openDatabaseAsync("CognitoDB.db");
 const initDB = async () => {
   const db = await dbPromise;
 
+  // DROP TABLE IF EXISTS Paciente;
+  // DROP TABLE IF EXISTS SesionTest;
+  // DROP TABLE IF EXISTS Test_1;
+  // DROP TABLE IF EXISTS Test_3;
+  // DROP TABLE IF EXISTS Test_4;
+  // DROP TABLE IF EXISTS Test_5;
+  // DROP TABLE IF EXISTS Test_6;
+  // DROP TABLE IF EXISTS Test_7;
+  // DROP TABLE IF EXISTS Test_8;
+  // DROP TABLE IF EXISTS Test_10;
+  // DROP TABLE IF EXISTS Test_11;
+  // DROP TABLE IF EXISTS Test_12;
+  // DROP TABLE IF EXISTS Test_13;
+  // DROP TABLE IF EXISTS Test_14;
+  // DROP TABLE IF EXISTS Test_15;
+  // DROP TABLE IF EXISTS Test_16;
+  // DROP TABLE IF EXISTS Test_17;
+  // DROP TABLE IF EXISTS Test_18;
+  // DROP TABLE IF EXISTS Test_19;
+  // DROP TABLE IF EXISTS Test_20;
+  // DROP TABLE IF EXISTS Test_21;
+  // DROP TABLE IF EXISTS Test_22;
+  // DROP TABLE IF EXISTS Test_23;
+  // DROP TABLE IF EXISTS Test_24;
+
   await db.execAsync(`
 
     CREATE TABLE IF NOT EXISTS Paciente (
@@ -27,7 +52,7 @@ const initDB = async () => {
 
     CREATE TABLE IF NOT EXISTS Test_1 (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      id_sesion INTEGER NOT NULL,
+      id_sesion INTEGER NOT NULL UNIQUE,
       numero_ensayos INTEGER NOT NULL,
       tiempos_reaccion TEXT NOT NULL,
       errores_anticipacion INTEGER NOT NULL,
@@ -38,7 +63,7 @@ const initDB = async () => {
 
     CREATE TABLE IF NOT EXISTS Test_3 (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      id_sesion INTEGER NOT NULL,
+      id_sesion INTEGER NOT NULL UNIQUE,
       numero_aciertos INTEGER NOT NULL,
       lectura_correcta INTEGER NOT NULL,
       errores_tiempo INTEGER NOT NULL,
@@ -47,7 +72,7 @@ const initDB = async () => {
 
     CREATE TABLE IF NOT EXISTS Test_4 (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      id_sesion INTEGER NOT NULL,
+      id_sesion INTEGER NOT NULL UNIQUE,
       numero_aciertos INTEGER NOT NULL,
       numero_sobreestimaciones INTEGER NOT NULL,
       numero_subestimaciones INTEGER NOT NULL,

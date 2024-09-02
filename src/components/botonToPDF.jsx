@@ -38,6 +38,7 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
       const test23 = datosTests.test_23[0] || {};
 
       //TODO: traducir html
+      //FIXME: genero
       const { uri } = await Print.printToFileAsync({
         html: `
           <html>
@@ -68,7 +69,7 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
               <h3>Test 1 - Tiempo de reacción</h3>
               <table class="prueba">
                 <tr>
-                  <th>Nº de ensayos</th>
+                  <th>Nº de ensayos correctos</th>
                   <th>Tiempo medio (ms)</th>
                   <th>Errores de anticipación</th>
                   <th>Retrasos</th>
@@ -76,10 +77,15 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
                 </tr>
                 <tr>
                   <td>${test1.numero_ensayos || ''}</td>
-                  <td>${test1.tiempo_medio || ''}</td>
-                  <td>${test1.errores_anticipacion || ''}</td>
-                  <td>${test1.errores_retrasos || ''}</td>
-                  <td>${test1.errores_tiempo || ''}</td>
+                  <td>${(() => {
+                    const tiempos = JSON.parse(test1.tiempos_reaccion || "[]");
+                    const total = tiempos.reduce((acc, curr) => acc + curr, 0);
+                    const media = tiempos.length > 0 ? (total / tiempos.length).toFixed(2) : '';
+                    return media;
+                  })()}</td>
+                  <td>${test1.errores_anticipacion || '0'}</td>
+                  <td>${test1.errores_retrasos || '0'}</td>
+                  <td>${test1.errores_tiempo || '0'}</td>
                 </tr>
                 <tr><th colspan="5">Tiempos de reacción (ms)</th></tr>
                 <tr><td colspan="5">${(test1.tiempos_reaccion && JSON.parse(test1.tiempos_reaccion).join(' - ')) || ''}</td></tr>
@@ -95,11 +101,11 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
                   <th>Errores de tiempo</th>
                 </tr>
                 <tr>
-                  <td>${test3.numero_aciertos || ''}</td>
-                  <td>${test3.lectura_correcta || ''}</td>
-                  <td>${test3.numero_aciertos || ''}</td>
-                  <td>${test3.fallos || ''}</td>
-                  <td>${test3.errores_tiempo || ''}</td>
+                  <td>${test3.lectura_correcta || '0'}</td>
+                  <td>${(6 - test3.lectura_correcta) || '0'}</td>
+                  <td>${test3.numero_aciertos || '0'}</td>
+                  <td>${(6 - test3.numero_aciertos) || '0'}</td>
+                  <td>${test3.errores_tiempo || '0'}</td>
                 </tr>
               </table>
 
@@ -112,10 +118,10 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
                   <th>Subestimaciones</th>
                 </tr>
                 <tr>
-                  <td>${test4.numero_aciertos || ''}</td>
-                  <td>${test4.numero_sobreestimaciones || ''}</td>
-                  <td>${test4.numero_sobreestimaciones || ''}</td>
-                  <td>${test4.numero_subestimaciones || ''}</td>
+                  <td>${test4.numero_aciertos || '0'}</td>
+                  <td>${(test4.numero_sobreestimaciones + test4.numero_subestimaciones) || '0'}</td>
+                  <td>${test4.numero_sobreestimaciones || '0'}</td>
+                  <td>${test4.numero_subestimaciones || '0'}</td>
                 </tr>
               </table>
 
@@ -127,9 +133,9 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
                   <th>Errores de tiempo</th>
                 </tr>
                 <tr>
-                  <td>${test5.ensayos_correctos || ''}</td>
-                  <td>${test5.numero_errores || ''}</td>
-                  <td>${test5.errores_tiempo || ''}</td>
+                  <td>${test5.ensayos_correctos || '0'}</td>
+                  <td>${test5.numero_errores || '0'}</td>
+                  <td>${test5.errores_tiempo || '0'}</td>
                 </tr>
               </table>
 
@@ -142,10 +148,10 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
                   <th>Sonidos correctos</th>
                 </tr>
                 <tr>
-                  <td>${test6.numero_aciertos || ''}</td>
-                  <td>${test6.numero_errores || ''}</td>
-                  <td>${test6.errores_tiempo || ''}</td>
-                  <td>${test6.sonidos_correctos || ''}</td>
+                  <td>${test6.ensayos_correctos || '0'}</td>
+                  <td>${test6.numero_errores || '0'}</td>
+                  <td>${test6.errores_tiempo || '0'}</td>
+                  <td>${test6.sonidos_correctos || '0'}</td>
                 </tr>
               </table>
 
@@ -157,9 +163,9 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
                   <th>Tiempo medio de acierto (ms)</th>
                 </tr>
                 <tr>
-                  <td>${test7.numero_aciertos || ''}</td>
-                  <td>${test7.numero_errores || ''}</td>
-                  <td>${test7.tiempo_medio || ''}</td>
+                  <td>${test7.numero_aciertos || '0'}</td>
+                  <td>${test7.numero_errores || '0'}</td>
+                  <td>${test7.tiempo_medio || '0'}</td>
                 </tr>
               </table>
 
@@ -174,12 +180,12 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
                   <th>Rechazos</th>
                 </tr>
                 <tr>
-                  <td>${test8.pronunciaciones_correctas || ''}</td>
-                  <td>${test8.pronunciaciones_incorrectas || ''}</td>
-                  <td>${test8.recordados || ''}</td>
-                  <td>${test8.intrusiones || ''}</td>
-                  <td>${test8.perseveraciones || ''}</td>
-                  <td>${test8.rechazos || ''}</td>
+                  <td>${test8.pronunciaciones_correctas || '0'}</td>
+                  <td>${test8.pronunciaciones_incorrectas || '0'}</td>
+                  <td>${test8.recordados || '0'}</td>
+                  <td>${test8.intrusiones || '0'}</td>
+                  <td>${test8.perseveraciones || '0'}</td>
+                  <td>${test8.rechazos || '0'}</td>
                 </tr>
               </table>
 
@@ -433,7 +439,7 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
               </table>
             </body>
           </html>
-        `,
+        `
       });
 
       // Definir la ruta donde se guardará el archivo PDF

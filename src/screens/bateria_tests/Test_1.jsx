@@ -80,6 +80,13 @@ const Test_1 = ({ navigation, route }) => {
     }
   }, [payasoVisible]);
 
+  useEffect(() => {
+    if (tiemposReaccion.length === 12 && ensayosCompletados === 36) {
+      almacenarResultados();
+    }
+  }, [ensayosCompletados]);
+
+
   function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
@@ -114,8 +121,6 @@ const Test_1 = ({ navigation, route }) => {
   const iniciarEnsayo = () => {
     if (tiemposReaccion.length < 12 && ensayosCompletados < 36) {
       mostrarPayaso();
-    } else {
-      almacenarResultados();
     }
   };
 
@@ -138,6 +143,7 @@ const Test_1 = ({ navigation, route }) => {
       if (reactionTime < 100) {
         setErroresAnticipacion(erroresAnticipacion + 1);
       } else if (reactionTime < 500) {
+        console.log(reactionTime);
         setTiemposReaccion([...tiemposReaccion, reactionTime]);
       } else if (reactionTime < 2000) {
         setErroresRetrasos(erroresRetrasos + 1);

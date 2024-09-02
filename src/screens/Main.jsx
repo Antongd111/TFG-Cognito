@@ -40,7 +40,7 @@ const Stack = createNativeStackNavigator();
 const Main = () => {
   return (
     <View style={{ flex: 1, backgroundColor: '#F2E8E1' }}>
-      <Stack.Navigator initialRouteName="Test_25" screenOptions={{headerShown: false }}>
+      <Stack.Navigator initialRouteName="Pacientes" screenOptions={{headerShown: false }}>
         <Stack.Screen name="Pacientes" component={PantallaPacientes} options={{ title: 'Pantalla de Pacientes' }} />
         <Stack.Screen name="AgregarPaciente" component={AgregarPaciente} options={{ title: 'Pantalla de añadir paciente' }} />
         <Stack.Screen name="FichaPaciente" component={FichaPaciente} options={{ title: 'Pantalla de ficha de paciente' }} />

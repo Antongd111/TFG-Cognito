@@ -88,7 +88,7 @@ const InfoSesion = ({ navigation, route }) => {
     {
       id: 1,
       nombre: translations.Test1 || 'Test 1',
-      resultado: `Ensayos: ${resultados.test_1[0]?.numero_ensayos || 0}, Correctas: ${resultados.test_1[0]?.tiempos_reaccion.length || 0}, Errores de Anticipación: ${resultados.test_1[0]?.errores_anticipacion || 0}, Errores por Retrasos: ${resultados.test_1[0]?.errores_retrasos || 0}, Errores de Tiempo: ${resultados.test_1[0]?.errores_tiempo || 0}`,
+      resultado: `Ensayos: ${resultados.test_1[0]?.numero_ensayos || 0}, Correctas: ${(JSON.parse(resultados.test_1[0]?.tiempos_reaccion || "[]")).length}, Errores de Anticipación: ${resultados.test_1[0]?.errores_anticipacion || 0}, Errores por Retrasos: ${resultados.test_1[0]?.errores_retrasos || 0}, Errores de Tiempo: ${resultados.test_1[0]?.errores_tiempo || 0}`,
     },
     {
       id: 3,

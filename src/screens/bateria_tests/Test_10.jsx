@@ -1,3 +1,5 @@
+//TODO: guardar bien resultados
+
 import React, { useState, useEffect } from 'react';
 import { View, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';

@@ -1,3 +1,5 @@
+//TODO: tiempo ensayo
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Text, View, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
@@ -38,6 +40,7 @@ const Test_6 = ({ navigation, route }) => {
     const [translations, setTranslations] = useState({});
     const isFocused = useIsFocused();
     const imagenesFiguras = { figura_1, figura_2, figura_3, figura_4, figura_5, figura_6, figura_7, figura_8 };
+    const isMountedRef = useRef(true);
 
     const [contadorSonidos, setContadorSonidos] = useState(0);
     const [faseEscucha, setFaseEscucha] = useState(true);
@@ -76,6 +79,12 @@ const Test_6 = ({ navigation, route }) => {
             iniciarEnsayo();
         }
     }, [modalVisible]);
+
+    useEffect(() => {
+        return () => {
+            isMountedRef.current = false;
+        };
+    }, []);
 
     /**
      * Actualiza el contador de tiempo cada segundo. Si el tiempo llega a 0, maneja un error de tiempo y pasa al siguiente ensayo.
@@ -163,6 +172,12 @@ const Test_6 = ({ navigation, route }) => {
             await sound.playAsync();
             const espera = Math.floor(Math.random() * (5000 - 3000 + 1)) + 3000;
             await sleep(espera);
+
+            if (!isMountedRef.current) {
+                await sound.stopAsync();
+                break;
+            }
+            
         } while (faseEscuchaRef.current);
 
         console.log("Fin de ejecutar sonidos");

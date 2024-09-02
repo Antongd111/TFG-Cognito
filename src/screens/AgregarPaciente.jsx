@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useIsFocused } from '@react-navigation/native';
 import Header from "../components/header";
 import { Text, View, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, Alert } from "react-native";
 import AgregarPacienteStyles from "../styles/AgregarPacienteStyles";
 import styles from "../styles/ComunStyles";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { agregarPaciente } from '../api/PacienteApi';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTranslation } from '../locales';
 
 const AgregarPaciente = ({ navigation }) => {
 
@@ -14,10 +17,6 @@ const AgregarPaciente = ({ navigation }) => {
     const [fechaNacimiento, setFechaNacimiento] = useState(new Date());
     const [genero, setGenero] = useState('');
     const [observaciones, setObservaciones] = useState('');
-    const generos = [
-        { label: translations.Hombre, value: 'M' },
-        { label: translations.Mujer, value: 'F' },
-    ];
 
     /******************** CARGA DE TRADUCCIONES ********************/
 
@@ -37,6 +36,11 @@ const AgregarPaciente = ({ navigation }) => {
     }, [isFocused]);
 
     /***************** FIN DE CARGA DE TRADUCCIONES ****************/
+
+    const generos = [
+        { label: translations.Hombre, value: 'M' },
+        { label: translations.Mujer, value: 'F' },
+    ];
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || fechaNacimiento;
