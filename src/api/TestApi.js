@@ -149,7 +149,8 @@ export const guardarResultadosTest_16 = async (idSesion, elementos, imposibilida
     }
 };
 
-export const guardarResultadosTest_17 = async (idSesion,
+export const guardarResultadosTest_17 = async (
+    idSesion,
     nombresRecordadosFase1,
     intrusionesFase1,
     perseveracionesFase1,
@@ -160,25 +161,28 @@ export const guardarResultadosTest_17 = async (idSesion,
     rechazosFase2,
     nombresIdentificadosFase3,
     erroresIdentificadosFase3,
-    rechazosReconocimientoFase3) => {
+    rechazosReconocimientoFase3
+  ) => {
     try {
-        const result = await BD_GuardarResultadosTest_17(idSesion,
-            nombresRecordadosFase1,
-            intrusionesFase1,
-            perseveracionesFase1,
-            rechazosFase1,
-            nombresRecordadosFase2,
-            intrusionesFase2,
-            perseveracionesFase2,
-            rechazosFase2,
-            nombresIdentificadosFase3,
-            erroresIdentificadosFase3,
-            rechazosReconocimientoFase3);
-        return result;
+      const result = await BD_GuardarResultadosTest_17(
+        idSesion,
+        nombresRecordadosFase1,
+        intrusionesFase1,
+        perseveracionesFase1,
+        rechazosFase1,
+        nombresRecordadosFase2,
+        intrusionesFase2,
+        perseveracionesFase2,
+        rechazosFase2,
+        nombresIdentificadosFase3,
+        erroresIdentificadosFase3,
+        rechazosReconocimientoFase3
+      );
+      return result;
     } catch (error) {
-        throw error;
+      throw error;
     }
-};
+  };
 
 export const guardarResultadosTest_18 = async (idSesion, carasReconocidasCorrectamente, carasIncorrectamenteReconocidas, nombresReconocidosCorrectamente) => {
     try {

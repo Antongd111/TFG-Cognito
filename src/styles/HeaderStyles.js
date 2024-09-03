@@ -28,6 +28,19 @@ export default HeaderStyles = StyleSheet.create({
     ajustesImg: {
         width: 50,
         height: 50,
+    },
+
+    volver: {
+        width: 50,
+        height: 50,
+        position: 'absolute',
+        left: 20,
+        top: 50,
+    },
+
+    volverImg: {
+        width: 50,
+        height: 50,
     }
 
 });

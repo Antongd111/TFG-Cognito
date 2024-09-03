@@ -176,38 +176,38 @@ const initDB = async () => {
     );
 
     CREATE TABLE IF NOT EXISTS Test_15 (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      id_sesion INTEGER NOT NULL UNIQUE,
-      imposibilidad BIT NOT NULL,
-      rechazo BIT NOT NULL,
-      perspectiva BIT NOT NULL,
-      elementos TEXT NOT NULL,
-      FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_sesion INTEGER NOT NULL UNIQUE,
+        imposibilidad INTEGER NOT NULL,  
+        rechazo INTEGER NOT NULL,        
+        perspectiva INTEGER NOT NULL,    
+        elementos TEXT NOT NULL,
+        FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
     );
-    
+
     CREATE TABLE IF NOT EXISTS Test_16 (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      id_sesion INTEGER NOT NULL UNIQUE,
-      imposibilidad BIT NOT NULL,
-      rechazo BIT NOT NULL,
-      perspectiva BIT NOT NULL,
-      elementos TEXT NOT NULL,
-      FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
-    );    
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_sesion INTEGER NOT NULL UNIQUE,
+        imposibilidad INTEGER NOT NULL,  
+        rechazo INTEGER NOT NULL,        
+        perspectiva INTEGER NOT NULL,    
+        elementos TEXT NOT NULL,
+        FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
+    ); 
 
     CREATE TABLE IF NOT EXISTS Test_17 (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_sesion INTEGER NOT NULL UNIQUE,
-    nombres_recordados_fase1 INTEGER NOT NULL,
+    nombres_recordados_fase1 TEXT NOT NULL,
     intrusiones_fase1 INTEGER NOT NULL,
     perseveraciones_fase1 INTEGER NOT NULL,
     rechazos_fase1 INTEGER NOT NULL,
-    nombres_recordados_fase2 INTEGER NOT NULL,
+    nombres_recordados_fase2 TEXT NOT NULL,
     intrusiones_fase2 INTEGER NOT NULL,
     perseveraciones_fase2 INTEGER NOT NULL,
     rechazos_fase2 INTEGER NOT NULL,
-    nombres_identificados_fase3 INTEGER NOT NULL,
-    errores_identificados_fase3 INTEGER NOT NULL,
+    nombres_identificados_fase3 TEXT NOT NULL,
+    errores_identificados_fase3 TEXT NOT NULL,
     rechazos_reconocimiento_fase3 INTEGER NOT NULL,
     FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
   );
@@ -586,12 +586,13 @@ export const guardarResultadosTest_14 = async (idSesion, correctas, errores, tie
 
 export const guardarResultadosTest_15 = async (idSesion, elementos, imposibilidad, rechazo, perspectiva) => {
   const db = await dbPromise;
-  console.log("Guardando resultados del Test 15:", idSesion, elementos, imposibilidad, rechazo, perspectiva);
+  const elementosJson = JSON.stringify(elementos); // Convertir elementos a JSON
+  console.log("Guardando resultados del Test 15:", idSesion, elementosJson, imposibilidad, rechazo, perspectiva);
   try {
     const statement = await db.prepareAsync(
       'INSERT OR REPLACE INTO Test_15 (id_sesion, elementos, imposibilidad, rechazo, perspectiva) VALUES ($id_sesion, $elementos, $imposibilidad, $rechazo, $perspectiva)'
     );
-    const result = await statement.executeAsync({ $id_sesion: idSesion, $elementos: elementos, $imposibilidad: imposibilidad, $rechazo: rechazo, $perspectiva: perspectiva });
+    const result = await statement.executeAsync({ $id_sesion: idSesion, $elementos: elementosJson, $imposibilidad: imposibilidad, $rechazo: rechazo, $perspectiva: perspectiva });
     await statement.finalizeAsync();
     console.log("Resultados del Test 15 guardados:", result.lastInsertRowId);
     return result.lastInsertRowId;
@@ -603,12 +604,13 @@ export const guardarResultadosTest_15 = async (idSesion, elementos, imposibilida
 
 export const guardarResultadosTest_16 = async (idSesion, elementos, imposibilidad, rechazo, perspectiva) => {
   const db = await dbPromise;
-  console.log("Guardando resultados del Test 16:", idSesion, elementos, imposibilidad, rechazo, perspectiva);
+  const elementosJson = JSON.stringify(elementos); // Convertir elementos a JSON
+  console.log("Guardando resultados del Test 16:", idSesion, elementosJson, imposibilidad, rechazo, perspectiva);
   try {
     const statement = await db.prepareAsync(
       'INSERT OR REPLACE INTO Test_16 (id_sesion, elementos, imposibilidad, rechazo, perspectiva) VALUES ($id_sesion, $elementos, $imposibilidad, $rechazo, $perspectiva)'
     );
-    const result = await statement.executeAsync({ $id_sesion: idSesion, $elementos: elementos, $imposibilidad: imposibilidad, $rechazo: rechazo, $perspectiva: perspectiva });
+    const result = await statement.executeAsync({ $id_sesion: idSesion, $elementos: elementosJson, $imposibilidad: imposibilidad, $rechazo: rechazo, $perspectiva: perspectiva });
     await statement.finalizeAsync();
     console.log("Resultados del Test 16 guardados:", result.lastInsertRowId);
     return result.lastInsertRowId;
@@ -633,51 +635,66 @@ export const guardarResultadosTest_17 = async (
   rechazosReconocimientoFase3
 ) => {
   const db = await dbPromise;
-  console.log("Guardando resultados del Test 17:", idSesion, nombresRecordadosFase1, intrusionesFase1, perseveracionesFase1, rechazosFase1, nombresRecordadosFase2, intrusionesFase2, perseveracionesFase2, rechazosFase2, nombresIdentificadosFase3, erroresIdentificadosFase3, rechazosReconocimientoFase3);
+  console.log(
+    "Guardando resultados del Test 17:",
+    idSesion,
+    nombresRecordadosFase1,
+    intrusionesFase1,
+    perseveracionesFase1,
+    rechazosFase1,
+    nombresRecordadosFase2,
+    intrusionesFase2,
+    perseveracionesFase2,
+    rechazosFase2,
+    nombresIdentificadosFase3,
+    erroresIdentificadosFase3,
+    rechazosReconocimientoFase3
+  );
+
   try {
     const statement = await db.prepareAsync(
       `INSERT OR REPLACE INTO Test_17 (
-              id_sesion,
-              nombres_recordados_fase1,
-              intrusiones_fase1,
-              perseveraciones_fase1,
-              rechazos_fase1,
-              nombres_recordados_fase2,
-              intrusiones_fase2,
-              perseveraciones_fase2,
-              rechazos_fase2,
-              nombres_identificados_fase3,
-              errores_identificados_fase3,
-              rechazos_reconocimiento_fase3
-          ) VALUES (
-              $id_sesion,
-              $nombres_recordados_fase1,
-              $intrusiones_fase1,
-              $perseveraciones_fase1,
-              $rechazos_fase1,
-              $nombres_recordados_fase2,
-              $intrusiones_fase2,
-              $perseveraciones_fase2,
-              $rechazos_fase2,
-              $nombres_identificados_fase3,
-              $errores_identificados_fase3,
-              $rechazos_reconocimiento_fase3
-          )`
+        id_sesion,
+        nombres_recordados_fase1,
+        intrusiones_fase1,
+        perseveraciones_fase1,
+        rechazos_fase1,
+        nombres_recordados_fase2,
+        intrusiones_fase2,
+        perseveraciones_fase2,
+        rechazos_fase2,
+        nombres_identificados_fase3,
+        errores_identificados_fase3,
+        rechazos_reconocimiento_fase3
+      ) VALUES (
+        $id_sesion,
+        $nombres_recordados_fase1,
+        $intrusiones_fase1,
+        $perseveraciones_fase1,
+        $rechazos_fase1,
+        $nombres_recordados_fase2,
+        $intrusiones_fase2,
+        $perseveraciones_fase2,
+        $rechazos_fase2,
+        $nombres_identificados_fase3,
+        $errores_identificados_fase3,
+        $rechazos_reconocimiento_fase3
+      )`
     );
 
     const result = await statement.executeAsync({
       $id_sesion: idSesion,
-      $nombres_recordados_fase1: nombresRecordadosFase1,
+      $nombres_recordados_fase1: JSON.stringify(nombresRecordadosFase1),
       $intrusiones_fase1: intrusionesFase1,
       $perseveraciones_fase1: perseveracionesFase1,
       $rechazos_fase1: rechazosFase1,
-      $nombres_recordados_fase2: nombresRecordadosFase2,
+      $nombres_recordados_fase2: JSON.stringify(nombresRecordadosFase2),
       $intrusiones_fase2: intrusionesFase2,
       $perseveraciones_fase2: perseveracionesFase2,
       $rechazos_fase2: rechazosFase2,
-      $nombres_identificados_fase3: nombresIdentificadosFase3,
-      $errores_identificados_fase3: erroresIdentificadosFase3,
-      $rechazos_reconocimiento_fase3: rechazosReconocimientoFase3
+      $nombres_identificados_fase3: JSON.stringify(nombresIdentificadosFase3),
+      $errores_identificados_fase3: JSON.stringify(erroresIdentificadosFase3),
+      $rechazos_reconocimiento_fase3: rechazosReconocimientoFase3,
     });
 
     await statement.finalizeAsync();
@@ -819,6 +836,7 @@ export const obtenerResultadosSesion = async (idSesion) => {
 
   try {
     // Obtener los resultados de todos los tests
+    const fechaSesion = await db.getAllAsync('SELECT fecha_sesion FROM SesionTest WHERE id = ?', [idSesion]);
     const resultadosTest1 = await db.getAllAsync('SELECT * FROM Test_1 WHERE id_sesion = ?', [idSesion]);
     const resultadosTest3 = await db.getAllAsync('SELECT * FROM Test_3 WHERE id_sesion = ?', [idSesion]);
     const resultadosTest4 = await db.getAllAsync('SELECT * FROM Test_4 WHERE id_sesion = ?', [idSesion]);
@@ -844,6 +862,7 @@ export const obtenerResultadosSesion = async (idSesion) => {
 
     // Organizar todos los resultados en un objeto para retornarlo
     const resultados = {
+      fecha: fechaSesion[0].fecha_sesion,
       test_1: resultadosTest1,
       test_3: resultadosTest3,
       test_4: resultadosTest4,

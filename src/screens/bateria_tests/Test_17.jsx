@@ -28,7 +28,7 @@ const Test_17 = ({ navigation, route }) => {
 
     // Fase 3: Reconocimiento
     const [nombresIdentificados, setNombresIdentificados] = useState([]);
-    const [erroresIdentificados, setErroresIdentificados] = useState(0);
+    const [erroresIdentificados, setErroresIdentificados] = useState([]);
     const [rechazosReconocimiento, setRechazosReconocimiento] = useState(0);
 
     /******************** CARGA DE TRADUCCIONES ********************/
@@ -83,13 +83,25 @@ const Test_17 = ({ navigation, route }) => {
     };
 
     const handleNombreIdentificado = (nombre) => {
-        setNombresIdentificados((prev) => {
-            if (prev.includes(nombre)) {
-                return prev.filter((n) => n !== nombre); // Deseleccionar
-            } else {
-                return [...prev, nombre]; // Seleccionar
-            }
-        });
+        if (nombresAprendidos.includes(nombre)) {
+            // Si el nombre está en nombresAprendidos, lo agregamos a nombresIdentificados
+            setNombresIdentificados((prev) => {
+                if (prev.includes(nombre)) {
+                    return prev.filter((n) => n !== nombre); // Deseleccionar
+                } else {
+                    return [...prev, nombre]; // Seleccionar
+                }
+            });
+        } else if (nombresDistractores.includes(nombre)) {
+            // Si el nombre está en nombresDistractores, lo agregamos a erroresIdentificados
+            setErroresIdentificados((prev) => {
+                if (prev.includes(nombre)) {
+                    return prev.filter((n) => n !== nombre); // Deseleccionar
+                } else {
+                    return [...prev, nombre]; // Seleccionar
+                }
+            });
+        }
     };
 
     const handlePerseveracion = () => {
@@ -135,17 +147,16 @@ const Test_17 = ({ navigation, route }) => {
     const guardarResultados = async () => {
         await guardarResultadosTest_17(
             route.params.idSesion,
-            route.params.idSesion,
-            nombresRecordadosFase1.filter((nombre) => nombresAprendidos.includes(nombre)).length,
+            nombresRecordadosFase1,
             intrusionesFase1,
             perseveracionesFase1,
             rechazosFase1,
-            nombresRecordadosFase2.filter((nombre) => nombresAprendidos.includes(nombre)).length,
+            nombresRecordadosFase2,
             intrusionesFase2,
             perseveracionesFase2,
             rechazosFase2,
-            nombresIdentificados.filter((nombre) => nombresAprendidos.includes(nombre)).length,
-            nombresIdentificados.filter((nombre) => nombresDistractores.includes(nombre)).length,
+            nombresIdentificados,
+            erroresIdentificados,
             rechazosReconocimiento
         );
 
@@ -176,7 +187,7 @@ const Test_17 = ({ navigation, route }) => {
 
     const renderReconocimientoItem = ({ item }) => (
         <TouchableOpacity
-            style={[styles.nombreItem, nombresIdentificados.includes(item) && styles.nombreItemSeleccionado]}
+            style={[styles.nombreItem, (nombresIdentificados.includes(item) || erroresIdentificados.includes(item)) && styles.nombreItemSeleccionado]}
             onPress={() => handleNombreIdentificado(item)}
         >
             <Text style={styles.nombreTexto}>{item}</Text>

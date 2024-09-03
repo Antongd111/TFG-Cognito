@@ -1,14 +1,12 @@
-//TODO: TRADUCIR ESTO Y PONER TODOS LOS DATOS
-
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../locales";
 import { obtenerResultadosSesion } from '../api/TestApi';
+import Header from "../components/header";
 
 import BotonToPDF from '../components/botonToPDF';
 import { obtenerPaciente } from '../database/db';
-import { id } from 'date-fns/locale';
 
 const InfoSesion = ({ navigation, route }) => {
   const { idSesion, idPaciente } = route.params;
@@ -56,8 +54,10 @@ const InfoSesion = ({ navigation, route }) => {
   };
   const renderItem = ({ item }) => (
     <View style={styles.testItem}>
-      <Text style={styles.testName}>{item.nombre}</Text>
-      <Text style={styles.testResult}>{item.resultado}</Text>
+      <View style={styles.columna}>
+        <Text style={styles.testName}>{item.nombre} - {item.titulo}</Text>
+        <Text style={styles.testResult}>{translations.Completado}?   {item.resultado}</Text>
+      </View>
       <TouchableOpacity
         style={styles.repetirButton}
         onPress={() => repetirTest(item.id)}
@@ -83,107 +83,144 @@ const InfoSesion = ({ navigation, route }) => {
     );
   }
 
-  // Generación de la lista de datos a mostrar
-  const testsData = [
-    {
-      id: 1,
-      nombre: translations.Test1 || 'Test 1',
-      resultado: `Ensayos: ${resultados.test_1[0]?.numero_ensayos || 0}, Correctas: ${(JSON.parse(resultados.test_1[0]?.tiempos_reaccion || "[]")).length}, Errores de Anticipación: ${resultados.test_1[0]?.errores_anticipacion || 0}, Errores por Retrasos: ${resultados.test_1[0]?.errores_retrasos || 0}, Errores de Tiempo: ${resultados.test_1[0]?.errores_tiempo || 0}`,
-    },
-    {
-      id: 3,
-      nombre: translations.Test3 || 'Test 3',
-      resultado: `Aciertos: ${resultados.test_3[0]?.numero_aciertos || 0}, Lectura Correcta: ${resultados.test_3[0]?.lectura_correcta || 0}, Errores de Tiempo: ${resultados.test_3[0]?.errores_tiempo || 0}`,
-    },
-    {
-      id: 4,
-      nombre: translations.Test4 || 'Test 4',
-      resultado: `Aciertos: ${resultados.test_4[0]?.numero_aciertos || 0}, Sobreestimaciones: ${resultados.test_4[0]?.numero_sobreestimaciones || 0}, Subestimaciones: ${resultados.test_4[0]?.numero_subestimaciones || 0}`,
-    },
-    {
-      id: 5,
-      nombre: translations.Test5 || 'Test 5',
-      resultado: `Ensayos Correctos: ${resultados.test_5[0]?.ensayos_correctos || 0}, Errores: ${resultados.test_5[0]?.numero_errores || 0}, Errores de Tiempo: ${resultados.test_5[0]?.errores_tiempo || 0}`,
-    },
-    {
-      id: 6,
-      nombre: translations.Test6 || 'Test 6',
-      resultado: `Aciertos: ${resultados.test_6[0]?.numero_aciertos || 0}, Errores: ${resultados.test_6[0]?.numero_errores || 0}`,
-    },
-    {
-      id: 7,
-      nombre: translations.Test7 || 'Test 7',
-      resultado: `Aciertos: ${resultados.test_7[0]?.numero_aciertos || 0}, Errores: ${resultados.test_7[0]?.numero_errores || 0}, Tiempo Medio: ${resultados.test_7[0]?.tiempo_medio || 0} ms`,
-    },
-    {
-      id: 8,
-      nombre: translations.Test8 || 'Test 8',
-      resultado: `Pronunciaciones Correctas: ${resultados.test_8[0]?.pronunciaciones_correctas || 0}, Pronunciaciones Incorrectas: ${resultados.test_8[0]?.pronunciaciones_incorrectas || 0}, Recordados: ${resultados.test_8[0]?.recordados || 0}, Intrusiones: ${resultados.test_8[0]?.intrusiones || 0}, Perseveraciones: ${resultados.test_8[0]?.perseveraciones || 0}, Rechazos: ${resultados.test_8[0]?.rechazos || 0}`,
-    },
-    {
-      id: 10,
-      nombre: translations.Test10 || 'Test 10',
-      resultado: `Resultados: ${JSON.stringify(resultados.test_10[0]?.correctas || [])}, Tiempos de Respuesta: ${JSON.stringify(resultados.test_10[0]?.tiempos_ensayos || [])}`,
-    },
-    {
-      id: 11,
-      nombre: translations.Test11 || 'Test 11',
-      resultado: `Correctas: ${resultados.test_11[0]?.correctas || 0}, Inversiones: ${resultados.test_11[0]?.inversiones || 0}, Rectificaciones: ${resultados.test_11[0]?.rectificaciones || 0}, Tiempos de Respuesta: ${JSON.stringify(resultados.test_11[0]?.tiempos_respuestas || [])}, Figuras Seleccionadas: ${JSON.stringify(resultados.test_11[0]?.figuras_seleccionadas || [])}`,
-    },
-    {
-      id: 12,
-      nombre: translations.Test12 || 'Test 12',
-      resultado: `Correctas: ${resultados.test_12[0]?.correctas || 0}, Errores Morfológicos: ${resultados.test_12[0]?.errores_morfológicos || 0}, Errores Fonéticos: ${resultados.test_12[0]?.errores_fonéticos || 0}, Errores Semánticos: ${resultados.test_12[0]?.errores_semánticos || 0}, Excedido Tiempo: ${resultados.test_12[0]?.excedido_tiempo || 0}, Respuesta Incorrecta: ${resultados.test_12[0]?.respuesta_incorrecta || 0}`,
-    },
-    {
-      id: 13,
-      nombre: translations.Test13 || 'Test 13',
-      resultado: `Correctas: ${resultados.test_13[0]?.correctas || 0}, Errores de Asociación: ${resultados.test_13[0]?.error_asociacion || 0}, Generalizaciones: ${resultados.test_13[0]?.generalizaciones || 0}, Parciales: ${resultados.test_13[0]?.parciales || 0}, Otros Errores: ${resultados.test_13[0]?.otros_errores || 0}, Exceso de Tiempo en Objetos: ${resultados.test_13[0]?.exceso_tiempo_obj || 0}, Exceso de Tiempo en Asociación: ${resultados.test_13[0]?.exceso_tiempo_asoc || 0}, Respuesta de Secuencia: ${JSON.stringify(resultados.test_13[0]?.respuesta_secuencia || [])}`,
-    },
-    {
-      id: 14,
-      nombre: translations.Test14 || 'Test 14',
-      resultado: `Correctas: ${resultados.test_14[0]?.correctas || 0}, Errores: ${resultados.test_14[0]?.errores || 0}, Tiempo Total: ${resultados.test_14[0]?.tiempo_total || 0} ms`,
-    },
-    {
-      id: 17,
-      nombre: translations.Test17 || 'Test 17',
-      resultado: `Fase 1 - Nombres Recordados: ${resultados.test_17[0]?.nombres_recordados_fase1 || 0}, Intrusiones: ${resultados.test_17[0]?.intrusiones_fase1 || 0}, Perseveraciones: ${resultados.test_17[0]?.perseveraciones_fase1 || 0}, Rechazos: ${resultados.test_17[0]?.rechazos_fase1 || 0}\nFase 2 - Nombres Recordados: ${resultados.test_17[0]?.nombres_recordados_fase2 || 0}, Intrusiones: ${resultados.test_17[0]?.intrusiones_fase2 || 0}, Perseveraciones: ${resultados.test_17[0]?.perseveraciones_fase2 || 0}, Rechazos: ${resultados.test_17[0]?.rechazos_fase2 || 0}\nFase 3 - Nombres Identificados: ${resultados.test_17[0]?.nombres_identificados_fase3 || 0}, Errores: ${resultados.test_17[0]?.errores_identificados_fase3 || 0}, Rechazos de Reconocimiento: ${resultados.test_17[0]?.rechazos_reconocimiento_fase3 || 0}`,
-    },
-    {
-      id: 18,
-      nombre: translations.Test18 || 'Test 18',
-      resultado: `Caras Reconocidas Correctamente: ${resultados.test_18[0]?.correctas || 0}, Caras Reconocidas Incorrectamente: ${resultados.test_18[0]?.errores || 0}, Nombres Reconocidos Correctamente: ${resultados.test_18[0]?.tiempo_total || 0}`,
-    },
-    {
-      id: 19,
-      nombre: translations.Test19 || 'Test 19',
-      resultado: `Respuestas Correctas (por tiempo): ${JSON.stringify(resultados.test_19[0]?.respuestas_correctas_tiempo || [])}, Intrusiones (por tiempo): ${JSON.stringify(resultados.test_19[0]?.intrusiones_tiempo || [])}, Perseveraciones (por tiempo): ${JSON.stringify(resultados.test_19[0]?.perseveraciones_tiempo || [])}`,
-    },
-    {
-      id: 20,
-      nombre: translations.Test20 || 'Test 20',
-      resultado: `Respuestas Correctas (por tiempo): ${JSON.stringify(resultados.test_20[0]?.respuestas_correctas_tiempo || [])}, Intrusiones (por tiempo): ${JSON.stringify(resultados.test_20[0]?.intrusiones_tiempo || [])}, Perseveraciones (por tiempo): ${JSON.stringify(resultados.test_20[0]?.perseveraciones_tiempo || [])}`,
-    },
-    {
-      id: 21,
-      nombre: translations.Test21 || 'Test 21',
-      resultado: `Intrusiones: ${resultados.test_21[0]?.intrusiones || 0}, Rechazos: ${resultados.test_21[0]?.rechazos || 0}, Índices Seleccionados: ${JSON.stringify(resultados.test_21[0]?.indices_seleccionados || [])}`,
-    },
-    {
-      id: 22,
-      nombre: translations.Test22 || 'Test 22',
-      resultado: `Intrusiones: ${resultados.test_22[0]?.intrusiones || 0}, Rechazos: ${resultados.test_22[0]?.rechazos || 0}, Índices Seleccionados: ${JSON.stringify(resultados.test_22[0]?.indices_seleccionados || [])}`,
-    },
-    {
-      id: 23,
-      nombre: translations.Test23 || 'Test 23',
-      resultado: `Correctas: ${resultados.test_23[0]?.correctas || 0}, Errores: ${resultados.test_23[0]?.errores || 0}, Excesos de Tiempo: ${resultados.test_23[0]?.excesos_tiempo || 0}, Respuestas: ${JSON.stringify(resultados.test_23[0]?.respuestas || [])}, Tiempos: ${JSON.stringify(resultados.test_23[0]?.tiempos || [])}`,
-    },
-  ];
-
+// Generación de la lista de datos a mostrar
+const testsData = [
+  {
+    id: 1,
+    nombre: 'Test 1',
+    titulo: translations.Pr01Titulo || 'Título del Test 1',
+    resultado: resultados.test_1?.length > 0 ? '✅' : '❌',
+  },
+  {
+    id: 3,
+    nombre: 'Test 3',
+    titulo: translations.Pr03Titulo || 'Título del Test 3',
+    resultado: resultados.test_3?.length > 0 ? '✅' : '❌',
+  },
+  {
+    id: 4,
+    nombre: 'Test 4',
+    titulo: translations.Pr04Titulo || 'Título del Test 4',
+    resultado: resultados.test_4?.length > 0 ? '✅' : '❌',
+  },
+  {
+    id: 5,
+    nombre: 'Test 5',
+    titulo: translations.Pr05Titulo || 'Título del Test 5',
+    resultado: resultados.test_5?.length > 0 ? '✅' : '❌',
+  },
+  {
+    id: 6,
+    nombre: 'Test 6',
+    titulo: translations.Pr06Titulo || 'Título del Test 6',
+    resultado: resultados.test_6?.length > 0 ? '✅' : '❌',
+  },
+  {
+    id: 7,
+    nombre: 'Test 7',
+    titulo: translations.Pr07Titulo || 'Título del Test 7',
+    resultado: resultados.test_7?.length > 0 ? '✅' : '❌',
+  },
+  {
+    id: 8,
+    nombre: 'Test 8',
+    titulo: translations.Pr08Titulo || 'Título del Test 8',
+    resultado: resultados.test_8?.length > 0 ? '✅' : '❌',
+  },
+  {
+    id: 10,
+    nombre: 'Test 10',
+    titulo: translations.Pr10Titulo || 'Título del Test 10',
+    resultado: resultados.test_10?.length > 0 ? '✅' : '❌',
+  },
+  {
+    id: 11,
+    nombre: 'Test 11',
+    titulo: translations.Pr11Titulo || 'Título del Test 11',
+    resultado: resultados.test_11?.length > 0 ? '✅' : '❌',
+  },
+  {
+    id: 12,
+    nombre: 'Test 12',
+    titulo: translations.Pr12Titulo || 'Título del Test 12',
+    resultado: resultados.test_12?.length > 0 ? '✅' : '❌',
+  },
+  {
+    id: 13,
+    nombre: 'Test 13',
+    titulo: translations.Pr13Titulo || 'Título del Test 13',
+    resultado: resultados.test_13?.length > 0 ? '✅' : '❌',
+  },
+  {
+    id: 14,
+    nombre: 'Test 14',
+    titulo: translations.Pr14Titulo || 'Título del Test 14',
+    resultado: resultados.test_14?.length > 0 ? '✅' : '❌',
+  },
+  {
+    id: 15,
+    nombre: 'Test 15',
+    titulo: translations.Pr15Titulo || 'Título del Test 15',
+    resultado: resultados.test_15?.length > 0 ? '✅' : '❌',
+  },
+  {
+    id: 16,
+    nombre: 'Test 16',
+    titulo: translations.Pr16Titulo || 'Título del Test 16',
+    resultado: resultados.test_16?.length > 0 ? '✅' : '❌',
+  },    
+  {
+    id: 17,
+    nombre: 'Test 17',
+    titulo: translations.Pr17Titulo || 'Título del Test 17',
+    resultado: resultados.test_17?.length > 0 ? '✅' : '❌',
+  },
+  {
+    id: 18,
+    nombre: 'Test 18',
+    titulo: translations.Pr18Titulo || 'Título del Test 18',
+    resultado: resultados.test_18?.length > 0 ? '✅' : '❌',
+  },
+  {
+    id: 19,
+    nombre: 'Test 19',
+    titulo: translations.Pr19Titulo || 'Título del Test 19',
+    resultado: resultados.test_19?.length > 0 ? '✅' : '❌',
+  },
+  {
+    id: 20,
+    nombre: 'Test 20',
+    titulo: translations.Pr20Titulo || 'Título del Test 20',
+    resultado: resultados.test_20?.length > 0 ? '✅' : '❌',
+  },
+  {
+    id: 21,
+    nombre: 'Test 21',
+    titulo: translations.Pr21Titulo || 'Título del Test 21',
+    resultado: resultados.test_21?.length > 0 ? '✅' : '❌',
+  },
+  {
+    id: 22,
+    nombre: 'Test 22',
+    titulo: translations.Pr22Titulo || 'Título del Test 22',
+    resultado: resultados.test_22?.length > 0 ? '✅' : '❌',
+  },
+  {
+    id: 23,
+    nombre: 'Test 23',
+    titulo: translations.Pr23Titulo || 'Título del Test 23',
+    resultado: resultados.test_23?.length > 0 ? '✅' : '❌',
+  },
+  {
+    id: 24,
+    nombre: 'Test 24',
+    titulo: translations.Pr24Titulo || 'Título del Test 24',
+    resultado: resultados.test_24?.length > 0 ? '✅' : '❌',
+  },
+];
   return (
     <View style={styles.container}>
+      <Header navigation={navigation} />
       <Text style={styles.title}>{translations.ResumenSesion || 'Resumen de la Sesión'}</Text>
       <View style={styles.contenedorLista}>
       <FlatList
@@ -193,7 +230,7 @@ const InfoSesion = ({ navigation, route }) => {
       />
       </View>
       <View>
-        <BotonToPDF datosPaciente={datosPaciente} datosTests={resultados} />
+        <BotonToPDF datosPaciente={datosPaciente} datosTests={resultados}/>
       </View>
     </View>
   );
@@ -202,21 +239,25 @@ const InfoSesion = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: '#f4f4f4'
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 20
+    marginBottom: 20,
+    marginTop: 10
   },
   contenedorLista: {
-    height: '80%',
-    marginBottom: 20
+    height: '50%',
+    marginBottom: 20,
+    marginHorizontal: 20
   },
   testItem: {
     backgroundColor: '#fff',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     padding: 15,
     borderRadius: 10,
     marginBottom: 15,
@@ -240,7 +281,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#D2B48C',
     paddingVertical: 10,
     borderRadius: 5,
-    alignItems: 'center'
+    alignItems: 'center',
+    padding: 20,
+    justifyContent: 'center'
   },
   repetirButtonText: {
     color: '#fff',
@@ -262,6 +305,10 @@ const styles = StyleSheet.create({
   },
   noResultsText: {
     fontSize: 18,
+  },
+  columna: {
+    display: 'flex',
+    flexDirection: 'column',
   },
 });
 

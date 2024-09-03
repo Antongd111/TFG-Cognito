@@ -47,6 +47,8 @@
     "Incorrecto": "Incorrecto",
     "RespuestaCorrecta": "Respuesta correcta",
     "RC": "RC",
+    "GenerarPdf": "Generar PDF de resultados",
+    "Completado": "Completado",
 
     "app_name": "Cognito",
     "InicioSubtitulo": "Batería computerizada de test cognitivos",

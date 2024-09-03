@@ -3,12 +3,10 @@ import { View, Image, Text, TouchableOpacity, StyleSheet, Alert } from 'react-na
 import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
-import { guardarResultadosTest_25 } from '../../api/TestApi';
+import { guardarResultadosTest_25, guardarResultadosTest_15, guardarResultadosTest_16 } from '../../api/TestApi';
 import { useIsFocused } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from '../../locales';
-import { guardarResultadosTest_15 } from '../../api/TestApi';
-import { guardarResultadosTest_16 } from '../../api/TestApi';
 
 import dibujo1 from '../../../assets/images/Test_25/casa.png';
 import dibujo2 from '../../../assets/images/Test_25/abstracta.png';
@@ -19,13 +17,13 @@ const Test_25 = ({ navigation, route }) => {
     const [aristasDibujo1, setAristasDibujo1] = useState(Array(13).fill('0'));
     const [aristasDibujo2, setAristasDibujo2] = useState(Array(21).fill('0'));
 
-    const [imposibilidadDibujo1, setImposibilidadDibujo1] = useState(false);
-    const [rechazoDibujo1, setRechazoDibujo1] = useState(false);
-    const [perspectivaDibujo1, setPerspectivaDibujo1] = useState(1);
+    const [imposibilidadDibujo1, setImposibilidadDibujo1] = useState(0); // Cambiado a 0
+    const [rechazoDibujo1, setRechazoDibujo1] = useState(0); // Cambiado a 0
+    const [perspectivaDibujo1, setPerspectivaDibujo1] = useState(1); // Ya estaba en 0 o 1
 
-    const [imposibilidadDibujo2, setImposibilidadDibujo2] = useState(false);
-    const [rechazoDibujo2, setRechazoDibujo2] = useState(false);
-    const [perspectivaDibujo2, setPerspectivaDibujo2] = useState(1);
+    const [imposibilidadDibujo2, setImposibilidadDibujo2] = useState(0); // Cambiado a 0
+    const [rechazoDibujo2, setRechazoDibujo2] = useState(0); // Cambiado a 0
+    const [perspectivaDibujo2, setPerspectivaDibujo2] = useState(1); // Ya estaba en 0 o 1
 
     const [evaluacionCompleta, setEvaluacionCompleta] = useState(false);
     const [translations, setTranslations] = useState({});
@@ -73,17 +71,17 @@ const Test_25 = ({ navigation, route }) => {
 
     const manejarToggleImposibilidad = (dibujo) => {
         if (dibujo === 1) {
-            setImposibilidadDibujo1(prev => !prev);
+            setImposibilidadDibujo1(prev => (prev === 0 ? 1 : 0)); // Alternar entre 0 y 1
         } else {
-            setImposibilidadDibujo2(prev => !prev);
+            setImposibilidadDibujo2(prev => (prev === 0 ? 1 : 0)); // Alternar entre 0 y 1
         }
     };
 
     const manejarToggleRechazo = (dibujo) => {
         if (dibujo === 1) {
-            setRechazoDibujo1(prev => !prev);
+            setRechazoDibujo1(prev => (prev === 0 ? 1 : 0)); // Alternar entre 0 y 1
         } else {
-            setRechazoDibujo2(prev => !prev);
+            setRechazoDibujo2(prev => (prev === 0 ? 1 : 0)); // Alternar entre 0 y 1
         }
     };
 
@@ -151,11 +149,11 @@ const Test_25 = ({ navigation, route }) => {
                         </View>
 
                         <View style={styles.contenedorExtras}>
-                            <TouchableOpacity style={[styles.botonExtra, imposibilidadDibujo1 && styles.botonExtraSeleccionado]} onPress={() => manejarToggleImposibilidad(1)}>
+                            <TouchableOpacity style={[styles.botonExtra, imposibilidadDibujo1 === 1 && styles.botonExtraSeleccionado]} onPress={() => manejarToggleImposibilidad(1)}>
                                 <Text style={styles.textoBotonExtra}>Imposibilidad: {imposibilidadDibujo1 ? 'Sí' : 'No'}</Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity style={[styles.botonExtra, rechazoDibujo1 && styles.botonExtraSeleccionado]} onPress={() => manejarToggleRechazo(1)}>
+                            <TouchableOpacity style={[styles.botonExtra, rechazoDibujo1 === 1 && styles.botonExtraSeleccionado]} onPress={() => manejarToggleRechazo(1)}>
                                 <Text style={styles.textoBotonExtra}>Rechazo: {rechazoDibujo1 ? 'Sí' : 'No'}</Text>
                             </TouchableOpacity>
 
@@ -209,11 +207,11 @@ const Test_25 = ({ navigation, route }) => {
                         </View>
 
                         <View style={styles.contenedorExtras}>
-                            <TouchableOpacity style={[styles.botonExtra, imposibilidadDibujo2 && styles.botonExtraSeleccionado]} onPress={() => manejarToggleImposibilidad(2)}>
+                            <TouchableOpacity style={[styles.botonExtra, imposibilidadDibujo2 === 1 && styles.botonExtraSeleccionado]} onPress={() => manejarToggleImposibilidad(2)}>
                                 <Text style={styles.textoBotonExtra}>Imposibilidad: {imposibilidadDibujo2 ? 'Sí' : 'No'}</Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity style={[styles.botonExtra, rechazoDibujo2 && styles.botonExtraSeleccionado]} onPress={() => manejarToggleRechazo(2)}>
+                            <TouchableOpacity style={[styles.botonExtra, rechazoDibujo2 === 1 && styles.botonExtraSeleccionado]} onPress={() => manejarToggleRechazo(2)}>
                                 <Text style={styles.textoBotonExtra}>Rechazo: {rechazoDibujo2 ? 'Sí' : 'No'}</Text>
                             </TouchableOpacity>
 
