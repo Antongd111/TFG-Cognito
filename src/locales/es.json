@@ -48,6 +48,7 @@
     "RespuestaCorrecta": "Respuesta correcta",
     "RC": "RC",
     "GenerarPdf": "Generar PDF de resultados",
+    "GenerarCsv": "Generar CSV de resultados",
     "Completado": "Completado",
 
     "app_name": "Cognito",

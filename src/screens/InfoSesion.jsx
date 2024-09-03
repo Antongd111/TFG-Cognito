@@ -4,8 +4,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../locales";
 import { obtenerResultadosSesion } from '../api/TestApi';
 import Header from "../components/header";
-
 import BotonToPDF from '../components/botonToPDF';
+import BotonToCSV from '../components/botonToCSV';
+
 import { obtenerPaciente } from '../database/db';
 
 const InfoSesion = ({ navigation, route }) => {
@@ -231,6 +232,7 @@ const testsData = [
       </View>
       <View>
         <BotonToPDF datosPaciente={datosPaciente} datosTests={resultados}/>
+        <BotonToCSV datosPaciente={datosPaciente} datosTests={resultados}/>
       </View>
     </View>
   );
