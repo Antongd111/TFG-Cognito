@@ -135,7 +135,7 @@ const Test_11 = ({ navigation, route }) => {
     // Guarda los resultados al finalizar todos los ensayos
     useEffect(() => {
         const guardarResultados = async () => {
-            await guardarResultadosTest_11(route.params.idSesion, correctas, inversiones, rectificaciones, JSON.stringify(tiemposRespuesta), JSON.stringify(seleccionesFiguras));
+            await guardarResultadosTest_11(route.params.idSesion, correctas, inversiones, rectificaciones, tiemposRespuesta, seleccionesFiguras);
             navigation.replace('Test_12', { idSesion: route.params.idSesion });
         };
 
@@ -163,11 +163,16 @@ const Test_11 = ({ navigation, route }) => {
         const esInversion = indice === secuencias[ensayoActual]?.inversion;
 
         // Almacena el tiempo de respuesta y la figura seleccionada
-        setTiemposRespuesta([...tiemposRespuesta, tiempoRespuesta]);
-        setSeleccionesFiguras([...seleccionesFiguras, indice !== null ? indice + 1 : "0"]);
+        
+        if (!entrenamiento){
+            setTiemposRespuesta([...tiemposRespuesta, tiempoRespuesta]);
+            setSeleccionesFiguras([...seleccionesFiguras, indice !== null ? indice + 1 : "0"]);
+        }
 
         if (esCorrecta) {
-            setCorrectas(correctas + 1);
+            if (!entrenamiento){
+                setCorrectas(correctas + 1);
+            }
         } else if (esInversion) {
             setInversiones(inversiones + 1);
         }

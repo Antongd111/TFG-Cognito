@@ -122,9 +122,17 @@ const Test_24 = ({ navigation, route }) => {
             const mediaConocidos = etapasConocidos.reduce((acc, cur) => acc + cur, 0) / etapasConocidos.length;
             const mediaDesconocidos = etapasDesconocidos.reduce((acc, cur) => acc + cur, 0) / etapasDesconocidos.length;
         
-            const diferencia = Math.abs(mediaConocidos - mediaDesconocidos);
+            const diferencia = Math.abs(mediaConocidos - mediaDesconocidos).toFixed(2);
         
-            await guardarResultadosTest_24(route.params.idSesion, etapasEnsayo, mediaConocidos, mediaDesconocidos, diferencia);
+           // Guardar los resultados en la base de datos
+            await guardarResultadosTest_24(
+                route.params.idSesion,
+                JSON.stringify(validezEnsayo), // Convierte a string JSON antes de guardar
+                JSON.stringify(etapasEnsayo),  // Convierte a string JSON antes de guardar
+                mediaConocidos,
+                mediaDesconocidos,
+                diferencia
+            );
         
             navigation.navigate('Test_25', { idSesion: route.params.idSesion });
         };
@@ -143,9 +151,9 @@ const Test_24 = ({ navigation, route }) => {
             <View style={stylesComunes.contenedor_test}>
                 <MenuComponent
                     onToggleVoice={() => { }}
-                    onNavigateHome={() => navigation.navigate('Pacientes')}
-                    onNavigateNext={() => navigation.navigate('Test_25', { idSesion: route.params.idSesion })}
-                    onNavigatePrevious={() => navigation.navigate('Test_23', { idSesion: route.params.idSesion })}
+                    onNavigateHome={() => navigation.replace('Pacientes')}
+                    onNavigateNext={() => navigation.replace('Test_25', { idSesion: route.params.idSesion })}
+                    onNavigatePrevious={() => navigation.replace('Test_23', { idSesion: route.params.idSesion })}
                 />
                 <InstruccionesModal
                     visible={modalVisible}

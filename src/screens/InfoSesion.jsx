@@ -123,7 +123,7 @@ const InfoSesion = ({ navigation, route }) => {
     {
       id: 10,
       nombre: translations.Test10 || 'Test 10',
-      resultado: `Resultados: ${JSON.stringify(resultados.test_10[0]?.resultados || {})}`,
+      resultado: `Resultados: ${JSON.stringify(resultados.test_10[0]?.correctas || [])}, Tiempos de Respuesta: ${JSON.stringify(resultados.test_10[0]?.tiempos_ensayos || [])}`,
     },
     {
       id: 11,

@@ -36,6 +36,7 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
       const test21 = datosTests.test_21[0] || {};
       const test22 = datosTests.test_22[0] || {};
       const test23 = datosTests.test_23[0] || {};
+      const test24 = datosTests.test_24[0] || {};
 
       //TODO: traducir html
       //FIXME: genero
@@ -78,11 +79,11 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
                 <tr>
                   <td>${test1.numero_ensayos || ''}</td>
                   <td>${(() => {
-                    const tiempos = JSON.parse(test1.tiempos_reaccion || "[]");
-                    const total = tiempos.reduce((acc, curr) => acc + curr, 0);
-                    const media = tiempos.length > 0 ? (total / tiempos.length).toFixed(2) : '';
-                    return media;
-                  })()}</td>
+            const tiempos = JSON.parse(test1.tiempos_reaccion || "[]");
+            const total = tiempos.reduce((acc, curr) => acc + curr, 0);
+            const media = tiempos.length > 0 ? (total / tiempos.length).toFixed(2) : '';
+            return media;
+          })()}</td>
                   <td>${test1.errores_anticipacion || '0'}</td>
                   <td>${test1.errores_retrasos || '0'}</td>
                   <td>${test1.errores_tiempo || '0'}</td>
@@ -194,13 +195,20 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
                 <tr>
                   <th>Número de ensayo</th>
                   <th>Validez</th>
+                  <th>Secuencia tocada</th>
                   <th>Tiempo empleado (ms)</th>
                 </tr>
-                ${(test10.resultados && JSON.parse(test10.resultados).map((resultado, index) => `
+                ${(test10.secuencias_tocadas && JSON.parse(test10.secuencias_tocadas).map((resultado, index) => `
                   <tr>
                     <td>${index + 1}</td>
-                    <td>${resultado.validez}</td>
-                    <td>${resultado.tiempo || ''}</td>
+                    <td>  ${JSON.parse(test10.correctas)[index] === true
+                            ? 'Correcto'
+                            : JSON.parse(test10.correctas)[index] === false
+                            ? 'Incorrecto'
+                            : ''}
+                    </td>
+                    <td>${resultado}</td>
+                    <td>${JSON.parse(test10.tiempos_ensayos)[index] || ''}</td>
                   </tr>
                 `).join('')) || ''}
               </table>
@@ -213,9 +221,9 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
                   <th>Errores de tiempo</th>
                 </tr>
                 <tr>
-                  <td>${test11.correctas || ''}</td>
-                  <td>${test11.inversiones || ''}</td>
-                  <td>${test11.rectificaciones || ''}</td>
+                  <td>${test11.correctas || '0'}</td>
+                  <td>${test11.inversiones || '0'}</td>
+                  <td>${test11.rectificaciones || '0'}</td>
                 </tr>
                 <tr>
                   <th>Número de ensayo</th>
@@ -225,8 +233,8 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
                 ${(test11.figuras_seleccionadas && JSON.parse(test11.figuras_seleccionadas).map((figura, index) => `
                   <tr>
                     <td>${index + 1}</td>
-                    <td>${figura.figura}</td>
-                    <td>${figura.tiempo || ''}</td>
+                    <td>${figura}</td>
+                    <td>${JSON.parse(test11.tiempos_respuestas)[index] || ''}</td>
                   </tr>
                 `).join('')) || ''}
               </table>
@@ -235,17 +243,19 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
               <table class="prueba">
                 <tr>
                   <th>Ensayos correctos</th>
+                  <th>Ensayos incorrectos</th>
                   <th>Errores morfológicos</th>
                   <th>Errores fonéticos</th>
                   <th>Errores semánticos</th>
                   <th>Errores de tiempo</th>
                 </tr>
                 <tr>
-                  <td>${test12.correctas || ''}</td>
-                  <td>${test12.errores_morfológicos || ''}</td>
-                  <td>${test12.errores_fonéticos || ''}</td>
-                  <td>${test12.errores_semánticos || ''}</td>
-                  <td>${test12.excedido_tiempo || ''}</td>
+                  <td>${test12.correctas || '0'}</td>
+                  <td>${test12.respuesta_incorrecta || '0'}</td>
+                  <td>${test12.errores_morfologicos || '0'}</td>
+                  <td>${test12.errores_foneticos || '0'}</td>
+                  <td>${test12.errores_semanticos || '0'}</td>
+                  <td>${test12.excedido_tiempo || '0'}</td>
                 </tr>
               </table>
 
@@ -269,6 +279,28 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
                 </tr>
               </table>
 
+              <!-- Resultados por Ensayo -->
+              <table class="prueba">
+                <tr>
+                  <th>Ensayo</th>
+                  <th>Correcto/Incorrecto</th>
+                  <th>Secuencia de Respuestas</th>
+                  <th>Generalizaciones</th>
+                  <th>Respuestas Parciales</th>
+                  <th>Otros Errores</th>
+                  <th>Objetos Asociados Elegidos</th>
+                  <th>Tiempo de Respuesta (ms)</th>
+                </tr>
+                ${JSON.parse(test13.respuesta_secuencia || '[]').map((respuesta, index) => `
+                <tr>
+                  <td>${index + 1}</td>
+                  <td>${respuesta.correcta ? 'Correcto' : 'Incorrecto'}</td>
+                  <td>${respuesta.generalizaciones ? 'Presente' : 'Ausente'}</td>
+                  <td>${respuesta.parciales ? 'Presente' : 'Ausente'}</td>
+                  <td>${respuesta.otros_errores ? 'Presente' : 'Ausente'}</td>
+                </tr>`).join('')}
+              </table>
+
               <h3>Test 14 - Tiempo total y errores</h3>
               <table class="prueba">
                 <tr>
@@ -283,160 +315,176 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
                 </tr>
               </table>
 
-              <h3>Test 17 - Fases de reconocimiento</h3>
-              <table class="prueba">
-                <tr><th colspan="4">FASE 1</th></tr>
-                <tr>
-                  <th>Nombres recordados</th>
-                  <th>Intrusiones</th>
-                  <th>Perseveraciones</th>
-                  <th>Rechazos</th>
-                </tr>
-                <tr>
-                  <td>${test17.nombres_recordados_fase1 || ''}</td>
-                  <td>${test17.intrusiones_fase1 || ''}</td>
-                  <td>${test17.perseveraciones_fase1 || ''}</td>
-                  <td>${test17.rechazos_fase1 || ''}</td>
-                </tr>
-                <tr><th colspan="4">FASE 2</th></tr>
-                <tr>
-                  <th>Nombres recordados</th>
-                  <th>Intrusiones</th>
-                  <th>Perseveraciones</th>
-                  <th>Rechazos</th>
-                </tr>
-                <tr>
-                  <td>${test17.nombres_recordados_fase2 || ''}</td>
-                  <td>${test17.intrusiones_fase2 || ''}</td>
-                  <td>${test17.perseveraciones_fase2 || ''}</td>
-                  <td>${test17.rechazos_fase2 || ''}</td>
-                </tr>
-                <tr><th colspan="3">FASE 3</th></tr>
-                <tr>
-                  <th>Nombres identificados</th>
-                  <th>Errores de identificación</th>
-                  <th>Rechazos</th>
-                </tr>
-                <tr>
-                  <td>${test17.nombres_identificados_fase3 || ''}</td>
-                  <td>${test17.errores_identificados_fase3 || ''}</td>
-                  <td>${test17.rechazos_reconocimiento_fase3 || ''}</td>
-                </tr>
-              </table>
+<h3>Test 17 - Fases de reconocimiento</h3>
+<table class="prueba">
+  <tr><th colspan="4">FASE 1</th></tr>
+  <tr>
+    <th>Nombres recordados</th>
+    <th>Intrusiones</th>
+    <th>Perseveraciones</th>
+    <th>Rechazos</th>
+  </tr>
+  <tr>
+    <td>${test17.nombres_recordados_fase1 || ''}</td>
+    <td>${test17.intrusiones_fase1 || ''}</td>
+    <td>${test17.perseveraciones_fase1 || ''}</td>
+    <td>${test17.rechazos_fase1 || ''}</td>
+  </tr>
+  <tr><th colspan="4">FASE 2</th></tr>
+  <tr>
+    <th>Nombres recordados</th>
+    <th>Intrusiones</th>
+    <th>Perseveraciones</th>
+    <th>Rechazos</th>
+  </tr>
+  <tr>
+    <td>${test17.nombres_recordados_fase2 || ''}</td>
+    <td>${test17.intrusiones_fase2 || ''}</td>
+    <td>${test17.perseveraciones_fase2 || ''}</td>
+    <td>${test17.rechazos_fase2 || ''}</td>
+  </tr>
+  <tr><th colspan="3">FASE 3</th></tr>
+  <tr>
+    <th>Nombres identificados</th>
+    <th>Errores de identificación</th>
+    <th>Rechazos</th>
+  </tr>
+  <tr>
+    <td>${test17.nombres_identificados_fase3 || ''}</td>
+    <td>${test17.errores_identificados_fase3 || ''}</td>
+    <td>${test17.rechazos_reconocimiento_fase3 || ''}</td>
+  </tr>
+</table>
 
-              <h3>Test 18 - Reconocimiento de caras</h3>
-              <table class="prueba">
-                <tr>
-                  <th>Caras reconocidas correctamente</th>
-                  <th>Caras incorrectamente reconocidas</th>
-                  <th>Nombres recordados</th>
-                </tr>
-                <tr>
-                  <td>${test18.caras_reconocidas_correctamente || ''}</td>
-                  <td>${test18.caras_incorrectamente_reconocidas || ''}</td>
-                  <td>${test18.nombres_reconocidos_correctamente || ''}</td>
-                </tr>
-              </table>
+<h3>Test 18 - Reconocimiento de caras</h3>
+<table class="prueba">
+  <tr>
+    <th>Caras reconocidas correctamente</th>
+    <th>Caras incorrectamente reconocidas</th>
+    <th>Nombres reconocidos</th>
+  </tr>
+  <tr>
+    <td>${test18.caras_reconocidas || '0'}</td>
+    <td>${test18.caras_reconocidas_incorrectamente || '0'}</td>
+    <td>${test18.nombres_reconocidos || '0'}</td>
+  </tr>
+</table>
 
-              <h3>Test 19 - Respuestas por intervalo de tiempo</h3>
-              <table class="prueba">
-                <tr>
-                  <th></th>
-                  <th>15 s</th>
-                  <th>30 s</th>
-                  <th>45 s</th>
-                  <th>60 s</th>
-                </tr>
-                <tr><th>Respuestas correctas</th></tr>
-                <tr>${(test19.respuestas_correctas_tiempo && JSON.parse(test19.respuestas_correctas_tiempo).map((res, index) => `<td>${res}</td>`).join('')) || ''}</tr>
-                <tr><th>Intrusiones</th></tr>
-                <tr>${(test19.intrusiones_tiempo && JSON.parse(test19.intrusiones_tiempo).map((res, index) => `<td>${res}</td>`).join('')) || ''}</tr>
-                <tr><th>Perseveraciones</th></tr>
-                <tr>${(test19.perseveraciones_tiempo && JSON.parse(test19.perseveraciones_tiempo).map((res, index) => `<td>${res}</td>`).join('')) || ''}</tr>
-              </table>
+<h3>Test 19 - Respuestas por intervalo de tiempo</h3>
+<table class="prueba">
+  <tr>
+    <th></th>
+    <th>15 s</th>
+    <th>30 s</th>
+    <th>45 s</th>
+    <th>60 s</th>
+  </tr>
+  <tr><td><b>Respuestas correctas</b></td>
+  ${(test19.respuestas_correctas_tiempo && JSON.parse(test19.respuestas_correctas_tiempo).map((res, index) => `<td>${res}</td>`).join('')) || ''}</tr>
 
-              <h3>Test 20 - Respuestas por intervalo de tiempo</h3>
-              <table class="prueba">
-                <tr>
-                  <th></th>
-                  <th>15 s</th>
-                  <th>30 s</th>
-                  <th>45 s</th>
-                  <th>60 s</th>
-                </tr>
-                <tr><th>Respuestas correctas</th></tr>
-                <tr>${(test20.respuestas_correctas_tiempo && JSON.parse(test20.respuestas_correctas_tiempo).map((res, index) => `<td>${res}</td>`).join('')) || ''}</tr>
-                <tr><th>Intrusiones</th></tr>
-                <tr>${(test20.intrusiones_tiempo && JSON.parse(test20.intrusiones_tiempo).map((res, index) => `<td>${res}</td>`).join('')) || ''}</tr>
-                <tr><th>Perseveraciones</th></tr>
-                <tr>${(test20.perseveraciones_tiempo && JSON.parse(test20.perseveraciones_tiempo).map((res, index) => `<td>${res}</td>`).join('')) || ''}</tr>
-              </table>
+  <tr><td><b>Intrusiones</b></td>
+  ${(test19.intrusiones_tiempo && JSON.parse(test19.intrusiones_tiempo).map((res, index) => `<td>${res}</td>`).join('')) || ''}</tr>
+  <tr><td><b>Perseveraciones</b></td>
+  ${(test19.perseveraciones_tiempo && JSON.parse(test19.perseveraciones_tiempo).map((res, index) => `<td>${res}</td>`).join('')) || ''}</tr>
+</table>
 
-              <h3>Test 21 - Secuencias recordadas</h3>
-              <table class="prueba">
-                <tr>
-                  <th>Recordados</th>
-                  <th>Intrusiones</th>
-                  <th>Rechazos</th>
-                </tr>
-                <tr>
-                  <td>${test21.recordados || ''}</td>
-                  <td>${test21.intrusiones || ''}</td>
-                  <td>${test21.rechazos || ''}</td>
-                </tr>
-                <tr>
-                  <th colspan="3">Secuencia recordada</th>
-                </tr>
-                <tr>
-                  <td colspan="3">${(test21.indices_seleccionados && JSON.parse(test21.indices_seleccionados).join(', ')) || ''}</td>
-                </tr>
-              </table>
+<h3>Test 20 - Respuestas por intervalo de tiempo</h3>
+<table class="prueba">
+  <tr>
+    <th></th>
+    <th>15 s</th>
+    <th>30 s</th>
+    <th>45 s</th>
+    <th>60 s</th>
+  </tr>
+  <tr><td><b>Respuestas correctas</b></td>
+  ${(test20.respuestas_correctas_tiempo && JSON.parse(test20.respuestas_correctas_tiempo).map((res, index) => `<td>${res}</td>`).join('')) || ''}</tr>
 
-              <h3>Test 22 - Secuencias recordadas</h3>
-              <table class="prueba">
-                <tr>
-                  <th>Recordados</th>
-                  <th>Intrusiones</th>
-                  <th>Rechazos</th>
-                </tr>
-                <tr>
-                  <td>${test22.recordados || ''}</td>
-                  <td>${test22.intrusiones || ''}</td>
-                  <td>${test22.rechazos || ''}</td>
-                </tr>
-                <tr>
-                  <th colspan="3">Secuencia recordada</th>
-                </tr>
-                <tr>
-                  <td colspan="3">${(test22.indices_seleccionados && JSON.parse(test22.indices_seleccionados).join(', ')) || ''}</td>
-                </tr>
-              </table>
+  <tr><td><b>Intrusiones</b></td>
+  ${(test20.intrusiones_tiempo && JSON.parse(test20.intrusiones_tiempo).map((res, index) => `<td>${res}</td>`).join('')) || ''}</tr>
+  <tr><td><b>Perseveraciones</b></td>
+  ${(test20.perseveraciones_tiempo && JSON.parse(test20.perseveraciones_tiempo).map((res, index) => `<td>${res}</td>`).join('')) || ''}</tr>
+</table>
 
-              <h3>Test 23 - Respuestas y tiempos</h3>
-              <table class="prueba">
-                <tr>
-                  <th>Respuestas correctas</th>
-                  <th>Respuestas incorrectas</th>
-                  <th>Excesos de tiempo</th>
-                </tr>
-                <tr>
-                  <td>${test23.correctas || ''}</td>
-                  <td>${test23.errores || ''}</td>
-                  <td>${test23.excesos_tiempo || ''}</td>
-                </tr>
-                <tr>
-                  <th>Número de ensayo</th>
-                  <th>Respuesta escogida</th>
-                  <th>Tiempo empleado (ms)</th>
-                </tr>
-                ${(test23.respuestas && JSON.parse(test23.respuestas).map((respuesta, index) => `
-                  <tr>
-                    <td>${index + 1}</td>
-                    <td>${respuesta.respuesta}</td>
-                    <td>${respuesta.tiempo || ''}</td>
-                  </tr>
-                `).join('')) || ''}
-              </table>
+<h3>Test 21 - Intrusiones y rechazos</h3>
+<table class="prueba">
+  <tr>
+    <th>Intrusiones</th>
+    <th>Rechazos</th>
+  </tr>
+  <tr>
+    <td>${test21.intrusiones || ''}</td>
+    <td>${test21.rechazos || ''}</td>
+  </tr>
+  <tr>
+    <th colspan="2">Índices seleccionados</th>
+  </tr>
+  <tr>
+    <td colspan="2">${(test21.indices_seleccionados && JSON.parse(test21.indices_seleccionados).join(', ')) || ''}</td>
+  </tr>
+</table>
+
+<h3>Test 22 - Intrusiones y rechazos</h3>
+<table class="prueba">
+  <tr>
+    <th>Intrusiones</th>
+    <th>Rechazos</th>
+  </tr>
+  <tr>
+    <td>${test22.intrusiones || ''}</td>
+    <td>${test22.rechazos || ''}</td>
+  </tr>
+  <tr>
+    <th colspan="2">Índices seleccionados</th>
+  </tr>
+  <tr>
+    <td colspan="2">${(test22.indices_seleccionados && JSON.parse(test22.indices_seleccionados).join(', ')) || ''}</td>
+  </tr>
+</table>
+
+<h3>Test 23 - Respuestas y tiempos</h3>
+<table class="prueba">
+  <tr>
+    <th>Respuestas correctas</th>
+    <th>Errores</th>
+    <th>Excesos de tiempo</th>
+  </tr>
+  <tr>
+    <td>${test23.correctas || ''}</td>
+    <td>${test23.errores || ''}</td>
+    <td>${test23.excesos_tiempo || ''}</td>
+  </tr>
+  <tr>
+    <th>Número de ensayo</th>
+    <th>Respuesta escogida</th>
+    <th>Tiempo empleado (ms)</th>
+  </tr>
+  ${(test23.respuestas && JSON.parse(test23.respuestas).map((respuesta, index) => `
+    <tr>
+      <td>${index + 1}</td>
+      <td>${respuesta.respuesta}</td>
+      <td>${respuesta.tiempo || ''}</td>
+    </tr>
+  `).join('')) || ''}
+</table>
+
+<h3>Test 24 - Reconocimiento de Nombres</h3>
+<table class="prueba">
+  <tr>
+    <th>Éxito o Fracaso por Ensayo</th>
+    <th>Número de Reconstrucciones</th>
+    <th>Media Conocidos</th>
+    <th>Media Desconocidos</th>
+    <th>Diferencia de Medias</th>
+  </tr>
+  <tr>
+    <td>${(test24.validez_ensayo && JSON.parse(test24.validez_ensayo).map((valido, index) => `<p>Ensayo ${index + 1}: ${valido ? 'Éxito' : 'Fracaso'}</p>`).join('')) || ''}</td>
+    <td>${(test24.etapas_ensayo && JSON.parse(test24.etapas_ensayo).map((etapa, index) => `<p>Ensayo ${index + 1}: ${etapa}</p>`).join('')) || ''}</td>
+    <td>${test24.media_conocidos || ''}</td>
+    <td>${test24.media_desconocidos || ''}</td>
+    <td>${test24.diferencia || ''}</td>
+  </tr>
+</table>
             </body>
           </html>
         `

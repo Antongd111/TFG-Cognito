@@ -240,7 +240,7 @@ const Test_13 = ({ navigation, route }) => {
                 otrosErrores,
                 excesoTiempoObj,
                 excesoTiempoAsoc,
-                JSON.stringify(respuestaSecuencia)
+                respuestaSecuencia
             );
             navigation.replace('Test_14', { idSesion: route.params.idSesion });
         };

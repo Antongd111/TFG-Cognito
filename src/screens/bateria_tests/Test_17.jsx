@@ -34,12 +34,14 @@ const Test_17 = ({ navigation, route }) => {
     /******************** CARGA DE TRADUCCIONES ********************/
     const [translations, setTranslations] = useState({});
     const isFocused = useIsFocused();
+    const [idioma, setIdioma] = useState('es');
 
     useEffect(() => {
         const loadLanguage = async () => {
             const savedLanguage = await AsyncStorage.getItem('language');
             const lang = savedLanguage || 'es';
             setTranslations(getTranslation(lang));
+            setIdioma(lang);
         };
 
         if (isFocused) {
@@ -256,9 +258,9 @@ const Test_17 = ({ navigation, route }) => {
                                 />
                             </View>
                             <View style={styles.listaContainer}>
-                                <Text style={styles.sectionHeader}>C</Text>
+                                <Text style={styles.sectionHeader}>{idioma === 'es' ? 'G' : 'C'}</Text>
                                 <FlatList
-                                    data={nombresAprendidos.filter((nombre) => nombre.startsWith('C'))}
+                                    data={nombresAprendidos.filter((nombre) => idioma === 'es' ? nombre.startsWith('G') : nombre.startsWith('C'))}
                                     renderItem={renderNombreItemFase2}
                                     keyExtractor={(item) => item}
                                     style={styles.nombreLista}

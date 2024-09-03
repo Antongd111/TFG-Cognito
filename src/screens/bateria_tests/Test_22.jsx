@@ -94,7 +94,7 @@ const Test_21 = ({ navigation, route }) => {
     };
 
     const guardarResultados = async () => {
-        await guardarResultadosTest_22(route.params.idSesion, intrusiones, rechazos, JSON.stringify(indicesSeleccionados));
+        await guardarResultadosTest_22(route.params.idSesion, intrusiones, rechazos, indicesSeleccionados);
         navigation.replace('Test_23', { idSesion: route.params.idSesion });
     };
 

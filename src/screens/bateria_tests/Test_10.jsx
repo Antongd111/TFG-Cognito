@@ -1,5 +1,3 @@
-//TODO: guardar bien resultados
-
 import React, { useState, useEffect } from 'react';
 import { View, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
@@ -39,9 +37,13 @@ const Test_10 = ({ navigation, route }) => {
     const [secuenciaActual, setSecuenciaActual] = useState([]);
     const [trayectoMostrado, setTrayectoMostrado] = useState(false);
     const [inicioEnsayo, setInicioEnsayo] = useState(null);
-    const [resultados, setResultados] = useState([]);
     const [payasoPosicion, setPayasoPosicion] = useState(null);
     const [mostrarModalInicioPruebas, setMostrarModalInicioPruebas] = useState(false);
+
+    // RESULTADOS
+    const [secuenciasTocadas, setSecuenciasTocadas] = useState([]);
+    const [resultadosCorrectos, setResultadosCorrectos] = useState([]);
+    const [tiemposEnsayo, setTiemposEnsayo] = useState([]);
 
     // Definición de los cuadrados en el grid
     const cuadrados = Array.from({ length: 9 }, (_, i) => i);
@@ -88,10 +90,10 @@ const Test_10 = ({ navigation, route }) => {
      */
     useEffect(() => {
         const guardarResultadosBD = async () => {
-            await guardarResultadosTest_10(route.params.idSesion, resultados);
+            await guardarResultadosTest_10(route.params.idSesion, secuenciasTocadas, resultadosCorrectos, tiemposEnsayo);
             navigation.replace('Test_11', { idSesion: route.params.idSesion });
         };
-
+    
         if (fase === 2 && ensayoActual === secuenciasPrueba.length) {
             guardarResultadosBD();
         }
@@ -104,9 +106,9 @@ const Test_10 = ({ navigation, route }) => {
     const mostrarTrayecto = async (secuencia) => {
         for (let i = 0; i < secuencia.length; i++) {
             setPayasoPosicion(secuencia[i]);
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await new Promise((resolve) => setTimeout(resolve, 10));
             setPayasoPosicion(null);
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await new Promise((resolve) => setTimeout(resolve, 10));
         }
 
         await playSound();
@@ -140,19 +142,13 @@ const Test_10 = ({ navigation, route }) => {
     const guardarResultados = async (nuevosCuadrados) => {
         const finEnsayo = Date.now();
         const tiempoEnsayo = finEnsayo - inicioEnsayo;
-
+    
         const esCorrecto = secuenciaActual.every((cuadrado, i) => nuevosCuadrados[i] === cuadrado);
-
+    
         if (fase === 2) { // Solo guardar los resultados de la fase de pruebas
-            setResultados(prev => [
-                ...prev,
-                {
-                    secuenciaMostrada: secuenciaActual,
-                    secuenciaTocada: nuevosCuadrados,
-                    correcta: esCorrecto,
-                    tiempo: tiempoEnsayo
-                }
-            ]);
+            setSecuenciasTocadas(prev => [...prev, nuevosCuadrados]);
+            setResultadosCorrectos(prev => [...prev, esCorrecto]);
+            setTiemposEnsayo(prev => [...prev, tiempoEnsayo]);
         }
     };
 

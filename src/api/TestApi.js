@@ -86,9 +86,9 @@ export const guardarResultadosTest_8 = async (id_sesion, pronunciacionesCorrecta
     }
 };
 
-export const guardarResultadosTest_10 = async (id_sesion) => {
+export const guardarResultadosTest_10 = async (idSesion, secuenciasTocadas, correctas, tiemposEnsayos) => {
     try {
-        const result = await BD_GuardarResultadosTest_10(id_sesion);
+        const result = await BD_GuardarResultadosTest_10(idSesion, secuenciasTocadas, correctas, tiemposEnsayos);
         return result;
     } catch (error) {
         throw error;
@@ -234,9 +234,9 @@ export const guardarResultadosTest_23 = async (idSesion, correctas, errores, exc
     }
 };
 
-export const guardarResultadosTest_24 = async (id_sesion, resultados, mediaConocidos, mediaDesconocidos, diferencia) => {
+export const guardarResultadosTest_24 = async (id_sesion, validezEnsayo, etapasEnsayo, mediaConocidos, mediaDesconocidos, diferencia) => {
     try {
-        const result = await BD_GuardarResultadosTest_24(id_sesion, resultados, mediaConocidos, mediaDesconocidos, diferencia);
+        const result = await BD_GuardarResultadosTest_24(id_sesion, validezEnsayo, etapasEnsayo, mediaConocidos, mediaDesconocidos, diferencia);
         return result;
     } catch (error) {
         throw error;

@@ -123,7 +123,9 @@ const initDB = async () => {
     CREATE TABLE IF NOT EXISTS Test_10 (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       id_sesion INTEGER NOT NULL UNIQUE,
-      resultados TEXT NOT NULL,
+      secuencias_tocadas TEXT NOT NULL,
+      correctas TEXT NOT NULL,
+      tiempos_ensayos TEXT NOT NULL,
       FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
     );
 
@@ -142,9 +144,9 @@ const initDB = async () => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       id_sesion INTEGER NOT NULL UNIQUE,
       correctas INTEGER NOT NULL,
-      errores_morfológicos INTEGER NOT NULL,
-      errores_fonéticos INTEGER NOT NULL,
-      errores_semánticos INTEGER NOT NULL,
+      errores_morfologicos INTEGER NOT NULL,
+      errores_foneticos INTEGER NOT NULL,
+      errores_semanticos INTEGER NOT NULL,
       excedido_tiempo INTEGER NOT NULL,
       respuesta_incorrecta INTEGER NOT NULL,
       FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
@@ -213,9 +215,9 @@ const initDB = async () => {
   CREATE TABLE IF NOT EXISTS Test_18 (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       id_sesion INTEGER NOT NULL UNIQUE,
-      correctas INTEGER NOT NULL,
-      errores INTEGER NOT NULL,
-      tiempo_total INTEGER NOT NULL,
+      caras_reconocidas INTEGER NOT NULL,
+      caras_reconocidas_incorrectamente INTEGER NOT NULL,
+      nombres_reconocidos INTEGER NOT NULL,
       FOREIGN KEY (id_sesion) REFERENCES SesionTest (id) ON DELETE CASCADE
   );
   
@@ -497,14 +499,14 @@ export const guardarResultadosTest_8 = async (id_sesion, pronunciacionesCorrecta
   }
 };
 
-export const guardarResultadosTest_10 = async (idSesion, resultados) => {
+export const guardarResultadosTest_10 = async (idSesion, secuenciasTocadas, correctas, tiemposEnsayos) => {
   const db = await dbPromise;
-  console.log("Guardando resultados del Test 10:", idSesion, resultados);
+  console.log("Guardando resultados del Test 10:", idSesion, secuenciasTocadas, correctas, tiemposEnsayos);
   try {
     const statement = await db.prepareAsync(
-      'INSERT OR REPLACE INTO Test_10 (id_sesion, resultados) VALUES ($id_sesion, $resultados)'
+      'INSERT OR REPLACE INTO Test_10 (id_sesion, secuencias_tocadas, correctas, tiempos_ensayos) VALUES ($id_sesion, $secuencias_tocadas, $correctas, $tiempos_ensayos)'
     );
-    const result = await statement.executeAsync({ $id_sesion: idSesion, $resultados: JSON.stringify(resultados) });
+    const result = await statement.executeAsync({ $id_sesion: idSesion, $secuencias_tocadas: JSON.stringify(secuenciasTocadas), $correctas: JSON.stringify(correctas), $tiempos_ensayos: JSON.stringify(tiemposEnsayos) });
     await statement.finalizeAsync();
     console.log("Resultados del Test 10 guardados:", result.lastInsertRowId);
     return result.lastInsertRowId;
@@ -531,14 +533,14 @@ export const guardarResultadosTest_11 = async (idSesion, correctas, inversiones,
   }
 };
 
-export const guardarResultadosTest_12 = async (idSesion, correctas, erroresMorfológicos, erroresFonéticos, erroresSemánticos, excedidoTiempo, respuestaIncorrecta) => {
+export const guardarResultadosTest_12 = async (idSesion, correctas, erroresMorfologicos, erroresFoneticos, erroresSemanticos, excedidoTiempo, respuestaIncorrecta) => {
   const db = await dbPromise;
-  console.log("Guardando resultados del Test 12:", idSesion, correctas, erroresMorfológicos, erroresFonéticos, erroresSemánticos, excedidoTiempo, respuestaIncorrecta);
+  console.log("Guardando resultados del Test 12:", idSesion, correctas, erroresMorfologicos, erroresFoneticos, erroresSemanticos, excedidoTiempo, respuestaIncorrecta);
   try {
     const statement = await db.prepareAsync(
-      'INSERT OR REPLACE INTO Test_12 (id_sesion, correctas, errores_morfológicos, errores_fonéticos, errores_semánticos, excedido_tiempo, respuesta_incorrecta) VALUES ($id_sesion, $correctas, $errores_morfológicos, $errores_fonéticos, $errores_semánticos, $excedido_tiempo, $respuesta_incorrecta)'
+      'INSERT OR REPLACE INTO Test_12 (id_sesion, correctas, errores_morfologicos, errores_foneticos, errores_semanticos, excedido_tiempo, respuesta_incorrecta) VALUES ($id_sesion, $correctas, $errores_morfologicos, $errores_foneticos, $errores_semanticos, $excedido_tiempo, $respuesta_incorrecta)'
     );
-    const result = await statement.executeAsync({ $id_sesion: idSesion, $correctas: correctas, $errores_morfológicos: erroresMorfológicos, $errores_fonéticos: erroresFonéticos, $errores_semánticos: erroresSemánticos, $excedido_tiempo: excedidoTiempo, $respuesta_incorrecta: respuestaIncorrecta });
+    const result = await statement.executeAsync({ $id_sesion: idSesion, $correctas: correctas, $errores_morfologicos: erroresMorfologicos, $errores_foneticos: erroresFoneticos, $errores_semanticos: erroresSemanticos, $excedido_tiempo: excedidoTiempo, $respuesta_incorrecta: respuestaIncorrecta });
     await statement.finalizeAsync();
     console.log("Resultados del Test 12 guardados:", result.lastInsertRowId);
     return result.lastInsertRowId;
@@ -687,14 +689,19 @@ export const guardarResultadosTest_17 = async (
   }
 };
 
-export const guardarResultadosTest_18 = async (idSesion, carasReconocidasCorrectamente, carasIncorrectamenteReconocidas, nombresReconocidosCorrectamente) => {
+export const guardarResultadosTest_18 = async (idSesion, carasReconocidas, carasReconocidasIncorrectamente, nombresReconocidos) => {
   const db = await dbPromise;
-  console.log("Guardando resultados del Test 18:", idSesion, carasReconocidasCorrectamente, carasIncorrectamenteReconocidas, nombresReconocidosCorrectamente);
+  console.log("Guardando resultados del Test 18:", idSesion, carasReconocidas, carasReconocidasIncorrectamente, nombresReconocidos);
   try {
     const statement = await db.prepareAsync(
-      'INSERT OR REPLACE INTO Test_18 (id_sesion, caras_reconocidas_correctamente, caras_incorrectamente_reconocidas, nombres_reconocidos_correctamente) VALUES ($id_sesion, $caras_reconocidas_correctamente, $caras_incorrectamente_reconocidas, $nombres_reconocidos_correctamente)'
+      'INSERT OR REPLACE INTO Test_18 (id_sesion, caras_reconocidas, caras_reconocidas_incorrectamente, nombres_reconocidos) VALUES ($id_sesion, $caras_reconocidas, $caras_reconocidas_incorrectamente, $nombres_reconocidos)'
     );
-    const result = await statement.executeAsync({ $id_sesion: idSesion, $caras_reconocidas_correctamente: carasReconocidasCorrectamente, $caras_incorrectamente_reconocidas: carasIncorrectamenteReconocidas, $nombres_reconocidos_correctamente: nombresReconocidosCorrectamente });
+    const result = await statement.executeAsync({
+      $id_sesion: idSesion,
+      $caras_reconocidas: carasReconocidas,
+      $caras_reconocidas_incorrectamente: carasReconocidasIncorrectamente,
+      $nombres_reconocidos: nombresReconocidos
+    });
     await statement.finalizeAsync();
     console.log("Resultados del Test 18 guardados:", result.lastInsertRowId);
     return result.lastInsertRowId;
