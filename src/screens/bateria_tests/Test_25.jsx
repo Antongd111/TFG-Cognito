@@ -17,13 +17,13 @@ const Test_25 = ({ navigation, route }) => {
     const [aristasDibujo1, setAristasDibujo1] = useState(Array(13).fill('0'));
     const [aristasDibujo2, setAristasDibujo2] = useState(Array(21).fill('0'));
 
-    const [imposibilidadDibujo1, setImposibilidadDibujo1] = useState(0); // Cambiado a 0
-    const [rechazoDibujo1, setRechazoDibujo1] = useState(0); // Cambiado a 0
-    const [perspectivaDibujo1, setPerspectivaDibujo1] = useState(1); // Ya estaba en 0 o 1
+    const [imposibilidadDibujo1, setImposibilidadDibujo1] = useState(0); 
+    const [rechazoDibujo1, setRechazoDibujo1] = useState(0); 
+    const [perspectivaDibujo1, setPerspectivaDibujo1] = useState(1); 
 
-    const [imposibilidadDibujo2, setImposibilidadDibujo2] = useState(0); // Cambiado a 0
-    const [rechazoDibujo2, setRechazoDibujo2] = useState(0); // Cambiado a 0
-    const [perspectivaDibujo2, setPerspectivaDibujo2] = useState(1); // Ya estaba en 0 o 1
+    const [imposibilidadDibujo2, setImposibilidadDibujo2] = useState(0); 
+    const [rechazoDibujo2, setRechazoDibujo2] = useState(0); 
+    const [perspectivaDibujo2, setPerspectivaDibujo2] = useState(1); 
 
     const [evaluacionCompleta, setEvaluacionCompleta] = useState(false);
     const [translations, setTranslations] = useState({});
@@ -108,7 +108,7 @@ const Test_25 = ({ navigation, route }) => {
         <View style={stylesComunes.borde_tests}>
             <View style={stylesComunes.contenedor_test}>
                 <MenuComponent
-                    onToggleVoice={() => { }}
+                    
                     onNavigateHome={() => navigation.navigate('Pacientes')}
                     onNavigateNext={() => navigation.navigate('Pacientes')}
                     onNavigatePrevious={() => navigation.navigate('Test_24', { idSesion: route.params.idSesion })}

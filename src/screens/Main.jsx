@@ -9,34 +9,33 @@ import ModificarPaciente from "./ModificarPaciente";
 import InfoSesion from "./InfoSesion";
 import Ajustes from "./Ajustes";
 import Test_1 from "./bateria_tests/Test_1";  
-import Test_2 from "./bateria_tests/Test_2";  //Revisado
-import Test_3 from "./bateria_tests/Test_3";  //Revisado
-import Test_4 from "./bateria_tests/Test_4";  //Revisado
-import Test_5 from "./bateria_tests/Test_5";  //Revisado
-import Test_6 from "./bateria_tests/Test_6";  //Revisado
-import Test_7 from "./bateria_tests/Test_7";  //Revisado
-import Test_8 from "./bateria_tests/Test_8";  //Revisado
-import Test_9 from "./bateria_tests/Test_9";  //Revisado
-import Test_10 from "./bateria_tests/Test_10";  //Revisado sin BD
-import Test_11 from "./bateria_tests/Test_11";  //Revisado sin BD
-import Test_12 from "./bateria_tests/Test_12";  // Revisado sin BD
-import Test_13 from "./bateria_tests/Test_13";  // Revisado sin BD
-import Test_14 from "./bateria_tests/Test_14";  // Revisado sin BD
-import Test_15 from "./bateria_tests/Test_15";  // Revisado
-import Test_16 from "./bateria_tests/Test_16";  // Revisado
-import Test_17 from "./bateria_tests/Test_17";  // Revisado sin BD
-import Test_18 from "./bateria_tests/Test_18";  // Revisado sin BD
-import Test_19 from "./bateria_tests/Test_19";  // Revisado sin BD
-import Test_20 from "./bateria_tests/Test_20";  // Revisado sin BD
-import Test_21 from "./bateria_tests/Test_21";  // Revisado sin BD
-import Test_22 from "./bateria_tests/Test_22";  // Revisado sin BD
-import Test_23 from "./bateria_tests/Test_23";  // Revisado sin BD
+import Test_2 from "./bateria_tests/Test_2";  
+import Test_3 from "./bateria_tests/Test_3";  
+import Test_4 from "./bateria_tests/Test_4";  
+import Test_5 from "./bateria_tests/Test_5";  
+import Test_6 from "./bateria_tests/Test_6";  
+import Test_7 from "./bateria_tests/Test_7";  
+import Test_8 from "./bateria_tests/Test_8";  
+import Test_9 from "./bateria_tests/Test_9";  
+import Test_10 from "./bateria_tests/Test_10";  
+import Test_11 from "./bateria_tests/Test_11";  
+import Test_12 from "./bateria_tests/Test_12";  
+import Test_13 from "./bateria_tests/Test_13";  
+import Test_14 from "./bateria_tests/Test_14";  
+import Test_15 from "./bateria_tests/Test_15";  
+import Test_16 from "./bateria_tests/Test_16";  
+import Test_17 from "./bateria_tests/Test_17";  
+import Test_18 from "./bateria_tests/Test_18";  
+import Test_19 from "./bateria_tests/Test_19";  
+import Test_20 from "./bateria_tests/Test_20";  
+import Test_21 from "./bateria_tests/Test_21";  
+import Test_22 from "./bateria_tests/Test_22";  
+import Test_23 from "./bateria_tests/Test_23";  
 import Test_24 from "./bateria_tests/Test_24";
 import Test_25 from "./bateria_tests/Test_25";
 
 const Stack = createNativeStackNavigator();
 
-//TODO: Se puede usar replace en lugar de navigate para que no se guarde en la pila de navegación, y que asi no se guarden los datos de la sesión
 const Main = () => {
   return (
     <View style={{ flex: 1, backgroundColor: '#F2E8E1' }}>

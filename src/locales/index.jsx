@@ -1,11 +1,11 @@
 import es from './es.json';
 import en from './en.json';
-// import fr from './fr.json';
+import fr from './fr.json';
 
 const translations = {
   es,
   en,
-  // fr
+  fr
 };
 
 export const getTranslation = (language) => {

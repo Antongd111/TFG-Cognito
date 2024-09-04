@@ -1,4 +1,6 @@
 {
+    "Idioma": "es",
+    "Narrador": "Narrador",
     "pdfIndicesSeleccionados": "Índices seleccionados",
     "pdfExito": "Éxito",
     "pdfFracaso": "Fracaso",
@@ -101,7 +103,7 @@
     "Si": "Sí",
     "No": "No",
     "pr17ItemStart": "Por favor, gire la pantalla hacia usted para que el sujeto no la vea. Ahora quiero que me diga todos los nombres de persona que le pedí que aprendiera antes.",
-    "pr17ItemStart2": "Continúe con la pantalla girada hacia usted. Ahora vamos a continuar con la tarea. Dígame los nombres que empiezan por M, luego por J, y finalmente por C.",
+    "pr17ItemStart2": "Continúe con la pantalla girada hacia usted. Ahora vamos a continuar con la tarea. Dígame los nombres que empiezan por M, luego por J, y finalmente por G.",
     "pr17ItemStart3": "Aquí tiene dos listas de nombres, todos los nombres que vimos anteriormente están aquí pero se han añadido otros, usted únicamente debe tocar a aquellos que ya vio.",
     "pr18CaraVista": "¿Ha visto esta cara antes?",
     "pr18MostrarNombre": "Mostrar nombre",

@@ -1,8 +1,9 @@
 // MenuComponent.js
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const MenuComponent = ({ onToggleVoice, onNavigateHome, onExitTest, onNavigateNext, onNavigatePrevious }) => {
+const MenuComponent = ({ onNavigateHome, onNavigateNext, onNavigatePrevious }) => {
   const [menuVisible, setMenuVisible] = useState(false);
 
   return (
@@ -12,17 +13,21 @@ const MenuComponent = ({ onToggleVoice, onNavigateHome, onExitTest, onNavigateNe
       </TouchableOpacity>
       {menuVisible && (
         <View style={styles.dropdown}>
-          <TouchableOpacity onPress={onToggleVoice}>
-            <Text style={styles.dropdownText}>Activar voz</Text>
+          <TouchableOpacity onPress={async () => {
+              const currentVoiceState = await AsyncStorage.getItem('voiceEnabled');
+              const newVoiceState = currentVoiceState === 'true' ? 'false' : 'true';
+              await AsyncStorage.setItem('voiceEnabled', newVoiceState);
+          }}>
+            <Text style={styles.dropdownText}>🔊</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={onNavigateHome}>
-            <Text style={styles.dropdownText}>Volver al menú</Text>
+            <Text style={styles.dropdownText}>🏠</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={onNavigatePrevious}>
-            <Text style={styles.dropdownText}>Test Anterior</Text>
+            <Text style={styles.dropdownText}>⬅️</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={onNavigateNext}>
-            <Text style={styles.dropdownText}>Siguiente test</Text>
+            <Text style={styles.dropdownText}>➡️</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -45,7 +50,7 @@ const styles = StyleSheet.create({
   },
   menuText: {
     color: 'white',
-    fontSize: 24,
+    fontSize: 30,
   },
   dropdown: {
     backgroundColor: 'white',
@@ -54,7 +59,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   dropdownText: {
-    fontSize: 16,
+    fontSize: 30,
     marginVertical: 5,
   }
 });

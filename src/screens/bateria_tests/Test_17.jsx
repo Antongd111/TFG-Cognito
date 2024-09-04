@@ -198,7 +198,7 @@ const Test_17 = ({ navigation, route }) => {
         <View style={stylesComunes.borde_tests}>
             <View style={stylesComunes.contenedor_test}>
                 <MenuComponent
-                    onToggleVoice={() => { }}
+                    
                     onNavigateHome={() => navigation.replace('Pacientes')}
                     onNavigateNext={() => navigation.replace('Test_18', { idSesion: route.params.idSesion })}
                     onNavigatePrevious={() => navigation.replace('Test_16', { idSesion: route.params.idSesion })}

@@ -93,7 +93,7 @@ const Test_19 = ({ navigation, route }) => {
         <View style={stylesComunes.borde_tests}>
             <View style={stylesComunes.contenedor_test}>
                 <MenuComponent
-                    onToggleVoice={() => { }}
+                    
                     onNavigateHome={() => navigation.navigate('Pacientes')}
                     onNavigateNext={() => navigation.navigate('Test_20', { idSesion: route.params.idSesion })}
                     onNavigatePrevious={() => navigation.navigate('Test_18', { idSesion: route.params.idSesion })}

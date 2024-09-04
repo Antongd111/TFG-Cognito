@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { Text, View, TouchableOpacity, StyleSheet, Alert, Switch } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '../components/header';
 import stylesComunes from '../styles/ComunStyles';
@@ -8,16 +8,20 @@ import { getTranslation } from "../locales";
 const Ajustes = ({ navigation }) => {
     const [language, setLanguage] = useState('es'); // Manejaremos solo un estado para el idioma
     const [translations, setTranslations] = useState({});
+    const [voiceEnabled, setVoiceEnabled] = useState(false); // Estado para el narrador
 
     useEffect(() => {
-        const loadLanguage = async () => {
+        const loadSettings = async () => {
             const savedLanguage = await AsyncStorage.getItem('language');
             const lang = savedLanguage || 'es'; // Usa 'es' como valor predeterminado
             setLanguage(lang);
             setTranslations(getTranslation(lang)); // Carga las traducciones del idioma
+
+            const savedVoiceEnabled = await AsyncStorage.getItem('voiceEnabled');
+            setVoiceEnabled(savedVoiceEnabled === 'true'); // Carga el estado del narrador
         };
 
-        loadLanguage();
+        loadSettings();
     }, []);
 
     const handleLanguageChange = async (newLanguage) => {
@@ -26,11 +30,17 @@ const Ajustes = ({ navigation }) => {
         await AsyncStorage.setItem('language', newLanguage); // Guarda el idioma seleccionado
     };
 
+    const toggleVoice = async (value) => {
+        setVoiceEnabled(value);
+        await AsyncStorage.setItem('voiceEnabled', value.toString()); // Guarda el estado del narrador
+    };
+
     const resetSettings = async () => {
         await AsyncStorage.clear();
         const defaultLanguage = 'es';
         setLanguage(defaultLanguage);
         setTranslations(getTranslation(defaultLanguage)); // Resetea a las traducciones por defecto
+        setVoiceEnabled(false); // Restablece el narrador a desactivado
         Alert.alert("Configuración Restablecida", "La configuración ha sido restablecida a los valores predeterminados.");
     };
 
@@ -65,6 +75,16 @@ const Ajustes = ({ navigation }) => {
                             </TouchableOpacity>
                         </View>
                     </View>
+
+                    {/* Ajuste para habilitar o deshabilitar el narrador */}
+                    <View style={styles.ajusteVoz}>
+                        <Text style={styles.settingLabel}>{translations.Narrador}</Text>
+                        <Switch
+                            onValueChange={toggleVoice}
+                            value={voiceEnabled}
+                            trackColor={{ false: "#767577", true: "#D2B48C" }}
+                        />
+                    </View>
                 </View>
 
                 <View style={styles.botonera}>
@@ -72,7 +92,7 @@ const Ajustes = ({ navigation }) => {
                         <Text style={styles.resetButtonText}>{translations.ReestablecerAjustes}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[stylesComunes.boton, { width: '40%' }]} onPress={() => navigation.goBack()}>
-                        <Text style={[stylesComunes.textoBoton, {fontWeight: 'bold'}]}>{translations["Volver"]}</Text>
+                        <Text style={[stylesComunes.textoBoton, { fontWeight: 'bold' }]}>{translations["Volver"]}</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -99,7 +119,6 @@ const styles = StyleSheet.create({
     ajustes: {
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-between',
         height: '80%',
     },
     ajuste: {
@@ -107,6 +126,14 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         width: '50%',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    ajusteVoz: {
+        marginTop: 50,
+        display: 'flex',
+        flexDirection: 'row',
+        width: '20%',
         alignItems: 'center',
         justifyContent: 'space-between',
     },
