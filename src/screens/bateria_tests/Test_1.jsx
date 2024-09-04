@@ -81,7 +81,7 @@ const Test_1 = ({ navigation, route }) => {
   }, [payasoVisible]);
 
   useEffect(() => {
-    if (tiemposReaccion.length === 12 && ensayosCompletados === 36) {
+    if (tiemposReaccion.length === 13 && ensayosCompletados === 36) {
       almacenarResultados();
     }
   }, [ensayosCompletados]);
@@ -119,7 +119,7 @@ const Test_1 = ({ navigation, route }) => {
    * almacenan resultados.
    */
   const iniciarEnsayo = () => {
-    if (tiemposReaccion.length < 12 && ensayosCompletados < 36) {
+    if (tiemposReaccion.length < 13 && ensayosCompletados < 36) {
       mostrarPayaso();
     }
   };

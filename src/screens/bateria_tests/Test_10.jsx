@@ -106,9 +106,9 @@ const Test_10 = ({ navigation, route }) => {
     const mostrarTrayecto = async (secuencia) => {
         for (let i = 0; i < secuencia.length; i++) {
             setPayasoPosicion(secuencia[i]);
-            await new Promise((resolve) => setTimeout(resolve, 10));
+            await new Promise((resolve) => setTimeout(resolve, 1000));
             setPayasoPosicion(null);
-            await new Promise((resolve) => setTimeout(resolve, 10));
+            await new Promise((resolve) => setTimeout(resolve, 1000));
         }
 
         await playSound();

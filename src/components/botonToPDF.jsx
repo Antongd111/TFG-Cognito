@@ -94,14 +94,14 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
             </style>
           </head>
           <body>
-            <h1>Batería de tests para detección de desarrollo cognitivo</h1>
-            <h2>Resultados de la sesión - ${fechaSesion}</h2>
+            <h1>${translations.Titulo}</h1>
+            <h2>${translations.ResultadosSesion} - ${fechaSesion}</h2>
             <table class="datosPaciente">
               <tr><th colspan="2">${translations.FichaPaciente}</th></tr>
               <tr><td><b>${translations.Identificacion}:</b></td><td>${identificacion}</td></tr>
               <tr><td><b>${translations.Nombre}:</b></td><td>${nombre} ${apellidos}</td></tr>
               <tr><td><b>${translations.FechaNacimiento}:</b></td><td>${fechaFormateada}</td></tr>
-              <tr><td><b>${translations.Sexo}:</b></td><td>${sexo == 'M' ? 'Hombre' : 'Mujer'}</td></tr>
+              <tr><td><b>${translations.Sexo}:</b></td><td>${sexo == 'M' ? translations.Hombre : translations.Mujer}</td></tr>
               <tr><td colspan="2" class="observaciones"><b>${translations.Observaciones}</b></td></tr>
               <tr><td colspan="2">${observaciones}</td></tr>
             </table>

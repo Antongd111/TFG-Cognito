@@ -69,12 +69,12 @@ const BotonToCSV = ({ datosPaciente, datosTests }) => {
 
       const header = [];
       const rows = [
-        ['Fecha de test', '', fechaSesion],
-        ['Identificacion', '', identificacion],
-        ['Nombre', '', `${nombre} ${apellidos}`],
-        ['Fecha de nacimiento', '', fechaFormateada],
-        ['Genero', '', sexo === 'M' ? 'Hombre' : 'Mujer'],
-        ['Observaciones', '', observaciones],
+        [translations.DatosTxtFechaTest, '', fechaSesion],
+        [translations.FichaPaciente, '', identificacion],
+        [translations.Nombre, '', `${nombre} ${apellidos}`],
+        [translations.FechaNacimiento, '', fechaFormateada],
+        [translations.Sexo, '', sexo === 'M' ? translations.Hombre : translations.Mujer],
+        [translations.Observaciones, '', observaciones],
         [],
         ['Test', 'Titulo', 'Datos'],
         ['Test 1', translations.Pr01Titulo, 

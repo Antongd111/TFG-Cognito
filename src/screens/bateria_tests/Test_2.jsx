@@ -93,7 +93,7 @@ const Test_2 = ({ navigation, route }) => {
                     visible={modalVisible}
                     onClose={() => setModalVisible(false)}
                     title={translations.Pr02Titulo}
-                    instructions={translations.pr02ItemStart + "\n \n" + translations.ItemStartBasico}
+                    instructions={translations.pr02ItemStart}
                 />
                 {!modalVisible && !mostrarOpciones && (
                     <TouchableOpacity

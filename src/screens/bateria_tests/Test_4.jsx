@@ -160,8 +160,8 @@ const Test_4 = ({ navigation, route }) => {
             <View style={stylesComunes.contenedor_test}>
                 <MenuComponent
                     onNavigateHome={() => navigation.replace('Pacientes')}
-                    onNavigateNext={() => navigation.replace('Test_5', { idSesion: idSesion })}
-                    onNavigatePrevious={() => navigation.replace('Test_3', { idSesion: idSesion })}
+                    onNavigateNext={() => navigation.replace('Test_5', { idSesion: route.params.idSesion })}
+                    onNavigatePrevious={() => navigation.replace('Test_3', { idSesion: route.params.idSesion })}
                 />
                 <InstruccionesModal
                     visible={modalVisible}
