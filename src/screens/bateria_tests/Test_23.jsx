@@ -1,5 +1,3 @@
-//TODO: mezclar respuestas para que la correcta no sea siempre la primera
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';

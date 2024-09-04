@@ -73,8 +73,6 @@ const BotonToPDF = ({ datosPaciente, datosTests }) => {
       const test23 = datosTests.test_23[0] || {};
       const test24 = datosTests.test_24[0] || {};
 
-      //TODO: fecha de sesion bien puesta
-
       const { uri } = await Print.printToFileAsync({
         html: `
           <html>
