@@ -187,13 +187,13 @@ const Test_23 = ({ navigation, route }) => {
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={iniciarTarea}
-                    title="Test 23"
+                    title={translations.Pr23Titulo}
                     instructions={translations.pr23ItemStart}
                 />
                 <InstruccionesModal
                     visible={modalPruebaVisible}
                     onClose={iniciarPruebaReal}
-                    title="Test 23"
+                    title={translations.Pr23Titulo}
                     instructions={translations.ItemStartPrueba}
                 />
                 {!modalVisible && !modalPruebaVisible && (

@@ -206,7 +206,7 @@ const Test_1 = ({ navigation, route }) => {
         <InstruccionesModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
-          title="Test 1"
+          title={translations.Pr01Titulo}
           instructions={translations.pr01ItemStart}
         />
 
@@ -216,7 +216,7 @@ const Test_1 = ({ navigation, route }) => {
             onClose={() => setPreguntaIniciarTest(false)}
             onRepeatTests={repetirPruebas}
             onStartRealTests={comenzarTestReal}
-            title="Test 1"
+            title={translations.Pr01Titulo}
             instructions={translations.Pr01PreguntaIniciar}
           />
         )}

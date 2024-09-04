@@ -480,7 +480,7 @@ const Test_14 = ({ navigation, route }) => {
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={iniciarPrueba}
-                    title="Test 14"
+                    title={translations.Pr14Titulo}
                     instructions={entrenamiento ? translations.pr14ItemStart : translations.ItemStartPrueba}
                 />
                 {!modalVisible && (

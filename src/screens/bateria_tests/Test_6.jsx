@@ -360,7 +360,7 @@ const Test_6 = ({ navigation, route }) => {
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={() => setModalVisible(false)}
-                    title="Test 6"
+                    title={translations.Pr06Titulo}
                     instructions={translations.pr06ItemStart + "\n \n" + translations.ItemStartBasico}
                 />
                 <InstruccionesModal
@@ -370,7 +370,7 @@ const Test_6 = ({ navigation, route }) => {
                         setEnsayoActual(3); // Iniciar los ensayos reales
                         iniciarEnsayo();
                     }}
-                    title="Test 6"
+                    title={translations.Pr06Titulo}
                     instructions={translations.ItemStartPrueba}
                 />
                 {!modalVisible && mostrarFiguraCorrecta && figuraCorrecta && (

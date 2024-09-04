@@ -101,7 +101,7 @@ const Test_19 = ({ navigation, route }) => {
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={iniciarTarea}
-                    title="Test 19"
+                    title={translations.Pr19Titulo}
                     instructions = {translations.pr19ItemStart}
                 />
                 {!modalVisible && (

@@ -161,15 +161,15 @@ const Test_8 = ({ navigation, route }) => {
                     <InstruccionesModal
                         visible={modalVisible}
                         onClose={() => setModalVisible(false)}
-                        title="Test 8 - 1"
+                        title={`${translations.Pr08Titulo} - 1`}
                         instructions={translations.pr08ItemStart}
                     />
                 )}
                 {fase === 2 && !memorizarNombres && !faseCompletada && (
                     <InstruccionesModal
                         visible={modalVisible}
-                        onClose={iniciarFase2} // Iniciar memorización al cerrar el modal
-                        title="Test 8 - 2"
+                        onClose={iniciarFase2}
+                        title={`${translations.Pr08Titulo} - 2`}
                         instructions={translations.pr08ItemStart2}
                     />
                 )}
@@ -177,7 +177,7 @@ const Test_8 = ({ navigation, route }) => {
                     <InstruccionesModal
                         visible={modalVisible}
                         onClose={iniciarEvaluacion}
-                        title="Test 8 - 3"
+                        title={`${translations.Pr08Titulo} - 3`}
                         instructions={translations.pr08ItemStart3}
                     />
                 )}

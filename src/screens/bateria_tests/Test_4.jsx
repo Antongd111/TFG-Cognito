@@ -167,7 +167,7 @@ const Test_4 = ({ navigation, route }) => {
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={handleStartTest}
-                    title="Test 4"
+                    title={translations.Pr04Titulo}
                     instructions={translations.pr04ItemStart + "\n \n" + translations.ItemStartBasico}
                 />
                 {!modalVisible && !faseEscucha && (

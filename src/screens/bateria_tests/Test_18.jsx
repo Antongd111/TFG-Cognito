@@ -175,7 +175,7 @@ const Test_18 = ({ navigation, route }) => {
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={iniciarTarea}
-                    title="Test 18"
+                    title={translations.Pr18Titulo}
                     instructions={translations.pr18ItemStart}
                 />
                 {!modalVisible && (

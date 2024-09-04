@@ -202,13 +202,13 @@ const Test_10 = ({ navigation, route }) => {
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={iniciarEnsayo}
-                    title="Test 10"
+                    title={translations.Pr10Titulo}
                     instructions={translations.pr10ItemStart}
                 />
                 <InstruccionesModal
                     visible={mostrarModalInicioPruebas}
                     onClose={iniciarPruebasReales}
-                    title="Test 10"
+                    title={translations.Pr10Titulo}
                     instructions={translations.ItemStartPrueba}
                 />
                 {!modalVisible && !mostrarModalInicioPruebas && (

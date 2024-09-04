@@ -199,26 +199,26 @@ const Test_17 = ({ navigation, route }) => {
             <View style={stylesComunes.contenedor_test}>
                 <MenuComponent
                     onToggleVoice={() => { }}
-                    onNavigateHome={() => navigation.navigate('Pacientes')}
-                    onNavigateNext={() => navigation.navigate('Test_18', { idSesion: route.params.idSesion })}
-                    onNavigatePrevious={() => navigation.navigate('Test_16', { idSesion: route.params.idSesion })}
+                    onNavigateHome={() => navigation.replace('Pacientes')}
+                    onNavigateNext={() => navigation.replace('Test_18', { idSesion: route.params.idSesion })}
+                    onNavigatePrevious={() => navigation.replace('Test_16', { idSesion: route.params.idSesion })}
                 />
                 <InstruccionesModal
                     visible={modalVisible && fase === 1}
                     onClose={iniciarTarea}
-                    title="Test 17 - 1"
+                    title={`${translations.Pr17Titulo} - 1`}
                     instructions={translations.pr17ItemStart}
                 />
                 <InstruccionesModal
                     visible={modalVisible && fase === 2}
                     onClose={iniciarTarea}
-                    title="Test 17 - 2"
+                    title={`${translations.Pr17Titulo} - 2`}
                     instructions={translations.pr17ItemStart2}
                 />
                 <InstruccionesModal
                     visible={modalVisible && fase === 3}
                     onClose={iniciarTarea}
-                    title="Test 17 - 3"
+                    title={`${translations.Pr17Titulo} - 3`}
                     instructions={translations.pr17ItemStart3}
                 />
                 {!modalVisible && fase === 1 && (

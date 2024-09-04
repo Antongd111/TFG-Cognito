@@ -209,7 +209,7 @@ const Test_7 = ({ navigation, route }) => {
                 <InstruccionesModal
                     visible={modalVisible}
                     onClose={() => setModalVisible(false)}
-                    title={`Test 7 - ${fase}`}
+                    title={`${translations.Pr07Titulo} - ${fase}`}
                     instructions={fase === 1 ? translations.pr07ItemStart :
                         fase === 2 ? translations.pr07ItemStart2 :
                         fase === 3 ? translations.pr07ItemStart3 : ''}
@@ -217,7 +217,7 @@ const Test_7 = ({ navigation, route }) => {
                 <InstruccionesModal
                     visible={testRealVisible}
                     onClose={iniciarTestReal}
-                    title="Test 7"
+                    title={translations.Pr07Titulo}
                     instructions={translations.ItemStartPrueba}
                 />
                 {!modalVisible && !testRealVisible && (

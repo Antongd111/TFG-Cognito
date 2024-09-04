@@ -150,32 +150,32 @@ const Test_25 = ({ navigation, route }) => {
 
                         <View style={styles.contenedorExtras}>
                             <TouchableOpacity style={[styles.botonExtra, imposibilidadDibujo1 === 1 && styles.botonExtraSeleccionado]} onPress={() => manejarToggleImposibilidad(1)}>
-                                <Text style={styles.textoBotonExtra}>Imposibilidad: {imposibilidadDibujo1 ? 'Sí' : 'No'}</Text>
+                                <Text style={styles.textoBotonExtra}>{translations.pdfImposibilidad}: {imposibilidadDibujo1 ? translations.Si : translations.No}</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity style={[styles.botonExtra, rechazoDibujo1 === 1 && styles.botonExtraSeleccionado]} onPress={() => manejarToggleRechazo(1)}>
-                                <Text style={styles.textoBotonExtra}>Rechazo: {rechazoDibujo1 ? 'Sí' : 'No'}</Text>
+                                <Text style={styles.textoBotonExtra}>{translations.pdfRechazo}: {rechazoDibujo1 ? translations.Si : translations.No}</Text>
                             </TouchableOpacity>
 
                             <View style={styles.perspectivaContainer}>
-                                <Text style={styles.textoBotonExtra}>Perspectiva:</Text>
+                                <Text style={styles.textoBotonExtra}>{translations.pdfPerspectiva}:</Text>
                                 <TouchableOpacity
                                     style={[styles.botonExtra, perspectivaDibujo1 === 1 && styles.botonExtraSeleccionado]}
                                     onPress={() => manejarPerspectiva(1, 'si')}
                                 >
-                                    <Text style={styles.textoBotonExtra}>Sí</Text>
+                                    <Text style={styles.textoBotonExtra}>{translations.Si}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.botonExtra, perspectivaDibujo1 === 0 && styles.botonExtraSeleccionado]}
                                     onPress={() => manejarPerspectiva(1, 'no')}
                                 >
-                                    <Text style={styles.textoBotonExtra}>No</Text>
+                                    <Text style={styles.textoBotonExtra}>{translations.No}</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
 
                         <TouchableOpacity style={styles.botonOK} onPress={finalizarEvaluacionDibujo1}>
-                            <Text style={styles.textoBotonOK}>Finalizar Dibujo 1</Text>
+                            <Text style={styles.textoBotonOK}>{translations.InicioTxtAceptar}</Text>
                         </TouchableOpacity>
                     </View>
                 )}
@@ -208,32 +208,32 @@ const Test_25 = ({ navigation, route }) => {
 
                         <View style={styles.contenedorExtras}>
                             <TouchableOpacity style={[styles.botonExtra, imposibilidadDibujo2 === 1 && styles.botonExtraSeleccionado]} onPress={() => manejarToggleImposibilidad(2)}>
-                                <Text style={styles.textoBotonExtra}>Imposibilidad: {imposibilidadDibujo2 ? 'Sí' : 'No'}</Text>
+                                <Text style={styles.textoBotonExtra}>{translations.pdfImposibilidad}: {imposibilidadDibujo2 ? translations.Si : translations.No}</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity style={[styles.botonExtra, rechazoDibujo2 === 1 && styles.botonExtraSeleccionado]} onPress={() => manejarToggleRechazo(2)}>
-                                <Text style={styles.textoBotonExtra}>Rechazo: {rechazoDibujo2 ? 'Sí' : 'No'}</Text>
+                                <Text style={styles.textoBotonExtra}>{translations.pdfRechazo}: {rechazoDibujo2 ? translations.Si : translations.No}</Text>
                             </TouchableOpacity>
 
                             <View style={styles.perspectivaContainer}>
-                                <Text style={styles.textoBotonExtra}>Perspectiva:</Text>
+                                <Text style={styles.textoBotonExtra}>{translations.pdfPerspectiva}:</Text>
                                 <TouchableOpacity
                                     style={[styles.botonExtra, perspectivaDibujo2 === 1 && styles.botonExtraSeleccionado]}
                                     onPress={() => manejarPerspectiva(2, 'si')}
                                 >
-                                    <Text style={styles.textoBotonExtra}>Sí</Text>
+                                    <Text style={styles.textoBotonExtra}>{translations.Si}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.botonExtra, perspectivaDibujo2 === 0 && styles.botonExtraSeleccionado]}
                                     onPress={() => manejarPerspectiva(2, 'no')}
                                 >
-                                    <Text style={styles.textoBotonExtra}>No</Text>
+                                    <Text style={styles.textoBotonExtra}>{translations.No}</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
 
                         <TouchableOpacity style={styles.botonOK} onPress={finalizarEvaluacion}>
-                            <Text style={styles.textoBotonOK}>Finalizar Evaluación</Text>
+                            <Text style={styles.textoBotonOK}>{translations.InicioTxtAceptar}</Text>
                         </TouchableOpacity>
                     </View>
                 )}
