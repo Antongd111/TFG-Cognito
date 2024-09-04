@@ -4,19 +4,19 @@ import Header from "../components/header";
 import { Text, View, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, Alert } from "react-native";
 import AgregarPacienteStyles from "../styles/AgregarPacienteStyles";
 import styles from "../styles/ComunStyles";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker'; // Para iOS y Android
 import { agregarPaciente } from '../api/PacienteApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from '../locales';
 
 const AgregarPaciente = ({ navigation }) => {
-
     const [nombre, setNombre] = useState('');
     const [apellidos, setApellidos] = useState('');
     const [identificacion, setIdentificacion] = useState('');
     const [fechaNacimiento, setFechaNacimiento] = useState(new Date());
     const [genero, setGenero] = useState('');
     const [observaciones, setObservaciones] = useState('');
+    const [showDatePicker, setShowDatePicker] = useState(false); // Controla la visibilidad del picker en Android
 
     /******************** CARGA DE TRADUCCIONES ********************/
 
@@ -43,6 +43,9 @@ const AgregarPaciente = ({ navigation }) => {
     ];
 
     const onChange = (event, selectedDate) => {
+        if (Platform.OS === 'android') {
+            setShowDatePicker(false); // Oculta el picker después de seleccionar la fecha en Android
+        }
         const currentDate = selectedDate || fechaNacimiento;
         setFechaNacimiento(currentDate);
     };
@@ -57,7 +60,6 @@ const AgregarPaciente = ({ navigation }) => {
         const formattedDate = fechaNacimiento.toISOString().split('T')[0];
 
         try {
-            // Llamar a la función de añadir paciente y esperar el resultado
             agregarPaciente(identificacion, nombre, apellidos, formattedDate, genero, observaciones);
             Alert.alert(translations.RegistroExitoso);
             navigation.navigate('Pacientes');
@@ -71,7 +73,6 @@ const AgregarPaciente = ({ navigation }) => {
         <KeyboardAvoidingView
             style={{ flex: 1 }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
-
         >
             <Header navigation={navigation} />
             <View style={AgregarPacienteStyles.contenedor}>
@@ -107,9 +108,12 @@ const AgregarPaciente = ({ navigation }) => {
                                     ))}
                                 </View>
                             </View>
+
+                            
+
                             <View style={AgregarPacienteStyles.inputGroupRow}>
                                 <Text style={AgregarPacienteStyles.label}>{translations.FechaNacimiento}:</Text>
-                                <View style={AgregarPacienteStyles.datePicker}>
+                                {Platform.OS === 'ios' ? (
                                     <DateTimePicker
                                         testID="dateTimePicker"
                                         value={fechaNacimiento}
@@ -119,10 +123,26 @@ const AgregarPaciente = ({ navigation }) => {
                                         onChange={onChange}
                                         maximumDate={new Date()}
                                     />
+                                ) : (
+                                    <>
+                                        <TouchableOpacity onPress={() => setShowDatePicker(true)} style={AgregarPacienteStyles.datePickerButton}>
+                                            <Text style={AgregarPacienteStyles.datePickerText}>{fechaNacimiento.toDateString()}</Text>
+                                        </TouchableOpacity>
+                                        {showDatePicker && (
+                                            <DateTimePicker
+                                                testID="dateTimePicker"
+                                                value={fechaNacimiento}
+                                                mode="date"
+                                                display="calendar"
+                                                onChange={onChange}
+                                                maximumDate={new Date()}
+                                            />
+                                        )}
+                                    </>
+                                )}
+                            </View>
+                            <View style={AgregarPacienteStyles.inputGroupRow}>
                                 </View>
-                            </View>
-                            <View style={AgregarPacienteStyles.inputGroup}>
-                            </View>
                         </View>
                         <View style={AgregarPacienteStyles.inputGroupObservaciones}>
                             <Text style={AgregarPacienteStyles.label}>{translations.Observaciones}:</Text>

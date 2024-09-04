@@ -9,22 +9,24 @@ import { NavigationContainer } from '@react-navigation/native';
 import 'react-native-reanimated';
 import * as ScreenOrientation from 'expo-screen-orientation';
 
-const customFonts = {
-  'K2D-Bold': require('./assets/fonts/K2D-Bold.ttf'),
-};
-
 export default function App() {
 
+  // Bloquear la orientación en modo vertical
+  const lockOrientation = async () => {
+    await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE_RIGHT);
+  };
+
   useEffect(() => {
+    // Inicializamos la base de datos
     initDB();
+
+    // Bloqueamos la orientación al cargar la app
+    lockOrientation();
   }, []);
 
   return (
     <NavigationContainer>
       <Main />
     </NavigationContainer>
-    
   );
 }
-
-
