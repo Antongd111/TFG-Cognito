@@ -1,5 +1,8 @@
 {
     "Titulo": "Battery of tests for cognitive decline detection",
+    "SigTest": "Next test",
+    "AntTest": "Previous test",
+    "VolverInicio": "Back to menu",
     "ResultadosSesion": "Results",
     "Idioma": "en",
     "Narrador": "Narrator",

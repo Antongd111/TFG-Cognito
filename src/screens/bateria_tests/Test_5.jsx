@@ -7,6 +7,7 @@ import InstruccionesModal from '../../components/instrucciones';
 import MenuComponent from '../../components/menu';
 import stylesComunes from '../../styles/ComunStyles';
 import { guardarResultadosTest_5 } from '../../api/TestApi';
+import { PixelRatio } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../../locales";
@@ -23,8 +24,10 @@ import figura_8 from '../../../assets/images/Test_5/figura_8.png';
 
 
 
-const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
+const { width, height } = Dimensions.get('window');
+
+const screenWidth = Math.max(width, height);
+const screenHeight = Math.min(width, height);
 const figuraSize = 50;
 const margenLateral = 100;
 const margenVertical = 50;
@@ -111,13 +114,20 @@ const Test_5 = ({ navigation, route }) => {
      */
     const generarPosicionAleatoria = (figurasExistentes) => {
         let newX, newY, overlap;
+    
         do {
             overlap = false;
+    
+            // Generar una posición aleatoria dentro de los márgenes definidos
             newX = Math.floor(Math.random() * (screenWidth - figuraSize - margenLateral * 2)) + margenLateral;
             newY = Math.floor(Math.random() * (screenHeight - figuraSize - margenVertical * 2)) + margenVertical;
-
-            overlap = figurasExistentes.some(fig => Math.abs(newX - fig.x) < figuraSize && Math.abs(newY - fig.y) < figuraSize);
+    
+            // Comprobar si la nueva figura se superpone a una existente
+            overlap = figurasExistentes.some(fig => 
+                Math.abs(newX - fig.x) < figuraSize && Math.abs(newY - fig.y) < figuraSize
+            );
         } while (overlap);
+    
         return { x: newX, y: newY };
     };
 

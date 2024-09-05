@@ -310,10 +310,11 @@ const Test_17 = ({ navigation, route }) => {
                             <TouchableOpacity style={styles.botonRechazo} onPress={handleRechazoReconocimiento}>
                                 <Text style={styles.textoBotonValidar}>{translations.Rechazo}</Text>
                             </TouchableOpacity>
-                        </View>
+                        
                         <TouchableOpacity style={styles.botonValidar} onPress={validarFase}>
                             <Text style={styles.textoBotonValidar}>{translations.Validar}</Text>
                         </TouchableOpacity>
+                        </View>
                     </View>
                 )}
             </View>

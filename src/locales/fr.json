@@ -1,5 +1,8 @@
 {
     "Titulo": "Batterie de tests pour la détection du déclin cognitif",
+    "SigTest": "Test suivant",
+    "AntTest": "Test précédent",
+    "VolverInicio": "Retourner à l'accueil",
     "ResultadosSesion": "Résultats de la session",
     "Idioma": "fr",
     "Narrador": "Narrateur",

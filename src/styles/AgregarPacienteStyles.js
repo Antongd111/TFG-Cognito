@@ -105,12 +105,14 @@ export default AgregarPacientesStyles = StyleSheet.create({
 
     
     observaciones: {
+        textAlignVertical: 'top',
         height: 200,
         width: '100%',
     },
 
-    inputGroupObservaciones: {
-        
+    datePickerText : {
+        fontSize: 20,
+        padding: 10,
     },
 
     // Para la selección de género ****/

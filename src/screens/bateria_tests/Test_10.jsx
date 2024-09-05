@@ -239,16 +239,16 @@ const styles = StyleSheet.create({
     cuadradosContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        width: 300,
-        height: 300,
+        width: 500,
+        height: 500,
         justifyContent: 'center',
         alignItems: 'center',
         alignSelf: 'center',
-        marginTop: 200,
+        marginTop: 100,
     },
     cuadrado: {
-        width: 90,
-        height: 90,
+        width: 150,
+        height: 150,
         margin: 5,
         backgroundColor: 'cyan',
         justifyContent: 'center',
@@ -258,8 +258,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'red',
     },
     payaso: {
-        width: 50,
-        height: 50,
+        width: 100,
+        height: 100,
     },
 });
 

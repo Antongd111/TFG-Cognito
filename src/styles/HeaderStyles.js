@@ -7,6 +7,7 @@ export default HeaderStyles = StyleSheet.create({
         justifyContent: 'center',
         alignContent: 'center',
         backgroundColor: '#F2E8E1',
+        height: '17%',
     },
 
     logo: {

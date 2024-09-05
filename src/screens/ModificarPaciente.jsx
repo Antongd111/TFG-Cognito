@@ -20,6 +20,8 @@ const ModificarPaciente = ({ navigation, route }) => {
     const [fechaNacimiento, setFechaNacimiento] = useState(new Date());
     const [genero, setGenero] = useState('');
     const [observaciones, setObservaciones] = useState('');
+    const [showDatePicker, setShowDatePicker] = useState(false); // Controla la visibilidad del picker en Android
+
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || fechaNacimiento;
@@ -127,15 +129,33 @@ const ModificarPaciente = ({ navigation, route }) => {
                         <View style={AgregarPacienteStyles.inputGroupRow}>
                             <Text style={AgregarPacienteStyles.label}>{translations.FechaNacimiento}:</Text>
                             <View style={AgregarPacienteStyles.datePicker}>
-                                <DateTimePicker
-                                    testID="dateTimePicker"
-                                    value={fechaNacimiento}
-                                    mode="date"
-                                    is24Hour={true}
-                                    display="calendar"
-                                    onChange={onChange}
-                                    maximumDate={new Date()}
-                                />
+                            {Platform.OS === 'ios' ? (
+                                    <DateTimePicker
+                                        testID="dateTimePicker"
+                                        value={fechaNacimiento}
+                                        mode="date"
+                                        is24Hour={true}
+                                        display="calendar"
+                                        onChange={onChange}
+                                        maximumDate={new Date()}
+                                    />
+                                ) : (
+                                    <>
+                                        <TouchableOpacity onPress={() => setShowDatePicker(true)} style={AgregarPacienteStyles.datePickerButton}>
+                                            <Text style={AgregarPacienteStyles.datePickerText}>{fechaNacimiento.toDateString()}</Text>
+                                        </TouchableOpacity>
+                                        {showDatePicker && (
+                                            <DateTimePicker
+                                                testID="dateTimePicker"
+                                                value={fechaNacimiento}
+                                                mode="date"
+                                                display="calendar"
+                                                onChange={onChange}
+                                                maximumDate={new Date()}
+                                            />
+                                        )}
+                                    </>
+                                )}
                             </View>
                         </View>
                         <View style={AgregarPacienteStyles.inputGroup}>

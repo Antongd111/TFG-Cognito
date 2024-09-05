@@ -8,19 +8,22 @@ import initDB from './src/database/db';
 import { NavigationContainer } from '@react-navigation/native';
 import 'react-native-reanimated';
 import * as ScreenOrientation from 'expo-screen-orientation';
+import * as NavigationBar from 'expo-navigation-bar';
+import { StatusBar } from 'react-native';
 
 export default function App() {
 
-  // Bloquear la orientación en modo vertical
   const lockOrientation = async () => {
     await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE_RIGHT);
   };
 
   useEffect(() => {
-    // Inicializamos la base de datos
+    // Inicialización la base de datos
     initDB();
+    NavigationBar.setVisibilityAsync("hidden");
+    StatusBar.setHidden(true);
 
-    // Bloqueamos la orientación al cargar la app
+    // Bloqueo de la orientación al cargar la app
     lockOrientation();
   }, []);
 

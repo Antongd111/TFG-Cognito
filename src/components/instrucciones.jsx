@@ -29,28 +29,26 @@ const InstruccionesModal = ({ visible, onClose, title, instructions }) => {
         }
     }, [isFocused]);
 
-    useEffect(() => {
-        if (visible && instructions && narracionHabilitada) {  // Solo ejecuta si la narración está habilitada
-            let retries = 0;
-            const maxRetries = 5;
-
-            const narrationInterval = setInterval(() => {
-                if (retries < maxRetries) {
-                    Speech.speak(instructions, {
-                        language: translations.Idioma || 'es',
-                    });
-                    retries++;
-                } else {
-                    clearInterval(narrationInterval);
-                }
-            }, 300); // Intenta cada 300ms, ajustable
-
-            return () => {
-                clearInterval(narrationInterval);
-                Speech.stop();
-            };
+    const startNarrationOnce = () => {
+        if (!narrationStarted.current) {  // Solo ejecuta si no se ha iniciado la narración
+            narrationStarted.current = true;  // Marcar que la narración ha comenzado
+            Speech.speak(instructions, {
+                language: translations.Idioma || 'es',
+            });
         }
+    };
+
+    useEffect(() => {
+        if (visible && instructions && narracionHabilitada) {
+            startNarrationOnce();  // Inicia la narración solo una vez
+        }
+
+        return () => {
+            Speech.stop();  // Detener la narración cuando el modal se cierra
+            narrationStarted.current = false;  // Reiniciar el control para la próxima vez
+        };
     }, [visible, instructions, translations, narracionHabilitada]);
+
 
     return (
         <Modal

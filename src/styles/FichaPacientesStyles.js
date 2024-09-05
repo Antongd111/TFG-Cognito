@@ -96,7 +96,6 @@ export default FichaPacientesStyle = StyleSheet.create({
     test: {
         backgroundColor: 'white',
         width: '100%',
-        height: 20,
         borderRadius: 10,
         margin: 5,
         marginLeft: 15,

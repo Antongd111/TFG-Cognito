@@ -114,58 +114,72 @@ const Test_1 = ({ navigation, route }) => {
     }
   };
 
-  /**
-   * Maneja el inicio de un ensayo real. Si hay 12 ensayos válidos o 36 totales, se acaba el test y se
-   * almacenan resultados.
-   */
-  const iniciarEnsayo = () => {
-    if (tiemposReaccion.length < 13 && ensayosCompletados < 36) {
-      mostrarPayaso();
-    }
-  };
+/**
+ * Maneja el toque de la pantalla cuando aparece el payaso.
+ */
+const manejarRespuesta = () => {
+  if (!payasoVisible) return; // Si el payaso no está visible, no hacer nada
 
-  /**
-   * Maneja el toque de la pantalla. Calcula el tiempo tardado en tocar desde que aparece el payaso y:
-   * - Si t < 100 se suma un error de anticipación
-   * - Si 100 < t < 500 se suma un acierto
-   * - Si 500 < t < 2000 se suma un error por retraso
-   * - Si 2000 < t se suma un error de tiempo
-   */
-  const manejarRespuesta = () => {
-    const reactionTime = Date.now() - startTime;
-    setUltimoTiempo(reactionTime);
-    setEnsayosCompletados(ensayosCompletados + 1);
-    setPayasoVisible(false);
+  const reactionTime = Date.now() - startTime;
+  setUltimoTiempo(reactionTime);
+  setEnsayosCompletados(ensayosCompletados + 1);
+  setPayasoVisible(false);  // Ocultar el payaso después de la respuesta
 
-    if (prueba) {
-      setTimeout(iniciarEnsayoEntrenamiento, 3000);
-    } else {
-      if (reactionTime < 100) {
-        setErroresAnticipacion(erroresAnticipacion + 1);
-      } else if (reactionTime < 500) {
-        console.log(reactionTime);
-        setTiemposReaccion([...tiemposReaccion, reactionTime]);
-      } else if (reactionTime < 2000) {
-        setErroresRetrasos(erroresRetrasos + 1);
+  console.log(`Tiempo de reacción: ${reactionTime} ms, Ensayos completados: ${ensayosCompletados}`);
+
+  if (prueba) {
+      if (ensayosCompletados < 5) {
+          setTimeout(iniciarEnsayoEntrenamiento, 3000);
       } else {
-        setErroresTiempo(erroresTiempo + 1);
+          preguntarSobreTestReal();
+      }
+  } else {
+      if (reactionTime < 100) {
+          setErroresAnticipacion(erroresAnticipacion + 1);
+          console.log("Error de anticipación");
+      } else if (reactionTime < 500) {
+          console.log(`Acierto con tiempo: ${reactionTime} ms`);
+          setTiemposReaccion([...tiemposReaccion, reactionTime]);
+      } else if (reactionTime < 2000) {
+          setErroresRetrasos(erroresRetrasos + 1);
+          console.log("Error de retraso");
+      } else {
+          setErroresTiempo(erroresTiempo + 1);
+          console.log("Error de tiempo");
       }
 
-      setTimeout(iniciarEnsayo, 3000);
-    }
-  };
+      if (tiemposReaccion.length >= 13 || ensayosCompletados >= 36) {
+          almacenarResultados();  // Guardar los resultados si se ha completado el test
+      } else {
+          setTimeout(iniciarEnsayo, 3000);  // Esperar 3 segundos para el siguiente ensayo
+      }
+  }
+};
 
-  /**
-   * Almacena los resultados en BD.
-   */
-  const almacenarResultados = async () => {
-    try {
+/**
+* Maneja el inicio de un ensayo real. Si hay 12 ensayos válidos o 36 totales, se acaba el test y se
+* almacenan los resultados.
+*/
+const iniciarEnsayo = () => {
+  if (tiemposReaccion.length < 13 && ensayosCompletados < 36) {
+      mostrarPayaso();  // Mostrar el payaso si no se han completado todos los ensayos
+  } else {
+      almacenarResultados();  // Guardar los resultados si se ha completado el test
+  }
+};
+
+/**
+* Almacena los resultados en la base de datos y navega al siguiente test.
+*/
+const almacenarResultados = async () => {
+  try {
       await guardarResultadosTest_1(idSesion, ensayosCompletados, tiemposReaccion, erroresAnticipacion, erroresTiempo, erroresRetrasos);
       navigation.replace('Test_2', { idPaciente, idSesion });
-    } catch (error) {
+  } catch (error) {
       Alert.alert("Error", "Ha ocurrido un error al añadir los resultados a la Base de Datos.");
-    }
-  };
+      console.error(error);
+  }
+};
 
 
 
