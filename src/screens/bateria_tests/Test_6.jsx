@@ -1,5 +1,3 @@
-//TODO: tiempo ensayo
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Text, View, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import InstruccionesModal from '../../components/instrucciones';
@@ -435,7 +433,7 @@ const Test_6 = ({ navigation, route }) => {
                             ))}
                         </View>
                         <View style={styles.row}>
-                            <TouchableOpacity style={styles.numberButton} onPress={() => setInputSonidos(inputSonidos.slice(0, -1))}>
+                            <TouchableOpacity style={styles.numberButton} onPress={() => setInputValue(inputValue.slice(0, -1))}>
                                 <Text style={styles.numberText}>Del</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.numberButton} onPress={() => handleNumberPress('0')}>

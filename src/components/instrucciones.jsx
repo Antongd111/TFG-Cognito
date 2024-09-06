@@ -10,7 +10,7 @@ import { useIsFocused } from '@react-navigation/native';
 const InstruccionesModal = ({ visible, onClose, title, instructions }) => {
 
     const [translations, setTranslations] = useState({});
-    const [narracionHabilitada, setNarracionHabilitada] = useState(false); // Estado para manejar si la narración está habilitada
+    const [narracionHabilitada, setNarracionHabilitada] = useState(false);
     const isFocused = useIsFocused();
     const narrationStarted = useRef(false);
 
@@ -29,25 +29,32 @@ const InstruccionesModal = ({ visible, onClose, title, instructions }) => {
         }
     }, [isFocused]);
 
-    const startNarrationOnce = () => {
-        if (!narrationStarted.current) {  // Solo ejecuta si no se ha iniciado la narración
-            narrationStarted.current = true;  // Marcar que la narración ha comenzado
-            Speech.speak(instructions, {
-                language: translations.Idioma || 'es',
-            });
-        }
-    };
-
     useEffect(() => {
-        if (visible && instructions && narracionHabilitada) {
-            startNarrationOnce();  // Inicia la narración solo una vez
+        const startNarrationOnce = async () => {
+            if (!narrationStarted.current && instructions && narracionHabilitada && translations.Idioma) {
+                narrationStarted.current = true;  // Marcar que la narración ha comenzado
+
+                // Espera un poco para asegurarte de que translations está cargado
+                await new Promise(resolve => setTimeout(resolve, 300)); 
+
+                // Inicia la narración
+                await Speech.speak(instructions, {
+                    language: translations.Idioma || 'es',
+                    onDone: () => { narrationStarted.current = false; },  // Reinicia el flag cuando termine
+                    onError: () => { narrationStarted.current = false; }  // Reinicia en caso de error
+                });
+            }
+        };
+
+        if (visible) {
+            startNarrationOnce();
         }
 
         return () => {
             Speech.stop();  // Detener la narración cuando el modal se cierra
             narrationStarted.current = false;  // Reiniciar el control para la próxima vez
         };
-    }, [visible, instructions, translations, narracionHabilitada]);
+    }, [visible, instructions, translations, narracionHabilitada]); // Asegúrate de que todas las dependencias estén bien cargadas
 
 
     return (

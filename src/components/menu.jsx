@@ -78,15 +78,25 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
   dropdown: {
-    backgroundColor: 'white',
+    backgroundColor: '#F2E8E1',
     padding: 10,
     borderRadius: 5,
     marginTop: 5,
   },
   dropdownText: {
-    fontSize: 30,
+    fontSize: 25,
     marginVertical: 5,
-  }
+  },
+
+  fondoMenu: {
+    backgroundColor: '#D2B48C',
+    padding: 10,
+    margin: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 60,
+},
 });
 
 export default MenuComponent;
