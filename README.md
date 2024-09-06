@@ -1,7 +1,7 @@
-# CognitoApp - Detección y Diagnóstico de Deterioro Cognitivo en Esclerosis Múltiple
+# CognitoApp - Detección temprana de Deterioro Cognitivo en Esclerosis Múltiple
 
 ## Descripción del Proyecto
-CognitoApp es una aplicación móvil diseñada para ayudar en la detección temprana y el diagnóstico del deterioro cognitivo en pacientes con esclerosis múltiple. A través de una serie de pruebas cognitivas informatizadas, la aplicación ofrece una herramienta de apoyo para el personal especializado en la evaluación de la función cognitiva de los pacientes. Los resultados de estas pruebas permiten realizar un seguimiento preciso de las capacidades cognitivas afectadas, facilitando un diagnóstico temprano y un tratamiento eficaz.
+CognitoApp es una aplicación móvil diseñada para ayudar en la detección temprana del deterioro cognitivo en pacientes con esclerosis múltiple. A través de una serie de pruebas cognitivas informatizadas, la aplicación ofrece una herramienta de apoyo para el personal especializado en la evaluación de la función cognitiva de los pacientes. Los resultados de estas pruebas permiten realizar un seguimiento preciso de las capacidades cognitivas afectadas, facilitando un diagnóstico temprano y un tratamiento eficaz.
 
 La aplicación está orientada a dispositivos **iOS** (como iPads) y también es compatible con **Android** gracias a **React Native**.
 
@@ -9,7 +9,7 @@ La aplicación está orientada a dispositivos **iOS** (como iPads) y también es
 - **Gestión de Pacientes:** Crear, modificar y eliminar registros de pacientes.
 - **Batería de Tests Cognitivos:** Pruebas que evalúan funciones como memoria, atención y tiempo de reacción.
 - **Exportación de Resultados:** Generar informes en PDF o CSV para análisis posterior.
-- **Soporte Multilenguaje:** Disponible en varios idiomas.
+- **Soporte Multilenguaje y narrador:** Disponible en varios idiomas, tanto el narrador como para las instrucciones de las pruebas
 
 ## Tecnologías Utilizadas
 - **React Native:** Desarrollo de la interfaz de usuario y compatibilidad multiplataforma.
