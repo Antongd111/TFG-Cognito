@@ -56,6 +56,10 @@ const ListaPacientes = ({ navigation }) => {
         }, [])
     );
 
+    const eliminarPacienteDeLista = (idPaciente) => {
+        setPacientes((prevPacientes) => prevPacientes.filter((paciente) => paciente.id !== idPaciente));
+        setFilteredData((prevData) => prevData.filter((paciente) => paciente.id !== idPaciente));
+    };
 
     return (
         <View style={ListaPacientesStyles.contenedor}>
@@ -88,6 +92,7 @@ const ListaPacientes = ({ navigation }) => {
                         fecha_nacimiento={item.fecha_nacimiento}
                         sexo={item.sexo}
                         observaciones={item.observaciones}
+                        onDeletePaciente={eliminarPacienteDeLista}
                     />
                 )}
                 keyExtractor={item => item.id.toString()}

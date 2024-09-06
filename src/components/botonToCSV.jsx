@@ -140,7 +140,7 @@ const BotonToCSV = ({ datosPaciente, datosTests }) => {
       await Sharing.shareAsync(csvUri);
 
     } catch (error) {
-      Alert.alert('Error', 'No se pudo generar el CSV.');
+      Alert.alert('Error', 'No se pudo generar el CSV. ¿Has completado todos los tests?');
       console.error(error);
     }
   };

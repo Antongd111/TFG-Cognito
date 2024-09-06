@@ -1,5 +1,8 @@
 {
     "Titulo": "Batería de tests para la detección de deterioro cognitivo",
+    "Eliminar": "Eliminar",
+    "PreguntarEliminar": "¿Está seguro de que desea eliminar este paciente?",
+    "RepetirTest": "Repetir test",
     "SigTest": "Siguiente test",
     "AntTest": "Test anterior",
     "VolverInicio": "Volver al inicio",

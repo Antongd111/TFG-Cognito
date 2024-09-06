@@ -337,6 +337,21 @@ export const obtenerPaciente = async (id) => {
   }
 };
 
+export const eliminarPaciente = async (id) => {
+  const db = await dbPromise;
+  console.log("Eliminando paciente:", id);
+  try {
+    const statement = await db.prepareAsync('DELETE FROM Paciente WHERE id = ?');
+    const result = await statement.executeAsync([id]);
+    await statement.finalizeAsync();
+    console.log("Paciente eliminado:", result.changes);
+    return result.changes;
+  } catch (error) {
+    console.error("Error al eliminar paciente:", error);
+    throw error;
+  }
+};
+
 export const actualizarPaciente = async (id, identificacion, nombre, apellidos, fecha_nacimiento, sexo, observaciones) => {
   const db = await dbPromise;
   console.log("Actualizando paciente:", id, identificacion, nombre, apellidos, fecha_nacimiento, sexo, observaciones);

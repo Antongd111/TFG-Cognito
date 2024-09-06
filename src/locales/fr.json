@@ -1,5 +1,8 @@
 {
     "Titulo": "Batterie de tests pour la détection du déclin cognitif",
+    "RepetirTest": "Répéter le test",
+    "Eliminar": "Supprimer",
+    "PreguntarEliminar": "Voulez-vous vraiment supprimer le/la patient(e) ?",
     "SigTest": "Test suivant",
     "AntTest": "Test précédent",
     "VolverInicio": "Retourner à l'accueil",

@@ -4,7 +4,7 @@ export default styles = StyleSheet.create({
 
     tarjeta: {
         backgroundColor: '#F5F5F5',
-        padding: 10,
+        padding: 0,
         margin: '2%',
         borderRadius: 10,
         display: 'flex',
@@ -17,6 +17,7 @@ export default styles = StyleSheet.create({
     paciente : {
         display: 'flex',
         flexDirection: 'row',
+        margin: 10,
     },
 
     imagen: {
@@ -52,8 +53,9 @@ export default styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         height: '100%',
+        width: '60%',
         alignItems: 'center',
-        
+        justifyContent: 'flex-end',
     },
 
     boton : {
@@ -69,6 +71,21 @@ export default styles = StyleSheet.create({
     textoBoton : {
         color: 'white',
         fontSize: 20,
+    },
+
+    eliminar: {
+        width: 40,
+        height: 40,
+        margin: 10,
+    },
+
+    eliminarBoton : {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#F04343',
+        borderTopRightRadius: 10,
+        borderBottomRightRadius: 10,
     },
 
 });

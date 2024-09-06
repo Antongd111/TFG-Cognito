@@ -1,12 +1,13 @@
-import { Text, View, Image, TouchableOpacity } from "react-native";
+import { Text, View, Image, TouchableOpacity, Alert } from "react-native";
 import styles from "../styles/TarjetaPacienteStyles";
 import { format, parseISO } from 'date-fns';
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTranslation } from "../locales";
 import { useIsFocused } from '@react-navigation/native';
+import { eliminarPaciente } from '../api/PacienteApi';
 
-export default function TarjetaPaciente({ navigation, id, nombre, apellidos, fecha_nacimiento, sexo }) {
+export default function TarjetaPaciente({ navigation, id, nombre, apellidos, fecha_nacimiento, sexo, onDeletePaciente }) {
 
     /** CARGA DE TRADUCCIONES **************************************/
 
@@ -29,6 +30,27 @@ export default function TarjetaPaciente({ navigation, id, nombre, apellidos, fec
 
     const fecha_formateada = format(parseISO(fecha_nacimiento), 'dd/MM/yyyy');
 
+    const EliminarPaciente = async () => {
+        try {
+            await eliminarPaciente(id);
+            if (onDeletePaciente)
+                onDeletePaciente(id);
+        } catch (error) {
+            console.error("Error al eliminar el paciente:", error);
+        }
+    }
+           
+    const confirmarEliminacion = () => {
+        Alert.alert(
+            translations.PreguntarEliminar,
+            " ",
+            [
+                { text: translations.Cancelar, style: "cancel" },
+                { text: translations.Eliminar, onPress: () => EliminarPaciente() }
+            ]
+        );
+    };
+
     return (
         <View style={styles.tarjeta}>
             <View style={styles.paciente}>
@@ -49,6 +71,10 @@ export default function TarjetaPaciente({ navigation, id, nombre, apellidos, fec
                     <Text style={styles.textoBoton}>{translations.ComenzarTest}</Text>
                 </TouchableOpacity>
             </View>
+
+            <TouchableOpacity style={styles.eliminarBoton} onPress={confirmarEliminacion}>
+                <Image source={require('../../assets/images/delete.png')} style={styles.eliminar} />
+            </TouchableOpacity>
         </View>
     );
 }

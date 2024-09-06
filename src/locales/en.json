@@ -1,5 +1,8 @@
 {
     "Titulo": "Battery of tests for cognitive decline detection",
+    "Eliminar": "Delete",
+    "PreguntarEliminar": "Are you sure you want to delete this patient?",
+    "RepetirTest": "Repeat test",
     "SigTest": "Next test",
     "AntTest": "Previous test",
     "VolverInicio": "Back to menu",
